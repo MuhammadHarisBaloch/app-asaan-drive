@@ -1,10 +1,12 @@
 import '@mantine/core/styles.css';
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core';
+import BaseLayout from "@/components/layouts/BaseLayout";
+import theme from "@/styles/theme";
 
 export const metadata = {
-  title: 'My Mantine app',
-  description: 'I have followed setup instructions carefully',
+  title: "My Mantine app",
+  description: "I have followed setup instructions carefully",
 };
 
 export default function RootLayout({
@@ -18,7 +20,9 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>{children}</MantineProvider>
+        <MantineProvider theme={theme}>
+          <BaseLayout>{children}</BaseLayout>
+        </MantineProvider>
       </body>
     </html>
   );
