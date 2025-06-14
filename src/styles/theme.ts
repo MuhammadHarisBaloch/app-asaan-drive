@@ -30,7 +30,7 @@ const theme = createTheme({
       "#FFFFFF",
     ],
     gray: [
-      "#6F7170",
+      "#101829",
       "#6F7170",
       "#6F7170",
       "#6F7170",

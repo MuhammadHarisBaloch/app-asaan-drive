@@ -7,6 +7,7 @@ import {
 } from "@mantine/core";
 import BaseLayout from "@/components/layouts/BaseLayout";
 import theme from "@/styles/theme";
+import "./global.styles.css";
 
 export const metadata = {
   title: "My Mantine app",
