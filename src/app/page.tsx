@@ -1,6 +1,5 @@
-import BaseLayout from "@/components/layouts/BaseLayout";
-import { Button } from "@mantine/core";
+import HomeHeroSection from "../components/features/home/HeroSection";
 
 export default function Home() {
-  return <h1>Hello</h1>;
+  return <HomeHeroSection />;
 }

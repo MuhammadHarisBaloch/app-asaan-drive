@@ -2,13 +2,13 @@ import Images from "@/constants/Images";
 import {
   AppShell,
   AppShellHeader,
-  Paper,
-  Group,
-  Flex,
-  UnstyledButton,
-  Button,
   AppShellMain,
+  Button,
+  Flex,
+  Group,
   Image,
+  Paper,
+  UnstyledButton,
 } from "@mantine/core";
 import { PropsWithChildren } from "react";
 
@@ -16,7 +16,7 @@ export default function BaseLayout({ children }: PropsWithChildren) {
   return (
     <AppShell header={{ height: 60 }}>
       <AppShellHeader withBorder={false}>
-        <Paper shadow="md">
+        <Paper shadow="md" bg="white.0">
           <Group p="lg" justify="space-between">
             <Image src={Images.logos.simple} h={20} w="auto" />
             <Flex gap="xl">
@@ -25,12 +25,8 @@ export default function BaseLayout({ children }: PropsWithChildren) {
               <UnstyledButton>Browse Vehicles</UnstyledButton>
             </Flex>
             <Flex gap="lg">
-              <Button variant="outline" color="red" radius="md">
-                Sign in
-              </Button>
-              <Button color="red" radius="md">
-                Sign up
-              </Button>
+              <Button variant="outline">Sign in</Button>
+              <Button>Sign up</Button>
             </Flex>
           </Group>
         </Paper>
