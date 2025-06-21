@@ -12,8 +12,8 @@ import Images from "../../../../constants/Images";
 
 function HomeHeroSection() {
   return (
-    <SimpleGrid cols={2} mt="md" p="xl" h="calc(100dvh - 80px)">
-      <Stack w="100%" h="100%" pt="8rem" gap="xxl">
+    <SimpleGrid cols={2} px="lg" h="calc(100dvh - 80px)" spacing="xs">
+      <Stack mt="3xl" w="100%" h="100%" pt="3rem" gap="xxl">
         <Box>
           <Title order={1} lh={1}>
             Rent a Vehicle with

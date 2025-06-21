@@ -42,13 +42,13 @@ export default function HomeFeatureSection() {
       px="xl"
       gap="md"
       w="100%"
-      h="calc(100dvh - 80px)"
+      h="calc(100dvh - 60px)"
     >
-      <Text fz="1.5rem" c="red" fw={500}>
+      <Text fz="xl" c="red" fw={500}>
         Features
       </Text>
       <Title order={3}>Why Choose AsaanDrive?</Title>
-      <Text fz="1.5rem">
+      <Text fz="xl">
         Our platform offers multiple benefits to both renters and vehicle
         owners.
       </Text>

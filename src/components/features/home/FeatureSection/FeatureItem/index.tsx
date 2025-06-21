@@ -18,10 +18,10 @@ export default function FeatureItem({
         <Center h="100%">{icon}</Center>
       </Box>
       <Box maw="80%">
-        <Text c="black" fz="1.5rem" fw="bold">
+        <Text c="black" fz="xl" fw="bold">
           {title}
         </Text>
-        <Text fz="1.2rem" fw={400}>
+        <Text fz="lg" fw={400}>
           {description}
         </Text>
       </Box>
