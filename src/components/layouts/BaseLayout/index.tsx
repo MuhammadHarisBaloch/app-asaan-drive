@@ -27,7 +27,7 @@ export default function BaseLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
   return (
     <>
-      <AppShell header={{ height: 80 }}>
+      <AppShell header={{ height: 70 }}>
         <AppShellHeader withBorder={false}>
           <Paper shadow="md" bg="white.0">
             <Group p="lg" justify="space-between">

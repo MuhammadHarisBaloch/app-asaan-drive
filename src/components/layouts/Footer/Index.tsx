@@ -11,14 +11,14 @@ import {
 import {
   IconBrandFacebook,
   IconBrandInstagram,
-  IconBrandTwitter,
   IconBrandLinkedin,
+  IconBrandTwitter,
 } from "@tabler/icons-react";
 import Link from "next/link";
 
 export default function Footer() {
   return (
-    <Stack bg="gray.0" py="3rem" align="center" px="xl" gap="3rem" mt="4rem">
+    <Stack bg="blue" py="3rem" align="center" px="xl" gap="3rem">
       <Group w="100%" align="flex-start" justify="space-between">
         <Stack w="25%">
           <Text fz="lg" c="white" fw={600}>

@@ -1,12 +1,25 @@
 "use client";
-import { Button, createTheme, em, rem, Text } from "@mantine/core";
+import { Button, createTheme, rem, Text } from "@mantine/core";
 
 const theme = createTheme({
   fontFamily: "Poppins",
   primaryShade: 9,
   colors: {
+    black: [
+      "#00000000",
+      "#0000001A",
+      "#00000033",
+      "#0000004D",
+      "#00000066",
+      "#00000080",
+      "#00000099",
+      "#000000B3",
+      "#000000CC",
+      "#000000",
+      "#000000FF",
+    ],
     red: [
-      "#FF0005",
+      "#FF000533",
       "#FF0005",
       "#FF0005",
       "#FF0005",
@@ -29,8 +42,20 @@ const theme = createTheme({
       "#FFFFFF",
       "#FFFFFF",
     ],
-    gray: [
+    blue: [
       "#101829",
+      "#101829",
+      "#101829",
+      "#101829",
+      "#101829",
+      "#101829",
+      "#101829",
+      "#101829",
+      "#101829",
+      "#101829",
+    ],
+    gray: [
+      "#F1F2F3",
       "#6F7170",
       "#6F7170",
       "#6F7170",
