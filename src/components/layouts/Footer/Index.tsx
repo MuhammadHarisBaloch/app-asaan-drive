@@ -1,3 +1,4 @@
+import { data } from "@/constants/Data";
 import {
   Box,
   Divider,
@@ -12,58 +13,8 @@ import {
   IconBrandInstagram,
   IconBrandTwitter,
   IconBrandLinkedin,
-  IconMapPin,
-  IconPhone,
-  IconMail,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { JSX } from "react";
-
-interface FooterMenu {
-  title: string;
-  items: {
-    name: string;
-    link?: string;
-    icon?: JSX.Element;
-  }[];
-}
-
-const footerMenu: FooterMenu[] = [
-  {
-    title: "Quick Links",
-    items: [
-      { name: "Home", link: "/" },
-      { name: "How it works ", link: "/how-it-works" },
-      { name: "Subscription plan", link: "/subscription-plans" },
-    ],
-  },
-  {
-    title: "Support",
-    items: [
-      { name: "Help Center", link: "/help-center" },
-      { name: "Safety Information", link: "/safety-information" },
-      { name: "Contact us", link: "/contact-us" },
-      { name: "FAQs", link: "/faqs" },
-    ],
-  },
-  {
-    title: "Contact",
-    items: [
-      {
-        name: "MUET Boys Hostel KhairpurMir’s",
-        icon: <IconMapPin size={20} color="red" />,
-      },
-      {
-        name: "+923461392377",
-        icon: <IconPhone size={20} color="red" />,
-      },
-      {
-        name: "AsaanDrive786@gmail.com",
-        icon: <IconMail size={20} color="red" />,
-      },
-    ],
-  },
-];
 
 export default function Footer() {
   return (
@@ -83,7 +34,7 @@ export default function Footer() {
             <IconBrandLinkedin size={25} color="gray" />
           </Group>
         </Stack>
-        {footerMenu.map((item, index) => (
+        {data.footer.menu.map((item, index) => (
           <Stack key={index}>
             <Text fz="lg" c="white" fw={600}>
               {item.title}

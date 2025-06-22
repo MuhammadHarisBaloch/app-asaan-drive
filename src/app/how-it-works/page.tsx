@@ -1,9 +1,10 @@
-import AboutAppProcess from "@/components/features/how-it-works/AboutAppProcess";
-import { Box, Stack, Text, Title } from "@mantine/core";
+import FeatureCardList from "@/components/features/how-it-works/FeatureCardList";
+import { data } from "@/constants/Data";
+import { Stack, Text, Title } from "@mantine/core";
 
-export default function HowItWorks() {
+export default function HowItWorksPage() {
   return (
-    <Stack gap="3xl">
+    <Stack gap="3xl" px="lg">
       <Stack align="center" my="xxl" gap="xs">
         <Text c="red" fz="xl">
           Process
@@ -15,7 +16,18 @@ export default function HowItWorks() {
           Simple Steps to get you on the Road or Earn from your vehicle.
         </Text>
       </Stack>
-      <AboutAppProcess />
+      <Stack gap="xl">
+        <Text c="black" fz="xl" fw="bold">
+          For Renters
+        </Text>
+        <FeatureCardList items={data.renter.usageSteps} />
+      </Stack>
+      <Stack gap="xl">
+        <Text c="black" fz="xl" fw="bold">
+          For Vehicle Owners
+        </Text>
+        <FeatureCardList items={data.vehicleOwner.usageSteps} />
+      </Stack>
     </Stack>
   );
 }

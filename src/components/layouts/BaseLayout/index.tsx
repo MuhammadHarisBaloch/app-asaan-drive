@@ -1,3 +1,5 @@
+"use client";
+
 import Images from "@/constants/Images";
 import {
   AppShell,
@@ -13,8 +15,16 @@ import {
 import { PropsWithChildren } from "react";
 import Footer from "../Footer/Index";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const headerMenu = [
+  { name: "Home", link: "/" },
+  { name: "How it works", link: "/how-it-works" },
+  { name: "Subscription plans", link: "/subscription-plans" },
+];
 
 export default function BaseLayout({ children }: PropsWithChildren) {
+  const pathname = usePathname();
   return (
     <>
       <AppShell header={{ height: 80 }}>
@@ -23,16 +33,19 @@ export default function BaseLayout({ children }: PropsWithChildren) {
             <Group p="lg" justify="space-between">
               <Image src={Images.logos.simple} h={20} w="auto" />
               <Flex gap="xl">
-                <UnstyledButton component={Link} href="/">
-                  Home
-                </UnstyledButton>
-                <UnstyledButton component={Link} href="/how-it-works">
-                  How it works
-                </UnstyledButton>
-                <UnstyledButton component={Link} href="/subscription-plans">
-                  Subscription plans
-                </UnstyledButton>
+                {headerMenu.map((data, index) => (
+                  <UnstyledButton
+                    key={index}
+                    c={pathname == data.link ? "red" : "gray"}
+                    fw={pathname == data.link ? 500 : 400}
+                    component={Link}
+                    href={data.link}
+                  >
+                    {data.name}
+                  </UnstyledButton>
+                ))}
               </Flex>
+
               <Flex gap="lg">
                 <Button variant="outline">Sign in</Button>
                 <Button>Sign up</Button>

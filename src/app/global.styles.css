@@ -1,3 +1,7 @@
 .debug {
   border: 2px solid red;
 }
+.hover-expand-item:hover{
+  transform: translate3D(0,-1px,0) scale(1.03) ;
+  transition: all .3s ease;
+}

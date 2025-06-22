@@ -42,7 +42,7 @@ const theme = createTheme({
       "#6F7170",
     ],
     pink: [
-      "#000000",
+      "#FFE0E3",
       "#FFE0E3",
       "#FFE0E3",
       "#FFF9F9",

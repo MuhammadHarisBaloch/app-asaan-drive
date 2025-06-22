@@ -2,18 +2,19 @@ import { Card, Center, Stack, Text } from "@mantine/core";
 import { IconUserPlus } from "@tabler/icons-react";
 import { JSX } from "react";
 
-interface ProcessCardProps {
+interface FeatureCardProps {
   icon: JSX.Element;
   title: string;
-  description: string;
+  subtitle: string;
 }
-export default function ProcessCard({
+export default function FeatureCard({
   icon,
   title,
-  description,
-}: ProcessCardProps) {
+  subtitle,
+}: FeatureCardProps) {
   return (
     <Card
+      className="hover-expand-item"
       bg="pink"
       p="xl"
       radius="md"
@@ -30,7 +31,7 @@ export default function ProcessCard({
           {title}
         </Text>
         <Text c="black" fz="sm">
-          {description}
+          {subtitle}
         </Text>
       </Stack>
     </Card>
