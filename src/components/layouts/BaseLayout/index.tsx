@@ -47,8 +47,12 @@ export default function BaseLayout({ children }: PropsWithChildren) {
               </Flex>
 
               <Flex gap="lg">
-                <Button variant="outline">Sign in</Button>
-                <Button>Sign up</Button>
+                <Button component={Link} href="/signin" variant="outline">
+                  Sign in
+                </Button>
+                <Button component={Link} href="/signup">
+                  Sign up
+                </Button>
               </Flex>
             </Group>
           </Paper>
