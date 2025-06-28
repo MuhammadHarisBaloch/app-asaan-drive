@@ -14,7 +14,7 @@ export default function FeatureItem({
 }: FeatureItemProps) {
   return (
     <Group gap="md" justify="flex-start" align="flex-start" wrap="nowrap">
-      <Box bg="red" h={55} w={55} style={{ borderRadius: "5px" }}>
+      <Box bg="red.4" h={55} w={55} style={{ borderRadius: "5px" }}>
         <Center h="100%">{icon}</Center>
       </Box>
       <Box maw="80%">

@@ -18,7 +18,13 @@ function HomeHeroSection() {
           <Title order={1} lh={1}>
             Rent a Vehicle with
           </Title>
-          <Title order={1} c="red">
+          <Title
+            order={1}
+            c="red.4"
+            style={{
+              filter: "drop-shadow(2px 2px 10px rgba(255, 21, 21, 0.43))",
+            }}
+          >
             AsaanDrive
           </Title>
         </Box>

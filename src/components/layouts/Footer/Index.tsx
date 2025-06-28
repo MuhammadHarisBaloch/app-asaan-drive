@@ -18,7 +18,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <Stack bg="blue" py="3rem" align="center" px="xl" gap="3rem">
+    <Stack bg="blue.9" py="3rem" align="center" px="xl" gap="3rem">
       <Group w="100%" align="flex-start" justify="space-between">
         <Stack w="25%">
           <Text fz="lg" c="white" fw={600}>

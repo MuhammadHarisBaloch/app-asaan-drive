@@ -15,6 +15,7 @@ import {
   UnstyledButton,
   PasswordInput,
 } from "@mantine/core";
+import Link from "next/link";
 
 export default function SignInPage() {
   const form = useForm({
@@ -31,20 +32,20 @@ export default function SignInPage() {
   });
   return (
     <VehicleBackgroundOverlay>
-      <Stack align="center">
-        <Title order={3} c="white">
-          Sign in
-        </Title>
-        <Text fz="lg" c="white">
-          Welcome Back! Sign in your AsaanDrive Account
-        </Text>
-        <Card w="40%" pt="lg" pb="3xl">
+      <Stack w="100%" align="center" gap="xl">
+        <Stack w="100%" gap="xs" align="center">
+          <Title order={3} c="white">
+            Sign in
+          </Title>
+          <Text c="white">Welcome Back! Sign in your AsaanDrive Account</Text>
+        </Stack>
+        <Card w="35%" p="lg" pb="3xl" radius="lg">
           <form
             onSubmit={form.onSubmit((values) =>
               console.log("Signin data", values)
             )}
           >
-            <Stack w="100%" px="xxl">
+            <Stack align="center" px="xxl">
               <TextInput
                 w="100%"
                 label="Username"
@@ -80,23 +81,33 @@ export default function SignInPage() {
                     type: "checkbox",
                   })}
                 />
-                <Text fz="sm" c="red">
+                <UnstyledButton
+                  component={Link}
+                  href="/forget-password"
+                  c="red.4"
+                  fz="sm"
+                >
                   Forget Password?
-                </Text>
+                </UnstyledButton>
               </Group>
-              <Button bg="red" radius="lg" type="submit">
+              <Button w="80%" type="submit">
                 Sign in
               </Button>
-              <Flex justify="space-between" px="xxl" align="center">
-                <Divider w="40%" />
+              <Flex w="60%" align="center" gap="lg">
+                <Divider w="50%" />
                 Or
-                <Divider w="40%" />
+                <Divider w="50%" />
               </Flex>
-              <Flex gap="xs" justify="center">
+              <Flex gap="xs">
                 <Text fz="sm" c="gray">
                   Don’t have an Account ?
                 </Text>
-                <UnstyledButton c="red" fz="sm">
+                <UnstyledButton
+                  component={Link}
+                  href="/signup"
+                  c="red.4"
+                  fz="sm"
+                >
                   Sign up
                 </UnstyledButton>
               </Flex>
@@ -104,7 +115,6 @@ export default function SignInPage() {
           </form>
         </Card>
       </Stack>
-      x
     </VehicleBackgroundOverlay>
   );
 }

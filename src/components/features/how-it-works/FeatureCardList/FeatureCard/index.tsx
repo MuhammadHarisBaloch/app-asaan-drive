@@ -15,7 +15,7 @@ export default function FeatureCard({
   return (
     <Card
       className="hover-expand-item"
-      bg="pink"
+      bg="white.0"
       p="xl"
       radius="md"
       shadow="xl"
@@ -24,7 +24,7 @@ export default function FeatureCard({
       }}
     >
       <Stack>
-        <Center bg="pink.1" w={70} h={70} style={{ borderRadius: "50%" }}>
+        <Center bg="pink.0" w={70} h={70} style={{ borderRadius: "50%" }}>
           {icon}
         </Center>
         <Text c="black" fz="lg" fw={500}>

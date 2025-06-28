@@ -9,6 +9,7 @@ import {
   Group,
   PasswordInput,
   Radio,
+  SegmentedControl,
   Space,
   Stack,
   Text,
@@ -19,6 +20,8 @@ import {
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
 import Images from "../../constants/Images";
 import VehicleBackgroundOverlay from "@/components/VehicleBackgroundOverlay";
+import Link from "next/link";
+import { IconUserPlus } from "@tabler/icons-react";
 
 interface SignUpForm {
   userType: string;
@@ -62,7 +65,7 @@ function SignupPage() {
             Join AsaanDrive to rent vehicles or list your Own
           </Text>
         </Stack>
-        <Card w="35%" p="lg" py="3xl">
+        <Card w="35%" p="lg" py="3xl" radius="lg">
           <form
             onSubmit={form.onSubmit((values) => {
               console.log("Form is submitted", values);
@@ -75,9 +78,9 @@ function SignupPage() {
                 {...form.getInputProps("userType")}
               >
                 <Group mt="xs">
-                  <Radio color="red" value="renter" label="Renter" />
+                  <Radio color="red.4" value="renter" label="Renter" />
                   <Radio
-                    color="red"
+                    color="red.4"
                     value="vehicle-owner"
                     label="Vehicle Owner"
                   />
@@ -148,10 +151,14 @@ function SignupPage() {
                 Or
                 <Divider w="50%" />
               </Flex>
-
               <Flex gap="sm">
                 <Text fz="sm">Already have Account?</Text>
-                <UnstyledButton c="red" fz="sm" type="submit">
+                <UnstyledButton
+                  component={Link}
+                  href="/signin"
+                  c="red.4"
+                  fz="sm"
+                >
                   Sign in
                 </UnstyledButton>
               </Flex>

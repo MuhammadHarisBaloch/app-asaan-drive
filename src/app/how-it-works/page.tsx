@@ -4,9 +4,9 @@ import { Stack, Text, Title } from "@mantine/core";
 
 export default function HowItWorksPage() {
   return (
-    <Stack gap="3xl" px="lg">
+    <Stack gap="3xl" px="lg" mb="3xl">
       <Stack align="center" my="xxl" gap="xs">
-        <Text c="red" fz="xl">
+        <Text c="red.4" fz="xl">
           Process
         </Text>
         <Title order={3} fw="bold">

@@ -20,7 +20,7 @@ import { usePathname } from "next/navigation";
 const headerMenu = [
   { name: "Home", link: "/" },
   { name: "How it works", link: "/how-it-works" },
-  { name: "Subscription plans", link: "/subscription-plans" },
+  { name: "Contact us", link: "/contact" },
 ];
 
 export default function BaseLayout({ children }: PropsWithChildren) {
@@ -31,12 +31,15 @@ export default function BaseLayout({ children }: PropsWithChildren) {
         <AppShellHeader withBorder={false}>
           <Paper shadow="md" bg="white.0">
             <Group p="lg" justify="space-between">
-              <Image src={Images.logos.simple} h={20} w="auto" />
+              <Link href="/">
+                <Image src={Images.logos.simple} h={20} w="auto" />
+              </Link>
               <Flex gap="xl">
                 {headerMenu.map((data, index) => (
                   <UnstyledButton
+                    className="hover-expand-item"
                     key={index}
-                    c={pathname == data.link ? "red" : "gray"}
+                    c={pathname == data.link ? "red.4" : "gray"}
                     fw={pathname == data.link ? 500 : 400}
                     component={Link}
                     href={data.link}
@@ -47,10 +50,19 @@ export default function BaseLayout({ children }: PropsWithChildren) {
               </Flex>
 
               <Flex gap="lg">
-                <Button component={Link} href="/signin" variant="outline">
+                <Button
+                  className="hover-expand-item"
+                  component={Link}
+                  href="/signin"
+                  variant="outline"
+                >
                   Sign in
                 </Button>
-                <Button component={Link} href="/signup">
+                <Button
+                  className="hover-expand-item"
+                  component={Link}
+                  href="/signup"
+                >
                   Sign up
                 </Button>
               </Flex>

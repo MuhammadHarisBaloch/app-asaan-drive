@@ -1,12 +1,18 @@
 import { JSX } from "react";
 import {
-  IconBrandFacebook,
-  IconBrandInstagram,
-  IconBrandTwitter,
-  IconBrandLinkedin,
   IconMapPin,
   IconPhone,
   IconMail,
+  IconCreditCardRefund,
+  IconReceiptDollar,
+  IconSearch,
+  IconUserPlus,
+  IconClipboardList,
+  IconCircleCheckFilled,
+  IconMoneybag,
+  IconClock,
+  IconShieldCheck,
+  IconCoin,
 } from "@tabler/icons-react";
 interface FooterMenu {
   title: string;
@@ -23,7 +29,7 @@ const footerMenu: FooterMenu[] = [
     items: [
       { name: "Home", link: "/" },
       { name: "How it works ", link: "/how-it-works" },
-      { name: "Subscription plans", link: "/subscription-plans" },
+      { name: "Contact us", link: "/contact" },
     ],
   },
   {
@@ -31,8 +37,7 @@ const footerMenu: FooterMenu[] = [
     items: [
       { name: "Help Center", link: "/help-center" },
       { name: "Safety Information", link: "/safety-information" },
-      { name: "Contact us", link: "/contact-us" },
-      { name: "FAQs", link: "/faqs" },
+      { name: "FAQs", link: "/faq" },
     ],
   },
   {
@@ -54,15 +59,6 @@ const footerMenu: FooterMenu[] = [
   },
 ];
 
-import {
-  IconCreditCardRefund,
-  IconReceiptDollar,
-  IconSearch,
-  IconUserPlus,
-  IconClipboardList,
-  IconCircleCheckFilled,
-  IconMoneybag,
-} from "@tabler/icons-react";
 const renterUsageSteps = [
   {
     icon: <IconUserPlus size={25} color="#E30B5C" />,
@@ -111,6 +107,33 @@ const vehicleOwnerUsageSteps = [
   },
 ];
 
+const features = [
+  {
+    icon: <IconClock size={28} color="white" />,
+    title: "Flexible Rental Options",
+    description:
+      "Rent by the hour, day, week, or month based on your needs. No long-term commitments required.",
+  },
+  {
+    icon: <IconMapPin size={28} color="white" />,
+    title: "Real-Time Tracking",
+    description:
+      "Keep track of your rented vehicle with our real-time GPS tracking feature for safety and convenience.",
+  },
+  {
+    icon: <IconShieldCheck size={28} color="white" />,
+    title: "Safety First",
+    description:
+      "All vehicles are thoroughly inspected and maintained. Emergency assistance available 24/7.",
+  },
+  {
+    icon: <IconCoin size={28} color="white" />,
+    title: "Earn with Your Vehicle",
+    description:
+      "Turn your idle vehicle into a source of income by listing it on our platform when you're not using it.",
+  },
+];
+
 export const data = {
   footer: {
     menu: footerMenu,
@@ -120,5 +143,8 @@ export const data = {
   },
   vehicleOwner: {
     usageSteps: vehicleOwnerUsageSteps,
+  },
+  home: {
+    features: features,
   },
 };
