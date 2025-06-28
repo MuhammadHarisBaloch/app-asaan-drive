@@ -1,6 +1,11 @@
 const Images = {
   logos: { simple: "/logo/AsaanDrive.png" },
   general: { bike: "/images/general/bike.webp" },
+  listedVehicles: {
+    cd125: "/images/listedVehicles/125_bike.webp",
+    cycle: "/images/listedVehicles/mountain-cycle.webp",
+    rakshaw: "/images/listedVehicles/auto-rakshaw.webp",
+  },
   backgrounds: {
     signup: "/images/background/sign-up-page-background.webp",
   },

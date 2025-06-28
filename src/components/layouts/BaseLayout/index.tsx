@@ -17,14 +17,43 @@ import Footer from "../Footer/Index";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const headerMenu = [
-  { name: "Home", link: "/" },
-  { name: "How it works", link: "/how-it-works" },
+interface HeaderMenuItem {
+  name: string;
+  link: string;
+}
+const baseMenu: HeaderMenuItem[] = [
+  {
+    name: "Home",
+    link: "/",
+  },
+  {
+    name: "How it works",
+    link: "/how-it-works",
+  },
+];
+const websiteMenu: HeaderMenuItem[] = [
+  ...baseMenu,
   { name: "Contact us", link: "/contact" },
 ];
 
+const renterMenu: HeaderMenuItem[] = [
+  ...baseMenu,
+  {
+    name: "Browse Vehicle",
+    link: "/app/renters",
+  },
+  {
+    name: "Find Near me",
+    link: "/app/find-near-me",
+  },
+];
+const menuMapper: Record<string, HeaderMenuItem[]> = {
+  "/app/renters": renterMenu,
+  "/": websiteMenu,
+};
 export default function BaseLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
+  console.log("pathname", pathname);
   return (
     <>
       <AppShell header={{ height: 70 }}>
@@ -35,7 +64,7 @@ export default function BaseLayout({ children }: PropsWithChildren) {
                 <Image src={Images.logos.simple} h={20} w="auto" />
               </Link>
               <Flex gap="xl">
-                {headerMenu.map((data, index) => (
+                {menuMapper[pathname].map((data, index) => (
                   <UnstyledButton
                     className="hover-expand-item"
                     key={index}
