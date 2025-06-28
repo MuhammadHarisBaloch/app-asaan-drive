@@ -47,9 +47,18 @@ const renterMenu: HeaderMenuItem[] = [
     link: "/app/find-near-me",
   },
 ];
+
+const vehicleOwnerMenu: HeaderMenuItem[] = [
+  ...baseMenu,
+  {
+    name: "List Your Vehicles",
+    link: "/app/vehicles-owner",
+  },
+];
 const menuMapper: Record<string, HeaderMenuItem[]> = {
   "/app/renters": renterMenu,
   "/": websiteMenu,
+  "/app/vehicles-owner": vehicleOwnerMenu,
 };
 export default function BaseLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();

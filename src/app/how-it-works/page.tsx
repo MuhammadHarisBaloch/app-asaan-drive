@@ -1,3 +1,4 @@
+"use client";
 import FeatureCardList from "@/components/features/how-it-works/FeatureCardList";
 import { data } from "@/constants/Data";
 import { Stack, Text, Title } from "@mantine/core";
