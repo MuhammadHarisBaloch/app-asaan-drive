@@ -13,14 +13,16 @@ import {
   TextInput,
   Title,
   UnstyledButton,
+  Notification,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { auth } from "../../networking/firebase";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { notifications } from "@mantine/notifications";
+import { useDisclosure } from "@mantine/hooks";
 interface SignInForm {
   userName: string;
   password: string;
@@ -28,8 +30,8 @@ interface SignInForm {
 }
 
 export default function SignInPage() {
+  const [loading, { open: startLoading, close: stopLoading }] = useDisclosure();
   const router = useRouter();
-
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -55,8 +57,14 @@ export default function SignInPage() {
     signInWithEmailAndPassword(auth, values.userName, values.password)
       .then((user) => {
         router.push("/");
+        stopLoading();
       })
       .catch((error) => {
+        notifications.show({
+          title: "Error",
+          message: error.message,
+        });
+        stopLoading();
         console.log("Auth error", error.code, error.message);
       });
   };
@@ -74,6 +82,7 @@ export default function SignInPage() {
           <form
             onSubmit={form.onSubmit((values) => {
               console.log("Signin data", values);
+              startLoading();
               signInUser(values);
             })}
           >
@@ -122,7 +131,7 @@ export default function SignInPage() {
                   Forget Password?
                 </UnstyledButton>
               </Group>
-              <Button w="80%" type="submit">
+              <Button w="80%" type="submit" loading={loading}>
                 Sign in
               </Button>
               <Flex w="60%" align="center" gap="lg">

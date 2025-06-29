@@ -1,5 +1,5 @@
 import { Button, Flex } from "@mantine/core";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { auth } from "../../../../networking/firebase";
@@ -21,9 +21,12 @@ function AuthButtons() {
     return (
       <Button
         className="hover-expand-item"
-        component={Link}
-        href="/signin"
         variant="outline"
+        onClick={() => {
+          signOut(auth).then(() => {
+            console.log("Sign out successfully");
+          });
+        }}
       >
         Logout
       </Button>

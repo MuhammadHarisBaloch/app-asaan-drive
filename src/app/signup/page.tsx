@@ -22,6 +22,11 @@ import Images from "../../constants/Images";
 import VehicleBackgroundOverlay from "@/components/VehicleBackgroundOverlay";
 import Link from "next/link";
 import { IconUserPlus } from "@tabler/icons-react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/networking/firebase";
+import { useRouter } from "next/navigation";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 
 interface SignUpForm {
   userType: string;
@@ -33,6 +38,25 @@ interface SignUpForm {
 }
 
 function SignupPage() {
+  const router = useRouter();
+  const [loading, { open, close }] = useDisclosure(false);
+  const registerUser = (values: SignUpForm) => {
+    createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredentials) => {
+        const user = userCredentials.user;
+        close();
+        router.push("/");
+        console.log("Successfully Registered ", user);
+      })
+      .catch((error) => {
+        open();
+        notifications.show({
+          title: "Error Message",
+          message: error.message,
+        });
+        close();
+      });
+  };
   const form = useForm<SignUpForm>({
     mode: "uncontrolled",
     initialValues: {
@@ -68,6 +92,8 @@ function SignupPage() {
         <Card w="35%" p="lg" py="3xl" radius="lg">
           <form
             onSubmit={form.onSubmit((values) => {
+              registerUser(values);
+              open();
               console.log("Form is submitted", values);
             })}
           >
@@ -143,7 +169,7 @@ function SignupPage() {
                 {...form.getInputProps("confirmPassword")}
               />
               <Space h="lg" />
-              <Button w="80%" type="submit">
+              <Button w="80%" type="submit" loading={loading}>
                 Sign Up
               </Button>
               <Flex w="60%" align="center" gap="lg">

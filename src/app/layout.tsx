@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
-
+import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import {
   ColorSchemeScript,
   MantineProvider,
@@ -8,6 +9,7 @@ import {
 import BaseLayout from "@/components/layouts/BaseLayout";
 import theme from "@/styles/theme";
 import "./global.styles.css";
+import { Notifications } from "@mantine/notifications";
 
 export const metadata = {
   title: "My Mantine app",
@@ -32,6 +34,7 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider theme={theme}>
+          <Notifications />
           <BaseLayout>{children}</BaseLayout>
         </MantineProvider>
       </body>

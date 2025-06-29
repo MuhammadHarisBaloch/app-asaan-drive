@@ -57,20 +57,12 @@ const vehicleOwnerMenu: HeaderMenuItem[] = [
   },
 ];
 
-function getHeaderMenu(url: string): HeaderMenuItem[] {
-  // url = /
-  console.log("Header Menu function ", url);
-  // if (url.startsWith("/")) return websiteMenu;
-  if (url.startsWith("/app/renters")) return renterMenu;
-  if (url.startsWith("/app/vehicles-owner")) return vehicleOwnerMenu;
+function getHeaderMenu(pathname: string): HeaderMenuItem[] {
+  if (pathname.startsWith("/app/renters")) return renterMenu;
+  if (pathname.startsWith("/app/vehicles-owner")) return vehicleOwnerMenu;
   return websiteMenu;
 }
 
-const menuMapper: Record<string, HeaderMenuItem[]> = {
-  "/app/renters": renterMenu,
-  "/": websiteMenu,
-  "/app/vehicles-owner": vehicleOwnerMenu,
-};
 export default function BaseLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
   console.log("parhname ", pathname);
