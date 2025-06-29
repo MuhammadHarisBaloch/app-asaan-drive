@@ -1,23 +1,35 @@
 "use client";
 import VehicleBackgroundOverlay from "@/components/VehicleBackgroundOverlay";
-import { isNotEmpty, useForm } from "@mantine/form";
 import {
-  Card,
-  Stack,
-  TextInput,
-  Title,
-  Text,
-  Checkbox,
-  Group,
   Button,
+  Card,
+  Checkbox,
   Divider,
   Flex,
-  UnstyledButton,
+  Group,
   PasswordInput,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  UnstyledButton,
 } from "@mantine/core";
+import { isNotEmpty, useForm } from "@mantine/form";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { auth } from "../../networking/firebase";
+import { useEffect } from "react";
+
+interface SignInForm {
+  userName: string;
+  password: string;
+  rememberPassword: boolean;
+}
 
 export default function SignInPage() {
+  const router = useRouter();
+
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -30,6 +42,25 @@ export default function SignInPage() {
       password: isNotEmpty("Please Enter Password"),
     },
   });
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/");
+      }
+    });
+  }, []);
+
+  const signInUser = (values: SignInForm) => {
+    signInWithEmailAndPassword(auth, values.userName, values.password)
+      .then((user) => {
+        router.push("/");
+      })
+      .catch((error) => {
+        console.log("Auth error", error.code, error.message);
+      });
+  };
+
   return (
     <VehicleBackgroundOverlay>
       <Stack w="100%" align="center" gap="xl">
@@ -41,9 +72,10 @@ export default function SignInPage() {
         </Stack>
         <Card w="35%" p="lg" pb="3xl" radius="lg">
           <form
-            onSubmit={form.onSubmit((values) =>
-              console.log("Signin data", values)
-            )}
+            onSubmit={form.onSubmit((values) => {
+              console.log("Signin data", values);
+              signInUser(values);
+            })}
           >
             <Stack align="center" px="xxl">
               <TextInput

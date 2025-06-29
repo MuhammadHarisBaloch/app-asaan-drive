@@ -16,6 +16,7 @@ import { PropsWithChildren } from "react";
 import Footer from "../Footer/Index";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AuthButtons from "./AuthButtons";
 
 interface HeaderMenuItem {
   name: string;
@@ -96,24 +97,7 @@ export default function BaseLayout({ children }: PropsWithChildren) {
                   </UnstyledButton>
                 ))}
               </Flex>
-
-              <Flex gap="lg">
-                <Button
-                  className="hover-expand-item"
-                  component={Link}
-                  href="/signin"
-                  variant="outline"
-                >
-                  Sign in
-                </Button>
-                <Button
-                  className="hover-expand-item"
-                  component={Link}
-                  href="/signup"
-                >
-                  Sign up
-                </Button>
-              </Flex>
+              <AuthButtons />
             </Group>
           </Paper>
         </AppShellHeader>
