@@ -55,6 +55,16 @@ const vehicleOwnerMenu: HeaderMenuItem[] = [
     link: "/app/vehicles-owner",
   },
 ];
+
+function getHeaderMenu(url: string): HeaderMenuItem[] {
+  // url = /
+  console.log("Header Menu function ", url);
+  // if (url.startsWith("/")) return websiteMenu;
+  if (url.startsWith("/app/renters")) return renterMenu;
+  if (url.startsWith("/app/vehicles-owner")) return vehicleOwnerMenu;
+  return websiteMenu;
+}
+
 const menuMapper: Record<string, HeaderMenuItem[]> = {
   "/app/renters": renterMenu,
   "/": websiteMenu,
@@ -62,7 +72,7 @@ const menuMapper: Record<string, HeaderMenuItem[]> = {
 };
 export default function BaseLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
-  console.log("pathname", pathname);
+  console.log("parhname ", pathname);
   return (
     <>
       <AppShell header={{ height: 70 }}>
@@ -73,7 +83,7 @@ export default function BaseLayout({ children }: PropsWithChildren) {
                 <Image src={Images.logos.simple} h={20} w="auto" />
               </Link>
               <Flex gap="xl">
-                {menuMapper[pathname].map((data, index) => (
+                {getHeaderMenu(pathname).map((data, index) => (
                   <UnstyledButton
                     className="hover-expand-item"
                     key={index}

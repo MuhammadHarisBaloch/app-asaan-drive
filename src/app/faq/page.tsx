@@ -68,18 +68,20 @@ export default function FaqPage() {
 
   return (
     <Stack px="10rem" py="xxl" align="center" gap="sm">
-      <Title order={3} c="black" fw={600}>
-        Frequently Asked Questions
-      </Title>
-      <Text ta="center" fz="lg" w="90%" lh={1.2}>
-        Find quick answers to common questions about AsaanDrive. Can't find what
-        you're looking for? Contact our support team for personalized
-        assistance.
-      </Text>
-      <Accordion variant="contained" mt="xxl">
+      <Stack align="center" gap="xs">
+        <Title order={3} c="black" fw={600}>
+          Frequently Asked Questions
+        </Title>
+        <Text ta="center" fz="lg" w="90%" lh={1.2}>
+          Find quick answers to common questions about AsaanDrive. Can't find
+          what you're looking for? Contact our support team for personalized
+          assistance.
+        </Text>
+      </Stack>
+      <Accordion variant="contained" mt="xxl" radius="md">
         {items}
       </Accordion>
-      <Card withBorder w="100%">
+      <Card w="100%" radius="md" bg="red.0" mt="xxl">
         <Stack align="center" py="lg">
           <Text fz="lg" fw={500} c="black">
             Still have questions?

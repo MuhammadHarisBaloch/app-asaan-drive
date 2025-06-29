@@ -19,7 +19,7 @@ const theme = createTheme({
       "#000000FF",
     ],
     red: [
-      " #FFE5E5",
+      " #cc000029",
       " #FFB8B8",
       " #FF8A8A",
       " #FF5C5C",

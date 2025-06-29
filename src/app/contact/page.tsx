@@ -112,7 +112,7 @@ export default function ContactUsPage() {
           </Card>
         </GridCol>
         <GridCol span={6}>
-          <Stack>
+          <Stack gap="lg">
             <Card p="xl" radius="lg" withBorder>
               <Stack gap="xl">
                 <Text fz="lg" c="black" fw={500}>
