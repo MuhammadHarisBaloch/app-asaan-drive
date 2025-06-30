@@ -21,8 +21,8 @@ const theme = createTheme({
     red: [
       " #cc000029",
       " #FFB8B8",
-      " #FF8A8A",
-      " #FF5C5C",
+      " #f87171",
+      " #ef4444",
       " #FF0005",
       " #FF0000",
       " #CC0000",
@@ -43,7 +43,7 @@ const theme = createTheme({
       " #FFFFFF",
     ],
     blue: [
-      " #E6F0FF",
+      " #DBEAFE",
       " #B3D1FF",
       " #80B3FF",
       " #4D94FF",
@@ -55,7 +55,7 @@ const theme = createTheme({
       " #101829",
     ],
     green: [
-      " #E6FFEA",
+      " #DCFCE7",
       " #B3FFC2",
       " #80FF99",
       " #4DFF70",
@@ -67,7 +67,7 @@ const theme = createTheme({
       " #001A04",
     ],
     orange: [
-      "  #FFF0E0",
+      "  #FEF9C3",
       " #FFD9B3",
       " #FFC280",
       " #FFAB4D",
@@ -115,8 +115,8 @@ const theme = createTheme({
       " #1A1A1A",
     ],
     pink: [
-      " #FFE0E3",
-      " #FFCCE0",
+      " #fef2f2",
+      " #FEE2E2",
       " #FFB3D1",
       " #FF99C2",
       " #FF80B3",
@@ -140,6 +140,7 @@ const theme = createTheme({
     ],
   },
   spacing: {
+    xxs: rem(2),
     xs: rem(4),
     sm: rem(8),
     md: rem(12),

@@ -45,16 +45,18 @@ function SignupPage() {
       .then((userCredentials) => {
         const user = userCredentials.user;
         close();
-        router.push("/");
-        console.log("Successfully Registered ", user);
+        notifications.show({
+          title: "Account created successfully!",
+          message: 'You can now sign in with your credentials',
+        });
+        router.push("/signin");
       })
       .catch((error) => {
-        open();
+        close();
         notifications.show({
-          title: "Error Message",
+          title: "Registration Failed",
           message: error.message,
         });
-        close();
       });
   };
   const form = useForm<SignUpForm>({

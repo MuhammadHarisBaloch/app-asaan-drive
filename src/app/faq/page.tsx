@@ -10,6 +10,7 @@ import {
   Flex,
   Button,
 } from "@mantine/core";
+import { IconMail, IconPhone } from "@tabler/icons-react";
 
 const faqQuestions = [
   {
@@ -81,19 +82,35 @@ export default function FaqPage() {
       <Accordion variant="contained" mt="xxl" radius="md">
         {items}
       </Accordion>
-      <Card w="100%" radius="md" bg="red.0" mt="xxl">
+      <Card
+        w="100%"
+        radius="md"
+        bg="pink.0"
+        mt="xxl"
+        style={{ border: "1px solid #fecaca" }}
+      >
         <Stack align="center" py="lg">
-          <Text fz="lg" fw={500} c="black">
+          <Text fz="lg" fw={500} c="red.4">
             Still have questions?
           </Text>
           <Text fz="sm">
             Our friendly support team is here to help you 24/7
           </Text>
-          <Flex gap="lg">
-            <Button size="lg" fz="sm">
+          <Flex gap="lg" mt="md">
+            <Button
+              leftSection={<IconPhone color="white" size={20} />}
+              size="lg"
+              fz="sm"
+            >
               Call Support
             </Button>
-            <Button size="lg" variant="outline" color="red.4" fz="sm">
+            <Button
+              leftSection={<IconMail color="red" size={20} />}
+              size="lg"
+              fz="sm"
+              variant="outline"
+              color="red.4"
+            >
               Email Us
             </Button>
           </Flex>

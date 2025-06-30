@@ -56,12 +56,16 @@ export default function SignInPage() {
   const signInUser = (values: SignInForm) => {
     signInWithEmailAndPassword(auth, values.userName, values.password)
       .then((user) => {
+        notifications.show({
+          title: "Signed in successfully",
+          message: '',
+        });
         router.push("/");
         stopLoading();
       })
       .catch((error) => {
         notifications.show({
-          title: "Error",
+          title: "Sign in failed",
           message: error.message,
         });
         stopLoading();

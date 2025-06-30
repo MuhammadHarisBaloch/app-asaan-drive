@@ -3,6 +3,7 @@ import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { auth } from "../../../../networking/firebase";
+import { notifications } from "@mantine/notifications";
 
 function AuthButtons() {
   const [authUser, setAuthUser] = useState<User | undefined>(undefined);
@@ -24,7 +25,10 @@ function AuthButtons() {
         variant="outline"
         onClick={() => {
           signOut(auth).then(() => {
-            console.log("Sign out successfully");
+            notifications.show({
+              title: "Sign out successfully",
+              message: "",
+            });
           });
         }}
       >
