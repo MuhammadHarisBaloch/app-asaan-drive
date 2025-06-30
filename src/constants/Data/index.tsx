@@ -13,6 +13,13 @@ import {
   IconClock,
   IconShieldCheck,
   IconCoin,
+  IconRosetteDiscountCheck,
+  IconUsers,
+  IconTruck,
+  IconBrandLine,
+  IconExclamationCircle,
+  IconMessageCircle,
+  IconQuestionMark,
 } from "@tabler/icons-react";
 interface FooterMenu {
   title: string;
@@ -36,7 +43,7 @@ const footerMenu: FooterMenu[] = [
     title: "Support",
     items: [
       { name: "Help Center", link: "/help-center" },
-      { name: "Safety Information", link: "/safety-information" },
+      { name: "Safety Information", link: "/safety" },
       { name: "FAQs", link: "/faq" },
     ],
   },
@@ -134,6 +141,142 @@ const features = [
   },
 ];
 
+const SupportFeatureList = [
+  {
+    icon: <IconPhone color="red" />,
+    title: "Helpline",
+    subTitle: "Contact our support team anytime at 0800-ASAAN-123",
+  },
+  {
+    icon: <IconTruck color="red" />,
+    title: "Roadside Assistance",
+    subTitle:
+      "Get help with flat tires, battery issues, or other problems on the road.",
+  },
+  {
+    icon: <IconBrandLine color="red" />,
+    title: "Live Chat Support",
+    subTitle:
+      "Chat with our support team directly through the app for immediate assistance.",
+  },
+];
+
+const SafetyFeatureList = [
+  {
+    icon: <IconExclamationCircle color="red" />,
+    title: "Regular Maintenance",
+    subTitle:
+      "All vehicles undergo thorough maintenance checks before each rental.",
+  },
+  {
+    icon: <IconRosetteDiscountCheck color="red" />,
+    title: "Basic Repair Kit",
+    subTitle:
+      "Every vehicle comes equipped with basic tools for emergency repairs.",
+  },
+  {
+    icon: <IconUsers color="red" />,
+    title: "Safety Equipment",
+    subTitle:
+      "Helmets and other safety gear are provided with each rental as needed.",
+  },
+];
+
+const helpCenterFaqs = [
+  {
+    faqList: [
+      {
+        question: "How do I sign up for AsaanDrive?",
+        answer:
+          "Signing up is easy! Click the 'Sign Up' button on our homepage, provide your basic information including your name, email, and phone number. You'll need to verify your email address and upload a valid driver's license. Once verified, you can start browsing and booking vehicles immediately.",
+      },
+      {
+        question: "How do I find a vehicle near me?",
+        answer:
+          "Use our 'Browse Vehicles' page to see all available vehicles in your area. You can filter by vehicle type (bike, car, rickshaw), location, price range, and availability. Our map view shows vehicles near your current location, and you can see real-time availability and pricing.",
+      },
+      {
+        question: "What documents do I need to get started?",
+        answer:
+          "You'll need a valid driver's license, national ID card (CNIC), and a credit/debit card for payment. For premium vehicles, additional documents like proof of income may be required. All documents must be original and valid, and we verify them during the registration process.",
+      },
+    ],
+    title: "Getting Started",
+    icon: <IconQuestionMark color="blue" size={25} />,
+    iconBackgroundColor: "blue.0",
+    cardBorderColor: "#DBEAFE",
+  },
+  {
+    faqList: [
+      {
+        question: "How do I book a vehicle?",
+        answer:
+          "Select your desired vehicle from the browse page, choose your rental duration (hourly, daily, weekly, or monthly), select pickup and return dates/times, review the total cost, and proceed to payment. Once payment is confirmed, you'll receive booking details and the owner's contact information.",
+      },
+      {
+        question: "What is the cancellation policy?",
+        answer:
+          "You can cancel your booking up to 24 hours before the start time for a full refund. Cancellations within 24 hours incur a 50% charge, and cancellations within 2 hours of pickup time are non-refundable. Emergency cancellations due to vehicle breakdown are fully refundable.",
+      },
+      {
+        question: "Can I modify my booking after confirmation?",
+        answer:
+          "Yes, you can modify your booking through your dashboard or by contacting customer support. Changes to pickup time, duration, or dates are subject to vehicle availability. Additional charges may apply for extensions, and refunds for shortened rentals are calculated based on our cancellation policy.",
+      },
+    ],
+    title: "Booking and Rentals",
+    icon: <IconMessageCircle color="green" size={25} />,
+    iconBackgroundColor: "green.0",
+    cardBorderColor: "#DCFCE7",
+  },
+  {
+    faqList: [
+      {
+        question: "What payment methods do you accept?",
+        answer:
+          "We accept all major credit and debit cards (Visa, MasterCard, American Express), mobile wallet payments (EasyPaisa, JazzCash), and bank transfers. For security, we require card verification and may ask for additional authentication for high-value bookings.",
+      },
+      {
+        question: "How does the refund process work?",
+        answer:
+          "Refunds are processed automatically based on our cancellation policy. Full refunds take 3-5 business days to appear in your account, while partial refunds are processed within 2-3 business days. Security deposits are refunded within 24-48 hours after vehicle return and inspection.",
+      },
+      {
+        question: "When is the security deposit charged?",
+        answer:
+          "The security deposit is charged at the time of booking confirmation. The amount varies by vehicle type: bikes (PKR 5,000-15,000), cars (PKR 20,000-50,000), rickshaws (PKR 10,000-25,000). It's fully refunded after successful vehicle return in the same condition.",
+      },
+    ],
+    title: "Payments",
+    icon: <IconPhone color="orange" size={25} />,
+    iconBackgroundColor: "orange.0",
+    cardBorderColor: "#FEF9C3",
+  },
+  {
+    faqList: [
+      {
+        question: "How do I report an issue during my rental?",
+        answer:
+          "For immediate issues, call our 24/7 emergency hotline at +92 300 1234567. For non-urgent matters, use the 'Report Issue' feature in your dashboard or contact support via chat. Include photos and detailed descriptions to help us resolve issues quickly.",
+      },
+      {
+        question: "What should I do in case of an emergency?",
+        answer:
+          "In case of accidents or emergencies, first ensure your safety and call emergency services if needed. Then immediately contact our emergency hotline. We provide 24/7 roadside assistance and will arrange for vehicle replacement or towing as needed. Never leave the scene without reporting.",
+      },
+      {
+        question: "How do I contact customer support?",
+        answer:
+          "Our customer support is available 24/7. Call +92 300 1234567 for immediate assistance, email support@asaandrive.com, use live chat in the app, or visit our Contact Us page. For fastest response during business hours, use live chat or phone support.",
+      },
+    ],
+    title: "Safety and Support",
+    icon: <IconQuestionMark color="red" size={25} />,
+    iconBackgroundColor: "pink.1",
+    cardBorderColor: "#FEE2E2",
+  },
+];
+
 export const data = {
   footer: {
     menu: footerMenu,
@@ -146,5 +289,12 @@ export const data = {
   },
   home: {
     features: features,
+  },
+  safety: {
+    vehicleFeatures: SafetyFeatureList,
+    supportFeatures: SupportFeatureList,
+  },
+  helpCenter: {
+    faq: helpCenterFaqs,
   },
 };
