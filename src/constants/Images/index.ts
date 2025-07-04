@@ -1,5 +1,8 @@
 const Images = {
-  logos: { simple: "/logo/AsaanDrive.png" },
+  logos: {
+    simple: "/logo/AsaanDrive.png",
+    bikeLogo: "/logo/bike-logo.png",
+  },
   general: { bike: "/images/general/bike.webp" },
   listedVehicles: {
     cd125: "/images/listedVehicles/125_bike.webp",

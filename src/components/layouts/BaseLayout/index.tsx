@@ -38,7 +38,10 @@ const websiteMenu: HeaderMenuItem[] = [
 ];
 
 const renterMenu: HeaderMenuItem[] = [
-  ...baseMenu,
+  {
+    name: "Dashboard",
+    link: "/app/renters/dashboard",
+  },
   {
     name: "Browse Vehicle",
     link: "/app/renters",
@@ -50,7 +53,10 @@ const renterMenu: HeaderMenuItem[] = [
 ];
 
 const vehicleOwnerMenu: HeaderMenuItem[] = [
-  ...baseMenu,
+  {
+    name: "Dashboard",
+    link: "/app/vehicles-owner/dashboard",
+  },
   {
     name: "List Your Vehicles",
     link: "/app/vehicles-owner",
