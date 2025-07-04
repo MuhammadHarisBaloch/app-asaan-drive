@@ -1,7 +1,5 @@
 "use client";
 import {
-  BackgroundImage,
-  Box,
   Button,
   Card,
   Divider,
@@ -9,7 +7,6 @@ import {
   Group,
   PasswordInput,
   Radio,
-  SegmentedControl,
   Space,
   Stack,
   Text,
@@ -18,10 +15,8 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
-import Images from "../../constants/Images";
 import VehicleBackgroundOverlay from "@/components/VehicleBackgroundOverlay";
 import Link from "next/link";
-import { IconUserPlus } from "@tabler/icons-react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/networking/firebase";
 import { useRouter } from "next/navigation";

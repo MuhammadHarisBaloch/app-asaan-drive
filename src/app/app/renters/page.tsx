@@ -1,5 +1,5 @@
 import ListedVehicleCard from "@/components/features/renters/ListedVehicleCard";
-import Images from "@/constants/Images";
+import { data } from "@/constants/Data";
 import {
   Button,
   Card,
@@ -12,35 +12,6 @@ import {
   Title,
 } from "@mantine/core";
 
-const listedVehicles = [
-  {
-    image: Images.listedVehicles.cd125,
-    name: "Honda 125",
-    transmission: "Bike . Manual",
-    price: "500/Day",
-    rating: 4.8,
-    reviews: 125,
-    location: "Khairpur ,Sindh",
-  },
-  {
-    image: Images.listedVehicles.cycle,
-    name: "Mountain Bike",
-    transmission: "Cycle . Manual",
-    price: "200/Day",
-    rating: 4.6,
-    reviews: 24,
-    location: "Islamabad ,Panjab",
-  },
-  {
-    image: Images.listedVehicles.rakshaw,
-    name: "CNG Auto Rickshaw",
-    transmission: "Rakshaw . Manual/Automatic",
-    price: "1000/Day",
-    rating: 4.9,
-    reviews: 224,
-    location: "Karachi ,Sindh",
-  },
-];
 export default function RentersPage() {
   return (
     <Stack align="center" px="lg" py="3xl" gap="3xl">
@@ -94,7 +65,7 @@ export default function RentersPage() {
         </Group>
       </Card>
       <SimpleGrid cols={3} spacing="xl">
-        {listedVehicles.map((data, index) => {
+        {data.renter.inlistVehicles.map((data, index) => {
           return <ListedVehicleCard key={index} {...data} />;
         })}
       </SimpleGrid>

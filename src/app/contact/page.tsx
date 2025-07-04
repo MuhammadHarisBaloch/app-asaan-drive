@@ -1,5 +1,6 @@
 "use client";
 import ContactInfo from "@/components/features/contact/ContactInfo";
+import { data } from "@/constants/Data";
 import {
   Stack,
   Title,
@@ -14,32 +15,7 @@ import {
   Flex,
 } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
-import {
-  IconSend,
-  IconMail,
-  IconPhone,
-  IconAddressBook,
-} from "@tabler/icons-react";
-const contactInfoList = [
-  {
-    icon: <IconMail size={25} color="red" />,
-    title: "Email",
-    subTitle: "support@asaandrive.com",
-    description: "We typically respond within 24 hours",
-  },
-  {
-    icon: <IconPhone size={25} color="red" />,
-    title: "Phone",
-    subTitle: "+92 3461392377",
-    description: "Available 24/7 for urgent support",
-  },
-  {
-    icon: <IconAddressBook size={25} color="red" />,
-    title: "Address",
-    subTitle: "Khairpur, Sindh",
-    description: "Serving all major Cities in Pakistan",
-  },
-];
+import { IconSend, IconPhone } from "@tabler/icons-react";
 
 export default function ContactUsPage() {
   const theme = useMantineTheme();
@@ -118,7 +94,7 @@ export default function ContactUsPage() {
                 <Text fz="lg" c="black" fw={500}>
                   Get in Touch
                 </Text>
-                {contactInfoList.map((data, index) => {
+                {data.contact.contactInfo.map((data, index) => {
                   return (
                     <ContactInfo
                       key={index}

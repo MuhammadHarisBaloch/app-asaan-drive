@@ -14,11 +14,6 @@ import {
   SimpleGrid,
 } from "@mantine/core";
 import { IconAlertTriangleFilled, IconCheck } from "@tabler/icons-react";
-const emergencySteps = [
-  "Instantly connects you with emergency responders",
-  "Shares your real-time location automatically",
-  "Notifies your emergency contacts",
-];
 
 export default function SafetyPage() {
   return (
@@ -46,7 +41,7 @@ export default function SafetyPage() {
                 location
               </Text>
               <Stack gap="sm">
-                {emergencySteps.map((data, index) => {
+                {data.safety.emergencySteps.map((data, index) => {
                   return (
                     <Flex key={index} align="center" gap="sm">
                       <IconCheck size={20} color="red" />

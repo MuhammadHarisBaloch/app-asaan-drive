@@ -1,3 +1,4 @@
+import { data } from "@/constants/Data";
 import {
   Stack,
   Title,
@@ -12,51 +13,8 @@ import {
 } from "@mantine/core";
 import { IconMail, IconPhone } from "@tabler/icons-react";
 
-const faqQuestions = [
-  {
-    question: "How can I rent a vehicle on AsaanDrive?",
-    answer:
-      "Renting on AsaanDrive is simple! Browse available vehicles in your area, select your preferred vehicle, choose your rental duration, complete the booking process with required documents, and make payment. You'll receive booking confirmation and vehicle pickup details via email and SMS.",
-  },
-  {
-    question: "What documents are required for renting?",
-    answer:
-      "You'll need a valid driver's license, national ID card (CNIC), and a credit/debit card for payment. For some premium vehicles, additional documents like proof of income or employment may be required. All documents must be original and valid.",
-  },
-  {
-    question: "Is there any security deposite needed?",
-    answer:
-      "Yes, a refundable security deposit is required for all rentals. The amount varies based on the vehicle type and rental duration. For bikes and cycles, it's typically PKR 5,000-15,000, while cars and rickshaws may require PKR 20,000-50,000. The deposit is fully refunded after successful return of the vehicle.",
-  },
-  {
-    question: "How do I list my vehicle on the platform?",
-    answer:
-      "Vehicle owners can easily list their vehicles by creating an account, clicking 'List Vehicle', providing vehicle details including photos, documents, and pricing. Our team will verify your vehicle and documents within 24-48 hours. Once approved, your vehicle will be live on the platform for bookings.",
-  },
-  {
-    question: "How can I contact customer support?",
-    answer:
-      "Our customer support team is available 24/7 to assist you. You can reach us via phone at +92 300 1234567, email at support@asaandrive.com, or use the live chat feature in the app. We also have a comprehensive help center with guides and tutorials.",
-  },
-  {
-    question: "Is AsaanDrive available in my city?",
-    answer:
-      "AsaanDrive is currently available in major cities across Pakistan including Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, and Multan. We're rapidly expanding to more cities. Check our website or app to see if we're available in your area, or sign up for notifications when we launch in your city.",
-  },
-  {
-    question: "What happens if the vehicle breaks down during rental?",
-    answer:
-      "Don't worry! AsaanDrive provides 24/7 roadside assistance. Contact our emergency helpline immediately, and we'll arrange for repairs or a replacement vehicle. Basic mechanical issues are covered at no extra cost, though damages due to misuse may incur charges.",
-  },
-  {
-    question: "Can I extend my rental period?",
-    answer:
-      "Yes, you can extend your rental period subject to vehicle availability. Contact customer support or use the app to request an extension. Additional charges will apply based on the extended duration, and payment must be completed before the original rental period ends.",
-  },
-];
-
 export default function FaqPage() {
-  const items = faqQuestions.map((item, index) => (
+  const items = data.faq.questions.map((item, index) => (
     <AccordionItem key={index} value={item.question}>
       <AccordionControl fz="sm" p="md">
         {item.question}

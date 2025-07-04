@@ -1,35 +1,9 @@
 import FeatureCard from "@/components/features/vehicle-owner/featureCard";
+import { data } from "@/constants/Data";
 import Images from "@/constants/Images";
 import { Stack, Title, Text, SimpleGrid, Card, Button } from "@mantine/core";
-import {
-  IconArrowNarrowRight,
-  IconCurrencyDollar,
-  IconPlus,
-  IconStar,
-  IconUsers,
-} from "@tabler/icons-react";
+import { IconArrowNarrowRight, IconPlus } from "@tabler/icons-react";
 import Image from "next/image";
-
-const featureCardList = [
-  {
-    icon: <IconCurrencyDollar size={25} color="green" />,
-    title: "Rs. 15,000+",
-    subTitle: "Average monthly earnings",
-    iconBackgroundColor: "green.0",
-  },
-  {
-    icon: <IconUsers size={25} color="blue" />,
-    title: "50,000+",
-    subTitle: "Active renters",
-    iconBackgroundColor: "blue.0",
-  },
-  {
-    icon: <IconStar size={25} color="orange" />,
-    title: "4.8/5",
-    subTitle: "Average owner rating",
-    iconBackgroundColor: "orange.0",
-  },
-];
 
 export default function DashboardPage() {
   return (
@@ -56,7 +30,7 @@ export default function DashboardPage() {
         </Text>
       </Stack>
       <SimpleGrid cols={3} w="100%" spacing="xxl">
-        {featureCardList.map((feature, index) => {
+        {data.vehicleOwner.dashboard.featureCard.map((feature, index) => {
           return <FeatureCard key={index} {...feature} />;
         })}
       </SimpleGrid>

@@ -1,4 +1,5 @@
 import FeatureCard from "@/components/features/vehicle-owner/featureCard";
+import { data } from "@/constants/Data";
 import Images from "@/constants/Images";
 import {
   Stack,
@@ -10,65 +11,10 @@ import {
   Flex,
   UnstyledButton,
 } from "@mantine/core";
-import {
-  IconArrowNarrowRight,
-  IconCar,
-  IconClockHour5,
-  IconCurrencyDollar,
-  IconMapPin,
-  IconPlus,
-  IconShield,
-  IconStar,
-  IconUsers,
-} from "@tabler/icons-react";
+import { IconArrowNarrowRight, IconCar, IconMapPin } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const renterfeatureCard = [
-  {
-    icon: <IconShield size={25} color="blue" />,
-    title: "Verified & Safe",
-    subTitle:
-      "All vehicles and owners are thoroughly verified for your safety and peace of mind.",
-    iconBackgroundColor: "blue.0",
-  },
-  {
-    icon: <IconClockHour5 size={25} color="green" />,
-    title: "Instant Booking",
-    subTitle:
-      "Book any vehicle instantly and start your journey within minutes of confirmation.",
-    iconBackgroundColor: "green.0",
-  },
-  {
-    icon: <IconMapPin size={25} color="purple" />,
-    title: "Wide Coverage",
-    subTitle:
-      "Available in major cities across Pakistan with thousands of vehicles to choose from.",
-    iconBackgroundColor: "purple.0",
-  },
-];
-
-const quickTips = [
-  "Complete your profile with accurate information for better matches",
-  "Upload clear photos of your documents for quick verification",
-  "Use filters to find vehicles that match your exact needs",
-  "Read vehicle reviews and owner ratings before booking",
-];
-
-const quickLinks = [
-  {
-    name: "Visit Help Center",
-    link: "/help-center",
-  },
-  {
-    name: "Contact Support",
-    link: "/contact",
-  },
-  {
-    name: "How it Works",
-    link: "/how-it-works",
-  },
-];
 export default function DashboardPage() {
   return (
     <Stack align="center" py="xxl" px="12rem" gap="3xl" bg="pink.0">
@@ -131,7 +77,7 @@ export default function DashboardPage() {
         </Stack>
       </Card>
       <SimpleGrid cols={3} w="100%" spacing="xxl">
-        {renterfeatureCard.map((feature, index) => {
+        {data.renter.dashboard.featureCard.map((feature, index) => {
           return <FeatureCard key={index} {...feature} />;
         })}
       </SimpleGrid>
@@ -141,7 +87,7 @@ export default function DashboardPage() {
             💡 Quick Tips to Get Started
           </Text>
           <SimpleGrid cols={2} spacing="lg">
-            {quickTips.map((tip, index) => {
+            {data.renter.dashboard.quickTips.map((tip, index) => {
               return (
                 <Flex key={index} gap="sm">
                   <Text fz="sm" c="red.4">
@@ -157,7 +103,7 @@ export default function DashboardPage() {
       <Stack align="center" w="100%">
         <Text fz="sm">Need help getting started?</Text>
         <Flex gap="lg">
-          {quickLinks.map((data, index) => {
+          {data.renter.dashboard.quickLinks.map((data, index) => {
             return (
               <UnstyledButton
                 key={index}

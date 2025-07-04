@@ -20,7 +20,13 @@ import {
   IconExclamationCircle,
   IconMessageCircle,
   IconQuestionMark,
+  IconClockHour5,
+  IconShield,
+  IconCurrencyDollar,
+  IconStar,
+  IconAddressBook,
 } from "@tabler/icons-react";
+import Images from "../Images";
 interface FooterMenu {
   title: string;
   items: {
@@ -277,7 +283,6 @@ const helpCenterFaqs = [
   },
 ];
 
-
 const quichHelpList = [
   {
     icon: <IconQuestionMark size={25} color="blue" />,
@@ -324,15 +329,189 @@ const resourcesList = [
     link: "/app/renters",
   },
 ];
+const emergencySteps = [
+  "Instantly connects you with emergency responders",
+  "Shares your real-time location automatically",
+  "Notifies your emergency contacts",
+];
+
+const renterfeatureCard = [
+  {
+    icon: <IconShield size={25} color="blue" />,
+    title: "Verified & Safe",
+    subTitle:
+      "All vehicles and owners are thoroughly verified for your safety and peace of mind.",
+    iconBackgroundColor: "blue.0",
+  },
+  {
+    icon: <IconClockHour5 size={25} color="green" />,
+    title: "Instant Booking",
+    subTitle:
+      "Book any vehicle instantly and start your journey within minutes of confirmation.",
+    iconBackgroundColor: "green.0",
+  },
+  {
+    icon: <IconMapPin size={25} color="purple" />,
+    title: "Wide Coverage",
+    subTitle:
+      "Available in major cities across Pakistan with thousands of vehicles to choose from.",
+    iconBackgroundColor: "purple.0",
+  },
+];
+
+const quickTips = [
+  "Complete your profile with accurate information for better matches",
+  "Upload clear photos of your documents for quick verification",
+  "Use filters to find vehicles that match your exact needs",
+  "Read vehicle reviews and owner ratings before booking",
+];
+
+const quickLinks = [
+  {
+    name: "Visit Help Center",
+    link: "/help-center",
+  },
+  {
+    name: "Contact Support",
+    link: "/contact",
+  },
+  {
+    name: "How it Works",
+    link: "/how-it-works",
+  },
+];
+
+const listedVehicles = [
+  {
+    image: Images.listedVehicles.cd125,
+    name: "Honda 125",
+    transmission: "Bike . Manual",
+    price: "500/Day",
+    rating: 4.8,
+    reviews: 125,
+    location: "Khairpur ,Sindh",
+  },
+  {
+    image: Images.listedVehicles.cycle,
+    name: "Mountain Bike",
+    transmission: "Cycle . Manual",
+    price: "200/Day",
+    rating: 4.6,
+    reviews: 24,
+    location: "Islamabad ,Panjab",
+  },
+  {
+    image: Images.listedVehicles.rakshaw,
+    name: "CNG Auto Rickshaw",
+    transmission: "Rakshaw . Manual/Automatic",
+    price: "1000/Day",
+    rating: 4.9,
+    reviews: 224,
+    location: "Karachi ,Sindh",
+  },
+];
+const featureCardList = [
+  {
+    icon: <IconCurrencyDollar size={25} color="green" />,
+    title: "Rs. 15,000+",
+    subTitle: "Average monthly earnings",
+    iconBackgroundColor: "green.0",
+  },
+  {
+    icon: <IconUsers size={25} color="blue" />,
+    title: "50,000+",
+    subTitle: "Active renters",
+    iconBackgroundColor: "blue.0",
+  },
+  {
+    icon: <IconStar size={25} color="orange" />,
+    title: "4.8/5",
+    subTitle: "Average owner rating",
+    iconBackgroundColor: "orange.0",
+  },
+];
+const contactInfoList = [
+  {
+    icon: <IconMail size={25} color="red" />,
+    title: "Email",
+    subTitle: "support@asaandrive.com",
+    description: "We typically respond within 24 hours",
+  },
+  {
+    icon: <IconPhone size={25} color="red" />,
+    title: "Phone",
+    subTitle: "+92 3461392377",
+    description: "Available 24/7 for urgent support",
+  },
+  {
+    icon: <IconAddressBook size={25} color="red" />,
+    title: "Address",
+    subTitle: "Khairpur, Sindh",
+    description: "Serving all major Cities in Pakistan",
+  },
+];
+
+const faqQuestions = [
+  {
+    question: "How can I rent a vehicle on AsaanDrive?",
+    answer:
+      "Renting on AsaanDrive is simple! Browse available vehicles in your area, select your preferred vehicle, choose your rental duration, complete the booking process with required documents, and make payment. You'll receive booking confirmation and vehicle pickup details via email and SMS.",
+  },
+  {
+    question: "What documents are required for renting?",
+    answer:
+      "You'll need a valid driver's license, national ID card (CNIC), and a credit/debit card for payment. For some premium vehicles, additional documents like proof of income or employment may be required. All documents must be original and valid.",
+  },
+  {
+    question: "Is there any security deposite needed?",
+    answer:
+      "Yes, a refundable security deposit is required for all rentals. The amount varies based on the vehicle type and rental duration. For bikes and cycles, it's typically PKR 5,000-15,000, while cars and rickshaws may require PKR 20,000-50,000. The deposit is fully refunded after successful return of the vehicle.",
+  },
+  {
+    question: "How do I list my vehicle on the platform?",
+    answer:
+      "Vehicle owners can easily list their vehicles by creating an account, clicking 'List Vehicle', providing vehicle details including photos, documents, and pricing. Our team will verify your vehicle and documents within 24-48 hours. Once approved, your vehicle will be live on the platform for bookings.",
+  },
+  {
+    question: "How can I contact customer support?",
+    answer:
+      "Our customer support team is available 24/7 to assist you. You can reach us via phone at +92 300 1234567, email at support@asaandrive.com, or use the live chat feature in the app. We also have a comprehensive help center with guides and tutorials.",
+  },
+  {
+    question: "Is AsaanDrive available in my city?",
+    answer:
+      "AsaanDrive is currently available in major cities across Pakistan including Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, and Multan. We're rapidly expanding to more cities. Check our website or app to see if we're available in your area, or sign up for notifications when we launch in your city.",
+  },
+  {
+    question: "What happens if the vehicle breaks down during rental?",
+    answer:
+      "Don't worry! AsaanDrive provides 24/7 roadside assistance. Contact our emergency helpline immediately, and we'll arrange for repairs or a replacement vehicle. Basic mechanical issues are covered at no extra cost, though damages due to misuse may incur charges.",
+  },
+  {
+    question: "Can I extend my rental period?",
+    answer:
+      "Yes, you can extend your rental period subject to vehicle availability. Contact customer support or use the app to request an extension. Additional charges will apply based on the extended duration, and payment must be completed before the original rental period ends.",
+  },
+];
+
 export const data = {
   footer: {
     menu: footerMenu,
   },
   renter: {
     usageSteps: renterUsageSteps,
+    inlistVehicles: listedVehicles,
+    dashboard: {
+      featureCard: renterfeatureCard,
+      quickTips: quickTips,
+      quickLinks: quickLinks,
+    },
   },
   vehicleOwner: {
     usageSteps: vehicleOwnerUsageSteps,
+    dashboard: {
+      featureCard: featureCardList,
+    },
   },
   home: {
     features: features,
@@ -340,10 +519,17 @@ export const data = {
   safety: {
     vehicleFeatures: SafetyFeatureList,
     supportFeatures: SupportFeatureList,
+    emergencySteps: emergencySteps,
   },
   helpCenter: {
     faq: helpCenterFaqs,
     quickHelpCardList: quichHelpList,
     resourceCardList: resourcesList,
+  },
+  contact: {
+    contactInfo: contactInfoList,
+  },
+  faq: {
+    questions: faqQuestions,
   },
 };
