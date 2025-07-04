@@ -277,6 +277,53 @@ const helpCenterFaqs = [
   },
 ];
 
+
+const quichHelpList = [
+  {
+    icon: <IconQuestionMark size={25} color="blue" />,
+    iconBackground: "blue.0",
+    title: "Browse FAQ",
+    description: "Check our comprehensive FAQ section for detailed answers",
+    subTitle: "Visit FAQ",
+    subTitleColor: "blue.4",
+    subIconColor: "blue",
+  },
+  {
+    icon: <IconMessageCircle size={25} color="green" />,
+    iconBackground: "green.0",
+    title: "Live Chat",
+    description: "Get instant help from our support team",
+    subTitle: "Start Chat",
+    subTitleColor: "green.6",
+    subIconColor: "green",
+  },
+  {
+    icon: <IconPhone size={25} color="red" />,
+    iconBackground: "red.0",
+    title: "Call Support",
+    description: "Speak directly with our support team",
+    subTitle: "+92 300 1234567",
+    subTitleColor: "red.5",
+    subIconColor: "red",
+  },
+];
+const resourcesList = [
+  {
+    title: "How It Works",
+    subTitle: "Learn how to use AsaanDrive",
+    link: "/how-it-works",
+  },
+  {
+    title: "Safety Guidelines",
+    subTitle: "Stay safe while renting",
+    link: "/safety",
+  },
+  {
+    title: "Browse Vehicles",
+    subTitle: "Find your perfect ride",
+    link: "/app/renters",
+  },
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -296,5 +343,7 @@ export const data = {
   },
   helpCenter: {
     faq: helpCenterFaqs,
+    quickHelpCardList: quichHelpList,
+    resourceCardList: resourcesList,
   },
 };
