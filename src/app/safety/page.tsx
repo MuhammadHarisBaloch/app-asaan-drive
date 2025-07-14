@@ -14,6 +14,7 @@ import {
   SimpleGrid,
 } from "@mantine/core";
 import { IconAlertTriangleFilled, IconCheck } from "@tabler/icons-react";
+import Link from "next/link";
 
 export default function SafetyPage() {
   return (
@@ -50,7 +51,13 @@ export default function SafetyPage() {
                   );
                 })}
               </Stack>
-              <Button w="25%" fz="xs" size="md">
+              <Button
+                component={Link}
+                href="/emergency-details"
+                w="25%"
+                fz="xs"
+                size="md"
+              >
                 Learn How It Works
               </Button>
             </Stack>

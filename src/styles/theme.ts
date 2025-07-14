@@ -27,8 +27,8 @@ const theme = createTheme({
       " #FF0000",
       " #CC0000",
       " #990000",
-      " #660000",
-      " #330000",
+      " #B91C1C",
+      " #991B1B",
     ],
     white: [
       " #FFF9F9",
@@ -40,7 +40,7 @@ const theme = createTheme({
       " #FFFFFF",
       " #FFFFFF",
       " #FFFFFF",
-      " #FFFFFF",
+      " #F3F4F6",
     ],
     blue: [
       " #DBEAFE",
@@ -53,6 +53,18 @@ const theme = createTheme({
       " #003380",
       " #001F4D",
       " #101829",
+    ],
+    brown: [
+      "#F3E5AB",
+      "#E6D3B3",
+      "#D2B48C",
+      "#C8AD7F",
+      "#A67B5B",
+      "#8B5E3C",
+      "#7B482B",
+      "#5C4033",
+      "#4B3621",
+      "#3B2F2F",
     ],
     green: [
       " #DCFCE7",
@@ -68,7 +80,7 @@ const theme = createTheme({
     ],
     orange: [
       "  #FEF9C3",
-      " #FFD9B3",
+      " #FEFCE8",
       " #FFC280",
       " #FFAB4D",
       " #FF941A",
