@@ -17,7 +17,7 @@ import Link from "next/link";
 
 export default function DashboardPage() {
   return (
-    <Stack align="center" py="xxl" px="12rem" gap="3xl" bg="pink.0">
+    <Stack align="center" py="xxl" px="12rem" gap="3xl">
       <Stack gap="sm" align="center" px="lg">
         <Image
           src={Images.logos.bikeLogo}
@@ -81,7 +81,14 @@ export default function DashboardPage() {
           return <FeatureCard key={index} {...feature} />;
         })}
       </SimpleGrid>
-      <Card w="100%" bg="pink.1" radius="md" px="xl" py="xxl">
+      <Card
+        w="100%"
+        bg="pink.1"
+        radius="md"
+        px="xl"
+        py="xxl"
+        style={{ border: "1px solid #fecaca" }}
+      >
         <Stack align="center" w="100%" gap="xl">
           <Text fz="sm" c="black" fw={500}>
             💡 Quick Tips to Get Started

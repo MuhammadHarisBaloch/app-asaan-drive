@@ -494,6 +494,90 @@ const faqQuestions = [
   },
 ];
 
+const aboutEmergencyButton = [
+  {
+    title: "Main Dashboard",
+    subTitle:
+      "The emergency button is prominently displayed on your main dashboard, always visible during active rentals.",
+  },
+  {
+    title: "Trip Screen",
+    subTitle:
+      "During your trip, the button remains accessible in the top-right corner of your screen.",
+  },
+  {
+    title: "Quick Access Menu",
+    subTitle:
+      "Pull down the quick access menu from any screen to find the emergency button.",
+  },
+];
+const contactDetail = [
+  "Your designated emergency contacts (if set up)",
+  "Vehicle owner (for coordination)",
+  "Local authorities (when appropriate)",
+];
+
+const emergencyFeatures = [
+  {
+    icon: <IconClock size={30} color="blue" />,
+    iconBackground: "blue.0",
+    title: "Instant Response",
+    subTitle:
+      "Emergency alert is triggered immediately - no confirmation needed in crisis situations.",
+  },
+  {
+    icon: <IconMapPin size={30} color="green" />,
+    iconBackground: "green.0",
+    title: "Location Shared",
+    subTitle:
+      "Your exact GPS coordinates are automatically shared with our emergency response team.",
+  },
+  {
+    icon: <IconPhone size={30} color="purple" />,
+    iconBackground: "purple.0",
+    title: "Support Contacted",
+    subTitle:
+      "Our 24/7 emergency team receives your alert and begins immediate assistance protocols.",
+  },
+];
+const emergencyInformation = [
+  {
+    title: "Use only for real emergencies:",
+    subTitle: "False alarms can delay response to actual emergencies.",
+  },
+  {
+    title: "Stay calm:",
+    subTitle: "Our team is trained to handle emergency situations efficiently.",
+  },
+  {
+    title: "Keep your phone accessible:",
+    subTitle: "We may need to contact you for additional information.",
+  },
+];
+
+const emergencyResponseSteps = [
+  {
+    title: "Alert Received (0-30 seconds)",
+    subTitle:
+      "Our emergency team receives your alert with your location, trip details, and profile information.",
+  },
+  {
+    title: "Immediate Contact (30 seconds - 2 minutes)",
+    subTitle:
+      "We attempt to call you directly to assess the situation and determine the level of response needed.",
+  },
+  {
+    title: "Emergency Services (2-5 minutes)",
+    subTitle:
+      "If needed, we contact local emergency services and provide them with your exact location and situation details.",
+  },
+  {
+    title: "Follow-up Support",
+    subTitle:
+      "We stay in contact until the situation is resolved and provide additional support as needed.",
+  },
+];
+
 export const data = {
   footer: {
     menu: footerMenu,
@@ -520,6 +604,13 @@ export const data = {
     vehicleFeatures: SafetyFeatureList,
     supportFeatures: SupportFeatureList,
     emergencySteps: emergencySteps,
+  },
+  emergencyDetails: {
+    aboutEmergencyFeature: aboutEmergencyButton,
+    contactDetails: contactDetail,
+    emergencyFeaturesList: emergencyFeatures,
+    emergencyInfo: emergencyInformation,
+    emergencyResponse: emergencyResponseSteps,
   },
   helpCenter: {
     faq: helpCenterFaqs,

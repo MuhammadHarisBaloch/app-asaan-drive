@@ -1,11 +1,6 @@
+import { data } from "@/constants/Data";
 import { Card, Grid, GridCol, Stack, Flex, Text } from "@mantine/core";
 import { IconUsers, IconPointFilled, IconShield } from "@tabler/icons-react";
-
-const contactDetail = [
-  "Your designated emergency contacts (if set up)",
-  "Vehicle owner (for coordination)",
-  "Local authorities (when appropriate)",
-];
 
 export default function EmergencyContactCard() {
   return (
@@ -33,7 +28,7 @@ export default function EmergencyContactCard() {
               When you press the emergency button, we also notify:
             </Text>
             <Stack>
-              {contactDetail.map((data, index) => {
+              {data.emergencyDetails.contactDetails.map((data, index) => {
                 return (
                   <Flex key={index} align="center" gap="sm">
                     <IconPointFilled size={20} color="red" />

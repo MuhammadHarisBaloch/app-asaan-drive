@@ -1,29 +1,7 @@
+import { data } from "@/constants/Data";
 import { Card, Stack, SimpleGrid, Box, Center, Text } from "@mantine/core";
 import { IconClock, IconMapPin, IconPhone } from "@tabler/icons-react";
 
-const emergencyFeatures = [
-  {
-    icon: <IconClock size={30} color="blue" />,
-    iconBackground: "blue.0",
-    title: "Instant Response",
-    subTitle:
-      "Emergency alert is triggered immediately - no confirmation needed in crisis situations.",
-  },
-  {
-    icon: <IconMapPin size={30} color="green" />,
-    iconBackground: "green.0",
-    title: "Location Shared",
-    subTitle:
-      "Your exact GPS coordinates are automatically shared with our emergency response team.",
-  },
-  {
-    icon: <IconPhone size={30} color="purple" />,
-    iconBackground: "purple.0",
-    title: "Support Contacted",
-    subTitle:
-      "Our 24/7 emergency team receives your alert and begins immediate assistance protocols.",
-  },
-];
 export default function EmergencyFeatureCard() {
   return (
     <Card
@@ -39,7 +17,7 @@ export default function EmergencyFeatureCard() {
           What Happens When You Press It
         </Text>
         <SimpleGrid cols={3} spacing="3xl">
-          {emergencyFeatures.map((feature, index) => {
+          {data.emergencyDetails.emergencyFeaturesList.map((feature, index) => {
             return (
               <Stack align="center" key={index}>
                 <Box

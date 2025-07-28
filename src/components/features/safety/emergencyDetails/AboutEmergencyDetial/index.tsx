@@ -1,3 +1,4 @@
+import { data } from "@/constants/Data";
 import {
   Card,
   Grid,
@@ -9,23 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons-react";
-const aboutEmergencyButton = [
-  {
-    title: "Main Dashboard",
-    subTitle:
-      "The emergency button is prominently displayed on your main dashboard, always visible during active rentals.",
-  },
-  {
-    title: "Trip Screen",
-    subTitle:
-      "During your trip, the button remains accessible in the top-right corner of your screen.",
-  },
-  {
-    title: "Quick Access Menu",
-    subTitle:
-      "Pull down the quick access menu from any screen to find the emergency button.",
-  },
-];
+
 export default function AboutEmergencyDetail() {
   return (
     <Card
@@ -42,7 +27,7 @@ export default function AboutEmergencyDetail() {
             <Text fz="xl" c="black" fw={600}>
               Where to Find the Emergency Button
             </Text>
-            {aboutEmergencyButton.map((item, index) => {
+            {data.emergencyDetails.aboutEmergencyFeature.map((item, index) => {
               return (
                 <Flex gap="md" key={index}>
                   <Center
