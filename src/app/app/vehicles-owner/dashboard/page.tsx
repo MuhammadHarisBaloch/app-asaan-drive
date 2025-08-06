@@ -38,7 +38,11 @@ export default function DashboardPage() {
         w="100%"
         radius="md"
         py="xxl"
-        style={{ backgroundImage: "linear-gradient(150deg, red , black)" }}
+        bg="red.8"
+        style={{ border: "1px solid #570c0caf" }}
+        // style={{
+        //   backgroundImage: "linear-gradient(150deg, #B91C1C , #ff00048f)",
+        // }}
       >
         <Stack align="center">
           <Title order={3} c="white" fw={500}>

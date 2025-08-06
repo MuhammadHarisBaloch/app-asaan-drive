@@ -40,7 +40,11 @@ export default function DashboardPage() {
           simple steps!
         </Text>
       </Stack>
-      <Card w="100%" radius="md" shadow="md">
+      <Card
+        w="100%"
+        radius="md"
+        style={{ filter: "drop-shadow(1px 1px 2px #06050528)" }}
+      >
         <Stack align="center" py="xl" px="md" gap="lg">
           <Title order={4} c="black" fw={600}>
             Ready to Hit the Road?

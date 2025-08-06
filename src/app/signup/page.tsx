@@ -39,12 +39,12 @@ function SignupPage() {
     createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        close();
         notifications.show({
           title: "Account created successfully!",
-          message: 'You can now sign in with your credentials',
+          message: "You can now sign in with your credentials",
         });
         router.push("/signin");
+        close();
       })
       .catch((error) => {
         close();

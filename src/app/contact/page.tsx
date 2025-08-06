@@ -11,14 +11,13 @@ import {
   GridCol,
   Textarea,
   Button,
-  useMantineTheme,
   Flex,
 } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import { IconSend, IconPhone } from "@tabler/icons-react";
 
 export default function ContactUsPage() {
-  const theme = useMantineTheme();
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -46,7 +45,17 @@ export default function ContactUsPage() {
       <Grid w="100%" gutter="lg" pt="xxl" grow>
         <GridCol span={6}>
           <Card withBorder radius="lg">
-            <form onSubmit={form.onSubmit((values) => console.log(values))}>
+            <form
+              onSubmit={form.onSubmit((values) => {
+                console.log(values);
+                form.reset();
+                notifications.show({
+                  title: "Message Send Successfully",
+                  message: "Thank you for your message , we'll get you soon!",
+                  color: "green",
+                });
+              })}
+            >
               <Stack p="xl" gap="xl">
                 <Text fz="lg" c="black" fw={500}>
                   Send us a Message
