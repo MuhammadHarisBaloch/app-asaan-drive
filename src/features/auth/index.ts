@@ -1,5 +1,12 @@
 import { auth } from "@/networking/firebase";
-import { createUserWithEmailAndPassword, User } from "firebase/auth";
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+  UserCredential,
+} from "firebase/auth";
 
 export async function signupUser(
   email: string,
@@ -15,4 +22,24 @@ export async function signupUser(
   } catch {
     return null;
   }
+}
+
+export async function signinUser(
+  email: string,
+  password: string
+): Promise<User | null> {
+  try {
+    const userCredentials = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    return userCredentials.user;
+  } catch {
+    return null;
+  }
+}
+
+export async function signoutUser() {
+  await signOut(auth);
 }

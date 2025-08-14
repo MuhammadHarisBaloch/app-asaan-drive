@@ -23,6 +23,7 @@ import { auth } from "../../networking/firebase";
 import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
+import { signinUser } from "@/features/auth";
 interface SignInForm {
   userName: string;
   password: string;
@@ -53,24 +54,21 @@ export default function SignInPage() {
     });
   }, []);
 
-  const signInUser = (values: SignInForm) => {
-    signInWithEmailAndPassword(auth, values.userName, values.password)
-      .then((user) => {
-        notifications.show({
-          title: "Signed in successfully",
-          message: '',
-        });
-        router.push("/");
-        stopLoading();
-      })
-      .catch((error) => {
-        notifications.show({
-          title: "Sign in failed",
-          message: error.message,
-        });
-        stopLoading();
-        console.log("Auth error", error.code, error.message);
+  const signInUser = async (values: SignInForm) => {
+    const user = await signinUser(values.userName, values.password);
+    stopLoading();
+    if (user) {
+      notifications.show({
+        title: "Signed in successfully",
+        message: "",
       });
+      router.push("/");
+      return;
+    }
+    notifications.show({
+      title: "Sign in failed",
+      message: "Invalid user credentials",
+    });
   };
 
   return (
