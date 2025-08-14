@@ -1,4 +1,5 @@
 "use client";
+import VehicleBackgroundOverlay from "@/components/VehicleBackgroundOverlay";
 import {
   Button,
   Card,
@@ -15,13 +16,11 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
-import VehicleBackgroundOverlay from "@/components/VehicleBackgroundOverlay";
-import Link from "next/link";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/networking/firebase";
-import { useRouter } from "next/navigation";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signupUser } from "../../features/auth";
 
 interface SignUpForm {
   userType: string;
@@ -34,26 +33,26 @@ interface SignUpForm {
 
 function SignupPage() {
   const router = useRouter();
-  const [loading, { open, close }] = useDisclosure(false);
-  const registerUser = (values: SignUpForm) => {
-    createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        notifications.show({
-          title: "Account created successfully!",
-          message: "You can now sign in with your credentials",
-        });
-        router.push("/signin");
-        close();
-      })
-      .catch((error) => {
-        close();
-        notifications.show({
-          title: "Registration Failed",
-          message: error.message,
-        });
+  const [loading, { open: startLoading, close: stopLoading }] =
+    useDisclosure(false);
+
+  const registerUser = async (values: SignUpForm) => {
+    const user = await signupUser(values.email, values.password);
+    stopLoading();
+    if (user) {
+      notifications.show({
+        title: "Account created successfully!",
+        message: "You can now sign in with your credentials",
       });
+      router.push("/signin");
+      return;
+    }
+    notifications.show({
+      title: "Registration Failed",
+      message: "Failed to register new user",
+    });
   };
+
   const form = useForm<SignUpForm>({
     mode: "uncontrolled",
     initialValues: {
@@ -88,9 +87,9 @@ function SignupPage() {
         </Stack>
         <Card w="35%" p="lg" py="3xl" radius="lg">
           <form
-            onSubmit={form.onSubmit((values) => {
-              registerUser(values);
-              open();
+            onSubmit={form.onSubmit(async (values) => {
+              startLoading();
+              await registerUser(values);
               console.log("Form is submitted", values);
             })}
           >
