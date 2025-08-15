@@ -22,6 +22,7 @@ export default function Vehicle() {
         px="xl"
         pt="3xl"
         color="red.4"
+        c="red.4"
         size="xs"
         active={active}
         onStepClick={setActive}
