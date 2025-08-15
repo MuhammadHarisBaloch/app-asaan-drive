@@ -25,6 +25,13 @@ import {
   IconCurrencyDollar,
   IconStar,
   IconAddressBook,
+  IconShieldCheckFilled,
+  IconClockFilled,
+  IconCreditCardFilled,
+  IconRosetteDiscountCheckFilled,
+  IconCalendarWeek,
+  IconCircleCheck,
+  IconMotorbikeFilled,
 } from "@tabler/icons-react";
 import Images from "../Images";
 interface FooterMenu {
@@ -578,6 +585,90 @@ const emergencyResponseSteps = [
   },
 ];
 
+const vehiclesImages = [
+  {
+    src: Images.listedVehicles.cd125,
+    alt: "cd-125",
+  },
+  {
+    src: Images.listedVehicles.cycle,
+    alt: "cycle",
+  },
+  {
+    src: Images.listedVehicles.rakshaw,
+    alt: "rakshaw",
+  },
+];
+const priceOptions = [
+  {
+    option: "Daily",
+    price: "Rs: 1000",
+  },
+  {
+    option: "Weekly",
+    price: "Rs: 7500",
+  },
+  {
+    option: "Monthly",
+    price: "Rs: 25000",
+  },
+];
+const services = [
+  {
+    icon: <IconShieldCheckFilled size={30} color="red" />,
+    title: "Safe & Secure",
+    subTitle:
+      "All vehicles are regularly inspected and maintained for your safety.",
+  },
+  {
+    icon: <IconRosetteDiscountCheckFilled size={30} color="red" />,
+    title: "Verified Owners",
+    subTitle:
+      "All vehicle owners are verified and trusted members of our community.",
+  },
+  {
+    icon: <IconClockFilled size={30} color="red" />,
+    title: "Flexible Timing",
+    subTitle:
+      "Choose hourly, daily, weekly, or monthly rental options to match your needs.",
+  },
+  {
+    icon: <IconCreditCardFilled size={30} color="red" />,
+    title: "Easy Payments",
+    subTitle:
+      "Multiple payment options including credit/debit cards, mobile wallets and cash.",
+  },
+];
+interface vehicleFeatures {
+  icon: JSX.Element;
+  title: string;
+  subTitle: string;
+  textColor?: string;
+}
+[];
+const vehicleFeatures: vehicleFeatures[] = [
+  {
+    icon: <IconMotorbikeFilled color="red" size={60} />,
+    title: "Type",
+    subTitle: "Bike",
+  },
+  {
+    icon: <IconCalendarWeek color="red" size={60} />,
+    title: "Year",
+    subTitle: "2025",
+  },
+  {
+    icon: <IconMapPin color="red" size={60} />,
+    title: "Location",
+    subTitle: "Khairpur Mir's",
+  },
+  {
+    icon: <IconCircleCheck color="green" size={60} />,
+    title: "Status",
+    subTitle: "Available",
+    textColor: "green",
+  },
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -589,6 +680,14 @@ export const data = {
       featureCard: renterfeatureCard,
       quickTips: quickTips,
       quickLinks: quickLinks,
+    },
+    vehicle: {
+      vehicleDetails: {
+        vehicleImages: vehiclesImages,
+        vehiclePrices: priceOptions,
+        ourServices: services,
+        vehicleFeatures: vehicleFeatures,
+      },
     },
   },
   vehicleOwner: {

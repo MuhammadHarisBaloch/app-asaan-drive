@@ -36,7 +36,7 @@ const theme = createTheme({
       " #F9FAFB",
       " #FFFFFF",
       " #FFFFFF",
-      " #FFFFFF",
+      " #F2F2F2",
       " #FFFFFF",
       " #FFFFFF",
       " #FFFFFF",

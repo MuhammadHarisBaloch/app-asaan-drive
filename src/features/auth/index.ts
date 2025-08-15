@@ -1,11 +1,9 @@
 import { auth } from "@/networking/firebase";
 import {
-  Auth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   User,
-  UserCredential,
 } from "firebase/auth";
 
 export async function signupUser(
