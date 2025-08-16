@@ -1,4 +1,5 @@
 "use client";
+import BookingDetails from "@/components/features/renters/vehicle/BookingDetails";
 import VehicleDetails from "@/components/features/renters/vehicle/VehicleDetails";
 import { Stepper } from "@mantine/core";
 import {
@@ -22,7 +23,6 @@ export default function Vehicle() {
         px="xl"
         pt="3xl"
         color="red.4"
-        c="red.4"
         size="xs"
         active={active}
         onStepClick={setActive}
@@ -34,7 +34,7 @@ export default function Vehicle() {
           label="Book Details"
           icon={<IconCalendarPlus color="red" />}
         >
-          Step 2 content: Fill the booking details
+          <BookingDetails onClick={nextStep} />
         </Stepper.Step>
         <Stepper.Step
           label="Verification"

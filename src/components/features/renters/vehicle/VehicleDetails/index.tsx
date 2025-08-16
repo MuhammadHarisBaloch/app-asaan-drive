@@ -20,113 +20,109 @@ interface VehicleDetailsProps {
 }
 export default function VehicleDetails({ bookNow }: VehicleDetailsProps) {
   return (
-    <>
-      <Grid py="3xl" gutter="xxl">
-        <GridCol span={8}>
-          <Stack gap="xxl">
-            <Carousel
-              p="md"
-              withIndicators
-              controlSize={40}
-              withControls
-              emblaOptions={{
-                loop: true,
-              }}
-              style={{ borderRadius: "20px", border: "1px solid gray" }}
-              styles={{
-                control: {
-                  backgroundColor: "#0000005d",
-                  color: "white",
-                },
-                indicator: {
-                  backgroundColor: "red",
-                },
-              }}
+    <Grid py="3xl" gutter="xxl">
+      <GridCol span={8}>
+        <Stack gap="xxl">
+          <Carousel
+            p="md"
+            withIndicators
+            controlSize={40}
+            withControls
+            emblaOptions={{
+              loop: true,
+            }}
+            style={{ borderRadius: "20px", border: "1px solid gray" }}
+            styles={{
+              control: {
+                backgroundColor: "#0000005d",
+                color: "white",
+              },
+              indicator: {
+                backgroundColor: "red",
+              },
+            }}
+          >
+            {data.renter.vehicle.vehicleDetails.vehicleImages.map(
+              (data, index) => {
+                return (
+                  <Carousel.Slide key={index}>
+                    <Image
+                      src={data.src}
+                      alt={data.alt}
+                      height={100}
+                      width={100}
+                      sizes="100vw"
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                      }}
+                    />
+                  </Carousel.Slide>
+                );
+              }
+            )}
+          </Carousel>
+          <AboutVehicleCard />
+          <ServicesCard />
+        </Stack>
+      </GridCol>
+      <GridCol
+        span={4}
+        style={{
+          position: "sticky",
+          top: 80,
+          alignSelf: "flex-start",
+        }}
+      >
+        <Card withBorder radius="lg" p="xl">
+          <Stack w="100%" gap="lg">
+            <Text fz="lg" c="black" fw={600}>
+              Book this Vehicle
+            </Text>
+            <Text fz="md">Choose your rental duration and Book instantly</Text>
+            <Button
+              variant="filled"
+              color="cyan.0"
+              c="green.8"
+              size="lg"
+              fw={400}
+              fz="md"
+              leftSection={<IconCircleCheck color="#0F6646" />}
             >
-              {data.renter.vehicle.vehicleDetails.vehicleImages.map(
-                (data, index) => {
-                  return (
-                    <Carousel.Slide key={index}>
-                      <Image
-                        src={data.src}
-                        alt={data.alt}
-                        height={100}
-                        width={100}
-                        sizes="100vw"
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                        }}
-                      />
-                    </Carousel.Slide>
-                  );
-                }
-              )}
-            </Carousel>
-            <AboutVehicleCard />
-            <ServicesCard />
+              Available Now
+            </Button>
+            <Text fz="md" c="black">
+              Pricing Option
+            </Text>
+            {data.renter.vehicle.vehicleDetails.vehiclePrices.map(
+              (data, index) => {
+                return (
+                  <Stack key={index}>
+                    <Group justify="space-between">
+                      <Text fz="xs">{data.option}</Text>
+                      <Text fz="xs" c="black">
+                        {data.price}
+                      </Text>
+                    </Group>
+                    <Divider w="100%" />
+                  </Stack>
+                );
+              }
+            )}
+            <Button size="lg" fw={400} fz="md" onClick={bookNow}>
+              Book Now
+            </Button>
+            <Divider w="100%" />
+            <Text fz="xs" lh={1.8}>
+              Between 6 and 24 hours before pickup:* 50% refund.
+              <br />
+              Security deposit may be required
+              <br />
+              Instant booking confirmation
+            </Text>
           </Stack>
-        </GridCol>
-        <GridCol
-          span={4}
-          style={{
-            position: "sticky",
-            top: 80,
-            alignSelf: "flex-start",
-          }}
-        >
-          <Card withBorder radius="lg" p="xl">
-            <Stack w="100%" gap="lg">
-              <Text fz="lg" c="black" fw={600}>
-                Book this Vehicle
-              </Text>
-              <Text fz="md">
-                Choose your rental duration and Book instantly
-              </Text>
-              <Button
-                variant="filled"
-                color="cyan.0"
-                c="green.8"
-                size="lg"
-                fw={400}
-                fz="md"
-                leftSection={<IconCircleCheck color="#0F6646" />}
-              >
-                Available Now
-              </Button>
-              <Text fz="md" c="black">
-                Pricing Option
-              </Text>
-              {data.renter.vehicle.vehicleDetails.vehiclePrices.map(
-                (data, index) => {
-                  return (
-                    <Stack key={index}>
-                      <Group justify="space-between">
-                        <Text fz="xs">{data.option}</Text>
-                        <Text fz="xs" c="black">
-                          {data.price}
-                        </Text>
-                      </Group>
-                      <Divider w="100%" />
-                    </Stack>
-                  );
-                }
-              )}
-              <Button size="lg" fw={400} fz="md" onClick={bookNow}>
-                Book Now
-              </Button>
-              <Divider w="100%" />
-              <Text fz="xs" lh={1.8}>
-                Between 6 and 24 hours before pickup:* 50% refund.
-                <br />
-                Security deposit may be required
-                <br />
-                Instant booking confirmation
-              </Text>
-            </Stack>
-          </Card>
-        </GridCol>
-      </Grid>
-    </>
+        </Card>
+      </GridCol>
+    </Grid>
   );
 }

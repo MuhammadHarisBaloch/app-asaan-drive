@@ -10,6 +10,7 @@ import {
 } from "@mantine/core";
 import { IconStarFilled } from "@tabler/icons-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface ListedVehicleCardProps {
   image: string;
@@ -75,7 +76,13 @@ export default function ListedCard({
           </Flex>
           <Text fz="xs">{location}</Text>
         </Group>
-        <Button fullWidth mt="sm" fz="xs">
+        <Button
+          component={Link}
+          href="/app/renters/vehicle"
+          fullWidth
+          mt="sm"
+          fz="xs"
+        >
           View Details
         </Button>
       </Stack>

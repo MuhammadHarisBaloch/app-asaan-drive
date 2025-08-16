@@ -669,6 +669,55 @@ const vehicleFeatures: vehicleFeatures[] = [
     textColor: "green",
   },
 ];
+const vehicleBookingDetails = [
+  {
+    title: "Rental Type:",
+    subTitle: "Daily",
+  },
+  {
+    title: "Duration:",
+    subTitle: "1 Days",
+  },
+  {
+    title: "Pickup Date:",
+    subTitle: "Jul 27, 2025",
+  },
+  {
+    title: "Return Date (Est.):",
+    subTitle: "July 28, 2025",
+  },
+];
+
+interface bookingPaymentDetails {
+  title: string;
+  subTitle: string;
+  titleColor?: string;
+  subTitleColor?: string;
+}
+[];
+const bookingPaymentDetails: bookingPaymentDetails[] = [
+  {
+    title: "Base Rate:",
+    subTitle: "Rs. 1000/day",
+    subTitleColor: "black",
+  },
+  {
+    title: "Rental Cost:",
+    subTitle: "Rs. 1000.00",
+    subTitleColor: "black",
+  },
+  {
+    title: "Tax (15%):",
+    subTitle: "Rs. 150.00",
+    subTitleColor: "black",
+  },
+  {
+    title: "Total:",
+    subTitle: "Rs. 1150.00",
+    titleColor: "black",
+    subTitleColor: "red.4",
+  },
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -687,6 +736,10 @@ export const data = {
         vehiclePrices: priceOptions,
         ourServices: services,
         vehicleFeatures: vehicleFeatures,
+      },
+      bookingDetails: {
+        paymentDetails: bookingPaymentDetails,
+        vehicleDetails: vehicleBookingDetails,
       },
     },
   },
