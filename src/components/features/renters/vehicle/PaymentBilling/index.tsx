@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import CreditCardSection from "./CreditCardSection";
 import OrderSummarySection from "./OrderSummarySection";
+import CashOnPickupSection from "./CashOnPickupSection";
 
 export default function PaymentBilling() {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
@@ -68,7 +69,9 @@ export default function PaymentBilling() {
                   <CreditCardSection />
                 </Tabs.Panel>
                 <Tabs.Panel value="2">Second tab content</Tabs.Panel>
-                <Tabs.Panel value="3">Third tab content</Tabs.Panel>
+                <Tabs.Panel value="3">
+                  <CashOnPickupSection />
+                </Tabs.Panel>
               </Tabs>
             </Stack>
           </Card>
