@@ -718,6 +718,13 @@ const bookingPaymentDetails: bookingPaymentDetails[] = [
     subTitleColor: "red.4",
   },
 ];
+const importantNoticeForDocument = [
+  "Ensure documents are clear and all text is readable",
+  "Documents must be valid and not expired",
+  "Names on all documents should match",
+  "Upload clear images of both front and back sides of your ID",
+  "Verification typically takes 5-10 minutes",
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -740,6 +747,9 @@ export const data = {
       bookingDetails: {
         paymentDetails: bookingPaymentDetails,
         vehicleDetails: vehicleBookingDetails,
+      },
+      documentVerification: {
+        notices: importantNoticeForDocument,
       },
     },
   },

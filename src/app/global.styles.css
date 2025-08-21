@@ -8,3 +8,34 @@
 .hover-pointer:hover{
   cursor: pointer;
 }
+/* for tabs  */
+
+.list {
+  position: relative;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+
+.tab {
+  z-index: 1;
+  font-weight: 500;
+  transition: color 100ms ease;
+  color: var(--mantine-color-gray-7);
+  border: 1px solid gray;
+  border-radius: var(--mantine-radius-md);
+  margin-right: 10px;
+  &[data-active] {
+    color: #FF0005;
+    padding: 10px;
+    border: 1px solid #ea777a;
+    background-color: #FEF2F2;
+    border-radius: var(--mantine-radius-md);
+  }
+  @mixin dark {
+    color: var(--mantine-color-dark-1);
+
+    &[data-active] {
+      color: var(--mantine-color-white);
+    }
+  }
+}
