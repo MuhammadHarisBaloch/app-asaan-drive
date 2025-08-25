@@ -24,7 +24,7 @@ export default function CreditCardSection() {
       <TextInput
         w="100%"
         label="Card Holder Name"
-        placeholder="Muhammad Haris"
+        placeholder="Enter account holder name"
         radius="md"
         size="md"
         styles={{

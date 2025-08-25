@@ -1,13 +1,4 @@
-import {
-  Text,
-  Stack,
-  Card,
-  Grid,
-  Tabs,
-  FloatingIndicator,
-  Flex,
-  Divider,
-} from "@mantine/core";
+import { Text, Stack, Card, Grid, Tabs, Flex, Divider } from "@mantine/core";
 import {
   IconCash,
   IconCreditCardFilled,
@@ -17,6 +8,7 @@ import { useState } from "react";
 import CreditCardSection from "./CreditCardSection";
 import OrderSummarySection from "./OrderSummarySection";
 import CashOnPickupSection from "./CashOnPickupSection";
+import MobileWallet from "./MobileWallet";
 
 export default function PaymentBilling() {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
@@ -68,7 +60,9 @@ export default function PaymentBilling() {
                 <Tabs.Panel value="1">
                   <CreditCardSection />
                 </Tabs.Panel>
-                <Tabs.Panel value="2">Second tab content</Tabs.Panel>
+                <Tabs.Panel value="2">
+                  <MobileWallet />
+                </Tabs.Panel>
                 <Tabs.Panel value="3">
                   <CashOnPickupSection />
                 </Tabs.Panel>

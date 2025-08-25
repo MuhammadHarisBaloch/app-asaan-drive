@@ -1,0 +1,115 @@
+import Images from "@/constants/Images";
+import { Box, Button, Center, Flex, Stack, TextInput } from "@mantine/core";
+import Image from "next/image";
+import { useState } from "react";
+
+export default function MobileWallet() {
+    const [selected, setSelected] = useState<string|null>(null);
+    const options = [
+      {
+        id: "jazzcash",
+        src: Images.paymentMethods.jazzcash,
+        alt: "jazzcash-logo",
+      },
+      { 
+        id: "easypaisa",
+        src: Images.paymentMethods.easypaisa,
+        alt: "easypaisa-logo",
+      },
+    ];
+  return (
+    <Stack py="lg" gap="lg">
+      <Flex gap="xl">
+        {options.map((option,index)=>{
+            return (
+              <Center
+                key={index}
+                w="15%"
+                bg="white.2"
+                py="md"
+                onClick={()=>{
+                    setSelected(option.id)
+                }}
+                style={{
+                  borderRadius: "10px",
+                  filter: "drop-shadow(1px 1px 2px #63636333)",
+                  border: selected == option.id ? '2px solid red' : "",
+                  cursor:"pointer"
+                }}
+              >
+                <Image
+                  src={option.src}
+                  alt={option.alt}
+                  height={100}
+                  width={100}
+                  sizes="100vw"
+                  style={{
+                    width: "50%",
+                    height: "auto",
+                  }}
+                />
+              </Center>
+            );
+        })}
+        
+        {/* <Center
+          w="15%"
+          bg="white.2"
+          py="md"
+          style={{
+            borderRadius: "10px",
+            filter: "drop-shadow(1px 1px 2px #63636333)",
+          }}
+        >
+          <Image
+            src={Images.paymentMethods.easypaisa}
+            alt="jazzcash-logo"
+            height={100}
+            width={100}
+            sizes="100vw"
+            style={{
+              width: "50%",
+              height: "auto",
+            }}
+          />
+        </Center> */}
+      </Flex>
+      <TextInput
+        w="100%"
+        label="Mobile Number"
+        placeholder="0000 000 0000"
+        radius="md"
+        size="md"
+        maxLength={11}
+        styles={{
+          label: {
+            fontSize: "16px",
+            fontWeight: 400,
+          },
+          input: {
+            fontSize: "16px",
+          },
+        }}
+      />
+      <TextInput
+        w="100%"
+        label="Account Holder Name"
+        placeholder="Enter account holder name"
+        radius="md"
+        size="md"
+        styles={{
+          label: {
+            fontWeight: 400,
+            fontSize: "16px",
+          },
+          input: {
+            fontSize: "16px",
+          },
+        }}
+      />
+      <Button mt="lg" size="md">
+        Pay Now - Rs.2650
+      </Button>
+    </Stack>
+  );
+}

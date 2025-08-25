@@ -12,6 +12,10 @@ const Images = {
   backgrounds: {
     signup: "/images/background/sign-up-page-background.webp",
   },
+  paymentMethods: {
+    jazzcash: "/images/PaymentMethods/jazzcash.png",
+    easypaisa: "/images/PaymentMethods/easypaisa.png",
+  },
 };
 
 export default Images;
