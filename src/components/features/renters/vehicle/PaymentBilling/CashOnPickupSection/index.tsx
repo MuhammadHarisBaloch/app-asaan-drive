@@ -1,7 +1,12 @@
 import { Button, Flex, Stack, Text } from "@mantine/core";
 import { IconExclamationCircle } from "@tabler/icons-react";
 
-export default function CashOnPickupSection() {
+interface CashOnPickupSectionProps {
+  onClick: () => void;
+}
+export default function CashOnPickupSection({
+  onClick,
+}: CashOnPickupSectionProps) {
   return (
     <Stack py="xl" gap="lg">
       <Flex
@@ -16,7 +21,7 @@ export default function CashOnPickupSection() {
           amount.
         </Text>
       </Flex>
-      <Button mt="lg" size="md">
+      <Button mt="lg" size="md" onClick={onClick}>
         Continue
       </Button>
     </Stack>

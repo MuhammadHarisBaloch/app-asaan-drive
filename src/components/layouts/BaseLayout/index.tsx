@@ -47,7 +47,7 @@ const renterMenu: HeaderMenuItem[] = [
   },
   {
     name: "Find Near me",
-    link: "/app/find-near-me",
+    link: "/app/renters/find-near-me",
   },
 ];
 

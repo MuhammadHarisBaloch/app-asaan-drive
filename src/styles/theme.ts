@@ -44,7 +44,7 @@ const theme = createTheme({
     ],
     blue: [
       " #eff6ff",
-      " #B3D1FF",
+      " #DBEAFE",
       " #80B3FF",
       " #498ef4",
       " #1A75FF",
@@ -67,8 +67,8 @@ const theme = createTheme({
       "#3B2F2F",
     ],
     green: [
+      " #F0FDF4",
       " #DCFCE7",
-      " #B3FFC2",
       " #80FF99",
       " #4DFF70",
       " #1AFF47",
