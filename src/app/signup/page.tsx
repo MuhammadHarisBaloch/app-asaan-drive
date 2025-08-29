@@ -21,12 +21,12 @@ import { notifications } from "@mantine/notifications";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signupUser } from "../../features/auth";
+import { createUserDocument } from "../../features/user";
 
 interface SignUpForm {
   userType: string;
-  firstName: string;
+  fullName: string;
   email: string;
-  username: string;
   password: string;
   confirmPassword: string;
 }
@@ -38,13 +38,22 @@ function SignupPage() {
 
   const registerUser = async (values: SignUpForm) => {
     const user = await signupUser(values.email, values.password);
+    if (user) {
+      await createUserDocument({
+        id: user.uid,
+        email: values.email,
+        fullName: values.fullName,
+        userType: values.userType,
+      });
+    }
+
     stopLoading();
     if (user) {
       notifications.show({
         title: "Account created successfully!",
         message: "You can now sign in with your credentials",
       });
-      router.push("/signin");
+      router.push(`/app/${values.userType}`);
       return;
     }
     notifications.show({
@@ -57,17 +66,15 @@ function SignupPage() {
     mode: "uncontrolled",
     initialValues: {
       userType: "",
-      firstName: "",
+      fullName: "",
       email: "",
-      username: "",
       password: "",
       confirmPassword: "",
     },
     validate: {
       userType: isNotEmpty("Please select your type"),
-      firstName: hasLength({ min: 2 }, "Please enter your First Name"),
+      fullName: hasLength({ min: 2 }, "Please enter your Full Name"),
       email: isEmail("Incorrect Email"),
-      username: hasLength({ min: 2 }, "Please enter your Username"),
       password: hasLength({ min: 2 }, "Please enter your password"),
       confirmPassword: (value, values) =>
         value !== values.password ? "Passwords did not match" : null,
@@ -116,8 +123,8 @@ function SignupPage() {
                     fontSize: "xs",
                   },
                 }}
-                key={form.key("firstName")}
-                {...form.getInputProps("firstName")}
+                key={form.key("fullName")}
+                {...form.getInputProps("fullName")}
               />
               <TextInput
                 label="Email"
@@ -129,18 +136,6 @@ function SignupPage() {
                 }}
                 key={form.key("email")}
                 {...form.getInputProps("email")}
-              />
-              <TextInput
-                label="Username"
-                w="100%"
-                styles={{
-                  label: {
-                    fontSize: "xs",
-                  },
-                }}
-                inputMode="email"
-                key={form.key("username")}
-                {...form.getInputProps("username")}
               />
               <PasswordInput
                 label="Password"

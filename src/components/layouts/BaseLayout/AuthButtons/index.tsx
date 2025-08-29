@@ -1,13 +1,16 @@
+"use client";
 import { Button, Flex } from "@mantine/core";
 import { onAuthStateChanged, User } from "firebase/auth";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { auth } from "../../../../networking/firebase";
 
-import { notifications } from "@mantine/notifications";
 import { signoutUser } from "@/features/auth";
+import { notifications } from "@mantine/notifications";
+import { useRouter } from "next/navigation";
 
 function AuthButtons() {
+  const router = useRouter();
   const [authUser, setAuthUser] = useState<User | undefined>(undefined);
 
   useEffect(() => {
@@ -31,6 +34,7 @@ function AuthButtons() {
             title: "Sign out successfully",
             message: "",
           });
+          router.push("/");
         }}
       >
         Logout
