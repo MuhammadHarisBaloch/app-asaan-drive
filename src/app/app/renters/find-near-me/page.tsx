@@ -13,7 +13,6 @@ import {
 } from "@mantine/core";
 import { IconCurrentLocationFilled, IconSearch } from "@tabler/icons-react";
 import Image from "next/image";
-import { useState } from "react";
 
 const NearestVehicles = [
   {

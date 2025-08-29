@@ -16,8 +16,36 @@ import {
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconSend, IconPhone } from "@tabler/icons-react";
+import emailjs from "@emailjs/browser";
+import { useRef } from "react";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function ContactUsPage() {
+  const sendEmail = async () => {
+    try {
+      const result = await emailjs.sendForm(
+        "service_tm5rtqe",
+        "template_v17fak9",
+        formRef.current!,
+        "dp0EyRD3_tjsj-F_a"
+      );
+      console.log("Email Send Successfully", result.text);
+      close();
+      notifications.show({
+        title: "Message sent Successfully",
+        message: "",
+        color: "green",
+      });
+    } catch (error) {
+      console.error("Email not send !! ", error);
+      close();
+      notifications.show({
+        title: "Something Wrong",
+        message: `${error}`,
+        color: "red",
+      });
+    }
+  };
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -32,6 +60,10 @@ export default function ContactUsPage() {
       message: isNotEmpty("Please insert your message"),
     },
   });
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const [loader, { open, close }] = useDisclosure();
+
   return (
     <Stack px="5rem" py="xxl" align="center" gap="sm">
       <Title order={3} c="black" fw={600}>
@@ -46,31 +78,33 @@ export default function ContactUsPage() {
         <GridCol span={6}>
           <Card withBorder radius="lg">
             <form
-              onSubmit={form.onSubmit((values) => {
-                console.log(values);
+              ref={formRef}
+              onSubmit={(e) => {
+                e.preventDefault();
+                sendEmail();
+                open();
                 form.reset();
-                notifications.show({
-                  title: "Message Send Successfully",
-                  message: "Thank you for your message , we'll get you soon!",
-                  color: "green",
-                });
-              })}
+              }}
             >
               <Stack p="xl" gap="xl">
                 <Text fz="lg" c="black" fw={500}>
                   Send us a Message
                 </Text>
                 <TextInput
+                  required
                   label="Full Name"
                   placeholder="Enter your Full Name"
                   radius="md"
+                  name="user_name"
                   key={form.key("name")}
                   {...form.getInputProps("name")}
                 />
                 <TextInput
+                  required
                   label="Email Number"
                   placeholder="Enter your Email Address"
                   radius="md"
+                  name="user_email"
                   key={form.key("email")}
                   {...form.getInputProps("email")}
                 />
@@ -78,18 +112,26 @@ export default function ContactUsPage() {
                   label="Phone Number (Optional)"
                   placeholder="Enter your Full Name"
                   radius="md"
+                  name="number"
+                  maxLength={11}
                   key={form.key("number")}
                   {...form.getInputProps("number")}
                 />
                 <Textarea
+                  required
                   label="Message"
                   placeholder="Tell us How we can help you "
                   radius="md"
                   rows={6}
+                  name="message"
                   key={form.key("message")}
                   {...form.getInputProps("message")}
                 />
-                <Button leftSection={<IconSend size={15} />} type="submit">
+                <Button
+                  leftSection={<IconSend size={15} />}
+                  type="submit"
+                  loading={loader}
+                >
                   Send Message
                 </Button>
               </Stack>
