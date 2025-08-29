@@ -12,7 +12,7 @@ import {
   Title,
 } from "@mantine/core";
 
-export default function RentersPage() {
+export default function BrowseVehicle() {
   return (
     <Stack align="center" px="lg" py="3xl" gap="3xl">
       <Stack gap="xs" align="center">

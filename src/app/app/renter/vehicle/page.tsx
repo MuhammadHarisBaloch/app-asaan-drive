@@ -1,4 +1,5 @@
 "use client";
+import BookingConfirmation from "@/components/features/renters/vehicle/BookingConfirmation";
 import BookingDetails from "@/components/features/renters/vehicle/BookingDetails";
 import DocumentVerification from "@/components/features/renters/vehicle/DocumentVerification";
 import PaymentBilling from "@/components/features/renters/vehicle/PaymentBilling";
@@ -45,13 +46,13 @@ export default function Vehicle() {
           <DocumentVerification onClick={nextStep} />
         </Stepper.Step>
         <Stepper.Step label="Payment" icon={<IconCreditCard color="red" />}>
-          <PaymentBilling />
+          <PaymentBilling onClick={nextStep} />
         </Stepper.Step>
         <Stepper.Step
           label="Confirmation"
           icon={<IconClipboardCheck color="red" />}
         >
-          Step 5 content: confirm your ride
+          <BookingConfirmation />
         </Stepper.Step>
         <Stepper.Completed>
           Completed, click back button to get to previous step

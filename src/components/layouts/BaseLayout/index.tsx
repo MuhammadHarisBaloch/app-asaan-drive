@@ -39,15 +39,15 @@ const websiteMenu: HeaderMenuItem[] = [
 const renterMenu: HeaderMenuItem[] = [
   {
     name: "Dashboard",
-    link: "/app/renters/dashboard",
+    link: "/app/renter",
   },
   {
     name: "Browse Vehicle",
-    link: "/app/renters",
+    link: "/app/renter/browse-vehicle",
   },
   {
     name: "Find Near me",
-    link: "/app/renters/find-near-me",
+    link: "/app/renter/find-near-me",
   },
 ];
 
@@ -63,7 +63,7 @@ const vehicleOwnerMenu: HeaderMenuItem[] = [
 ];
 
 function getHeaderMenu(pathname: string): HeaderMenuItem[] {
-  if (pathname.startsWith("/app/renters")) return renterMenu;
+  if (pathname.startsWith("/app/renter")) return renterMenu;
   if (pathname.startsWith("/app/vehicles-owner")) return vehicleOwnerMenu;
   return websiteMenu;
 }

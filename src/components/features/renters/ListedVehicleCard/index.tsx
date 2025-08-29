@@ -78,7 +78,7 @@ export default function ListedCard({
         </Group>
         <Button
           component={Link}
-          href="/app/renters/vehicle"
+          href="/app/renter/vehicle"
           fullWidth
           mt="sm"
           fz="xs"
