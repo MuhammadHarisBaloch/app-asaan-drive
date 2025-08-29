@@ -1,4 +1,5 @@
 "use client";
+import DashboardSection from "@/components/features/renters/dashboard";
 import SideBar from "@/components/features/renters/dashboard/SideBar/inde";
 import { Grid, GridCol } from "@mantine/core";
 import { useState } from "react";
@@ -11,7 +12,7 @@ export default function RenterPage() {
         <SideBar active={active} setActive={setActive} />
       </GridCol>
       <GridCol span={9.5}>
-        {active === "Dashboard" && <h1>Dashboard Content</h1>}
+        {active === "Dashboard" && <DashboardSection />}
         {active === "My Bookings" && <h1>Bookings Content</h1>}
         {active === "Payments" && <h1>Payments Content</h1>}
         {active === "Notifications" && <h1>Notifications Content</h1>}
