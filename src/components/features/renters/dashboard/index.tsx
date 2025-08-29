@@ -9,13 +9,16 @@ import {
   Text,
 } from "@mantine/core";
 import {
-  IconBackground,
   IconCalendarEventFilled,
   IconCar,
   IconClock,
   IconCurrencyDollar,
 } from "@tabler/icons-react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getUserDocument } from "../../../../features/user";
+import { UserModel } from "../../../../features/user/models/user.model";
 
 const DashFeatures = [
   {
@@ -75,11 +78,28 @@ const RecentBookings = [
 ];
 
 export default function DashboardSection() {
+  const [user, setUser] = useState<UserModel | null>(null);
+
+  const auth = getAuth();
+
+  useEffect(() => {
+    const fetchUser = async (id: string) => {
+      const userData = await getUserDocument(id);
+      setUser(userData);
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchUser(user.uid);
+      }
+    });
+  }, []);
+
   return (
     <Stack p="lg" gap="xl">
       <Stack gap={0}>
         <Text fz="xl" c="black" fw={600}>
-          Welcome back!
+          Welcome {user?.fullName ?? ""}!
         </Text>
         <Text fz="12px">Here's what's happening with your rentals</Text>
       </Stack>
