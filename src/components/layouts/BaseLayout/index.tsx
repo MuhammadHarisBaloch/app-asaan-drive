@@ -54,11 +54,11 @@ const renterMenu: HeaderMenuItem[] = [
 const vehicleOwnerMenu: HeaderMenuItem[] = [
   {
     name: "Dashboard",
-    link: "/app/vehicles-owner/dashboard",
+    link: "/app/vehicles-owner",
   },
   {
     name: "List Your Vehicles",
-    link: "/app/vehicles-owner",
+    link: "/app/vehicles-owner/list-your-vehicle",
   },
 ];
 

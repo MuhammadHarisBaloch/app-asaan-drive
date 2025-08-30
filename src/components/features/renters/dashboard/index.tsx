@@ -79,9 +79,7 @@ const RecentBookings = [
 
 export default function DashboardSection() {
   const [user, setUser] = useState<UserModel | null>(null);
-
   const auth = getAuth();
-
   useEffect(() => {
     const fetchUser = async (id: string) => {
       const userData = await getUserDocument(id);

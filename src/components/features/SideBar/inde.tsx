@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, JSX, SetStateAction } from "react";
 import {
   IconBell,
   IconCalendarEventFilled,
@@ -10,20 +10,22 @@ import {
 import { Group, Text } from "@mantine/core";
 import classes from "./SideBar.module.css";
 
-const data = [
-  { label: "Dashboard", icon: IconLayoutDashboard },
-  { label: "My Bookings", icon: IconCalendarEventFilled },
-  { label: "Payments", icon: IconCreditCard },
-  { label: "Notifications", icon: IconBell },
-  { label: "Profile", icon: IconUser },
-];
-
 interface SideBarProps {
+  title: string;
+  data: {
+    label: string;
+    icon: React.ElementType;
+  }[];
   active: string;
   setActive: Dispatch<SetStateAction<string>>;
 }
 
-export default function SideBar({ active, setActive }: SideBarProps) {
+export default function SideBar({
+  title,
+  data,
+  active,
+  setActive,
+}: SideBarProps) {
   const links = data.map((item) => (
     <a
       className={classes.link}
@@ -44,7 +46,7 @@ export default function SideBar({ active, setActive }: SideBarProps) {
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
           <Text fz="lg" c="black" fw={500}>
-            Renter Portal
+            {title}
           </Text>
         </Group>
         {links}

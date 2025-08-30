@@ -46,13 +46,13 @@ function SignupPage() {
         userType: values.userType,
       });
     }
-
     stopLoading();
     if (user) {
       notifications.show({
         title: "Account created successfully!",
         message: "You can now sign in with your credentials",
       });
+      console.log("user type is ", values.userType);
       router.push(`/app/${values.userType}`);
       return;
     }
@@ -110,8 +110,8 @@ function SignupPage() {
                   <Radio color="red.4" value="renter" label="Renter" />
                   <Radio
                     color="red.4"
-                    value="vehicle-owner"
-                    label="Vehicle Owner"
+                    value="vehicles-owner"
+                    label="Vehicles Owner"
                   />
                 </Group>
               </Radio.Group>
