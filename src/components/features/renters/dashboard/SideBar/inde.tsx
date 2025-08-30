@@ -17,6 +17,7 @@ const data = [
   { label: "Notifications", icon: IconBell },
   { label: "Profile", icon: IconUser },
 ];
+
 interface SideBarProps {
   active: string;
   setActive: Dispatch<SetStateAction<string>>;
