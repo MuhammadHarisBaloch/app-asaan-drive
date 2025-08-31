@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { signinUser } from "@/features/auth";
+import { getUserDocument } from "@/features/user";
 interface SignInForm {
   userName: string;
   password: string;
@@ -55,16 +56,21 @@ export default function SignInPage() {
   }, []);
 
   const signInUser = async (values: SignInForm) => {
-    const user = await signinUser(values.userName, values.password);
-    stopLoading();
-    if (user) {
-      notifications.show({
-        title: "Signed in successfully",
-        message: "",
-      });
-      router.push("/");
+    const authUser = await signinUser(values.userName, values.password);
+    if (authUser) {
+      const fetchUser = await getUserDocument(authUser.uid);
+      stopLoading();
+      if (fetchUser) {
+        notifications.show({
+          title: "Signed in successfully",
+          message: "",
+        });
+        router.push(`/app/${fetchUser.userType}`);
+        return;
+      }
       return;
     }
+    stopLoading();
     notifications.show({
       title: "Sign in failed",
       message: "Invalid user credentials",

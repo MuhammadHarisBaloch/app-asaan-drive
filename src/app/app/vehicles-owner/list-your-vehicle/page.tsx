@@ -1,3 +1,6 @@
+"use client";
+import { data } from "@/constants/Data";
+import { createVehicleDocument } from "@/features/vehicle";
 import {
   Box,
   Button,
@@ -15,9 +18,62 @@ import {
   Title,
 } from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
-import { IconCamera, IconFile } from "@tabler/icons-react";
+import { isNotEmpty, useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { IconPhoto } from "@tabler/icons-react";
+import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+interface VehicleRegistrationForm {
+  vehicleType: string;
+  vehicleModel: string;
+  vehicleYear: string;
+  licensePlate: string;
+  pickupLocation: string;
+  dailyRate: number;
+  weeklyRate: number;
+  monthlyRate: number;
+}
 
 export default function ListYourVehicle() {
+  const formSubmitHandler = async (values: VehicleRegistrationForm) => {
+    const vehicle = await createVehicleDocument(values);
+    if (vehicle) {
+      notifications.show({
+        title: "Vehicle listed successfully",
+        message: "You can now sign in with your credentials",
+      });
+      return;
+    }
+    notifications.show({
+      title: "Listing Failed",
+      message: "You can now sign in with your credentials",
+    });
+  };
+
+  const form = useForm<VehicleRegistrationForm>({
+    mode: "uncontrolled",
+    initialValues: {
+      vehicleType: "",
+      vehicleModel: "",
+      vehicleYear: "",
+      licensePlate: "",
+      pickupLocation: "",
+      dailyRate: 0,
+      weeklyRate: 0,
+      monthlyRate: 0,
+    },
+    validate: {
+      vehicleType: isNotEmpty("please select vehicle type"),
+      vehicleModel: isNotEmpty("please enter vehicle model"),
+      vehicleYear: isNotEmpty("please enter vehicle year"),
+      licensePlate: isNotEmpty("please enter license plate"),
+      pickupLocation: isNotEmpty("please enter pickup location"),
+      dailyRate: (value) => (value > 0 ? "" : "please enter the daily rate"),
+      weeklyRate: (value) => (value > 0 ? "" : "please enter the weekly rate"),
+      monthlyRate: (value) =>
+        value > 0 ? "" : "please enter the monthly rate",
+    },
+  });
+
   return (
     <Stack align="center" py="xxl" px="6rem" gap="3xl">
       <Stack align="center" gap="sm">
@@ -31,171 +87,193 @@ export default function ListYourVehicle() {
         </Text>
       </Stack>
       <Card w="100%" withBorder radius="lg">
-        <Stack p="xxl" gap="3xl">
-          <Stack gap="xl">
-            <Text fz="lg" fw={500} c="black">
-              Vehicle Details
-            </Text>
-            <Flex gap="xxl">
-              <Select
-                w="100%"
-                label="Vehicle Type"
-                placeholder="Select Vehicle Type"
-                radius="md"
-                data={["Bike", "Cycle", "Rakshaw"]}
-              />
+        <form
+          onSubmit={form.onSubmit((values) => {
+            // formSubmitHandler(values);
+            console.log("Vehicle Registration form ", values);
+          })}
+        >
+          <Stack p="xxl" gap="3xl">
+            <Stack gap="xl">
+              <Text fz="lg" fw={500} c="black">
+                Vehicle Details
+              </Text>
+              <Flex gap="xxl">
+                <Select
+                  w="100%"
+                  label="Vehicle Type"
+                  placeholder="Select Vehicle Type"
+                  radius="md"
+                  data={data.vehicleOwner.vehicleRegistration.vehicleTypes}
+                  key={form.key("vehicleType")}
+                  {...form.getInputProps("vehicleType")}
+                />
+                <TextInput
+                  w="100%"
+                  label="Make/Model"
+                  placeholder="e.g., Honda CD 70"
+                  radius="md"
+                  key={form.key("vehicleModel")}
+                  {...form.getInputProps("vehicleModel")}
+                />
+              </Flex>
+              <Flex gap="xxl">
+                <YearPickerInput
+                  w="100%"
+                  label="Year"
+                  placeholder="e.g., 2025"
+                  radius="md"
+                  key={form.key("vehicleYear")}
+                  {...form.getInputProps("vehicleYear")}
+                />
+                <TextInput
+                  w="100%"
+                  label="License Plate"
+                  placeholder="e.g., KHI-123"
+                  radius="md"
+                  key={form.key("licensePlate")}
+                  {...form.getInputProps("licensePlate")}
+                />
+              </Flex>
               <TextInput
                 w="100%"
-                label="Make/Model"
-                placeholder="e.g., Honda CD 70"
+                label="Pickup Location"
+                placeholder="e.g., Khairpur Mir's"
                 radius="md"
+                key={form.key("pickupLocation")}
+                {...form.getInputProps("pickupLocation")}
               />
-            </Flex>
-            <Flex gap="xxl">
-              <YearPickerInput
-                w="100%"
-                label="Year"
-                placeholder="e.g., 2025"
-                radius="md"
-              />
-              <TextInput
-                w="100%"
-                label="License Plate"
-                placeholder="e.g., KHI-123"
-                radius="md"
-              />
-            </Flex>
-            <TextInput
-              w="100%"
-              label="Pickup Location"
-              placeholder="e.g., Khairpur Mir's"
-              radius="md"
-            />
-          </Stack>
-          <Divider w="100%" />
-          <Stack gap="xl">
-            <Text fz="lg" fw={500} c="black">
-              Pricing & Availability
-            </Text>
-            <Flex gap="xxl">
-              <NumberInput
-                w="100%"
-                label="Daily Rate (PKR)"
-                placeholder="e.g., 500"
-                radius="md"
-              />
-              <NumberInput
-                w="100%"
-                label="Weekly Rate (PKR)"
-                placeholder="e.g., 2000"
-                radius="md"
-              />
-              <NumberInput
-                w="100%"
-                label="Monthly Rate (PKR)"
-                placeholder="e.g., 8000"
-                radius="md"
-              />
-            </Flex>
-          </Stack>
-          <Divider w="100%" />
-          <Stack gap="xl">
-            <Text fz="lg" fw={500} c="black">
-              Vehicle Photos
-            </Text>
-            <Box
-              w="100%"
-              style={{
-                borderRadius: "10px",
-                borderStyle: "dashed",
-                borderColor: " gray",
-              }}
-            >
-              <Stack align="center" py="xl" gap="xxs">
-                <IconCamera size={45} color="gray" />
-                <Flex align="center" gap="sm">
-                  <FileInput
-                    variant="unstyled"
-                    placeholder="Upload Photos"
-                    multiple
-                    styles={{
-                      placeholder: {
-                        color: "red",
-                        fontWeight: 500,
-                        fontSize: "14px",
-                      },
-                    }}
-                  />
-                  <Text fz="xs" fw={500}>
-                    or drag and drop
-                  </Text>
-                </Flex>
-                <Text fz="12px">PNG, JPG, GIF up to 10MB</Text>
-              </Stack>
-            </Box>
-          </Stack>
-          <Divider w="100%" />
-          <Stack gap="xl">
-            <Text fz="lg" fw={500} c="black">
-              Vehicle Documents
-            </Text>
-            <Text fz="xs" c="black">
-              Upload required documents including registration, license, and
-              insurance papers.
-            </Text>
-            <Box
-              w="100%"
-              style={{
-                borderRadius: "10px",
-                borderStyle: "dashed",
-                borderColor: " gray",
-              }}
-            >
-              <Stack align="center" py="xl" gap="xxs">
-                <IconFile size={45} color="gray" />
-                <Flex align="center" gap="sm">
-                  <FileInput
-                    variant="unstyled"
-                    placeholder="Upload Documents"
-                    multiple
-                    styles={{
-                      placeholder: {
-                        color: "red",
-                        fontWeight: 500,
-                        fontSize: "14px",
-                      },
-                    }}
-                  />
-                  <Text fz="xs" fw={500}>
-                    or drag and drop
-                  </Text>
-                </Flex>
-                <Text fz="12px" ta="center" lh="2">
-                  PDF, JPG, PNG up to 10MB each <br />
-                  Required: Registration, License, Insurance
+            </Stack>
+            <Divider w="100%" />
+            <Stack gap="xl">
+              <Text fz="lg" fw={500} c="black">
+                Pricing & Availability
+              </Text>
+              <Flex gap="xxl">
+                <NumberInput
+                  w="100%"
+                  label="Daily Rate (PKR)"
+                  placeholder="e.g., 500"
+                  radius="md"
+                  min={0}
+                  key={form.key("dailyRate")}
+                  {...form.getInputProps("dailyRate")}
+                />
+                <NumberInput
+                  w="100%"
+                  label="Weekly Rate (PKR)"
+                  placeholder="e.g., 2000"
+                  radius="md"
+                  min={0}
+                  key={form.key("weeklyRate")}
+                  {...form.getInputProps("weeklyRate")}
+                />
+                <NumberInput
+                  w="100%"
+                  label="Monthly Rate (PKR)"
+                  placeholder="e.g., 8000"
+                  min={0}
+                  radius="md"
+                  key={form.key("monthlyRate")}
+                  {...form.getInputProps("monthlyRate")}
+                />
+              </Flex>
+            </Stack>
+            <Divider w="100%" />
+            <Stack gap="xl">
+              <Text fz="lg" fw={500} c="black">
+                Vehicle Photos
+              </Text>
+              <Dropzone
+                onDrop={(files) => console.log("accepted files", files)}
+                onReject={(files) => console.log("rejected files", files)}
+                maxSize={5 * 1024 ** 2}
+                accept={IMAGE_MIME_TYPE}
+              >
+                <Stack align="center" py="xl" gap="xxs">
+                  <Dropzone.Idle>
+                    <IconPhoto
+                      size={52}
+                      color="var(--mantine-color-dimmed)"
+                      stroke={1.5}
+                    />
+                  </Dropzone.Idle>
+                  <div>
+                    <Stack align="center" py="xl" gap="xxs">
+                      <Text fz="xs" fw={500}>
+                        <span style={{ color: "red", fontWeight: 500 }}>
+                          Upload Photos
+                        </span>{" "}
+                        or drag and drop
+                      </Text>
+                      <Text fz="12px">PNG, JPG, GIF up to 5MB</Text>
+                    </Stack>
+                  </div>
+                </Stack>
+              </Dropzone>
+            </Stack>
+            <Divider w="100%" />
+            <Stack gap="xl">
+              <Stack gap="sm">
+                <Text fz="lg" fw={500} c="black">
+                  Vehicle Documents
+                </Text>
+                <Text fz="xs" c="black">
+                  Upload required documents including registration, license, and
+                  insurance papers.
                 </Text>
               </Stack>
-            </Box>
+              <Dropzone
+                onDrop={(files) => console.log("accepted files", files)}
+                onReject={(files) => console.log("rejected files", files)}
+                maxSize={5 * 1024 ** 2}
+                accept={IMAGE_MIME_TYPE}
+              >
+                <Stack align="center" py="xl" gap="xxs">
+                  <Dropzone.Idle>
+                    <IconPhoto
+                      size={52}
+                      color="var(--mantine-color-dimmed)"
+                      stroke={1.5}
+                    />
+                  </Dropzone.Idle>
+                  <div>
+                    <Stack align="center" py="xl" gap="xxs">
+                      <Text fz="xs" fw={500}>
+                        <span style={{ color: "red", fontWeight: 500 }}>
+                          upload documents
+                        </span>{" "}
+                        or drag and drop
+                      </Text>
+                      <Text fz="12px" ta="center" lh="2">
+                        PDF, JPG, PNG up to 5MB each <br />
+                        Required: Registration, License, Insurance
+                      </Text>
+                    </Stack>
+                  </div>
+                </Stack>
+              </Dropzone>
+            </Stack>
+            <Divider w="100%" />
+            <Stack gap="xl">
+              <Text fz="lg" fw={500} c="black">
+                Vehicle Description
+              </Text>
+              <Textarea
+                w="100%"
+                radius="md"
+                label="Description"
+                placeholder="Describe your vehicle, its condition, feature, etc"
+                rows={6}
+              />
+            </Stack>
+            <Divider w="100%" />
+            <Group justify="space-between">
+              <Box />
+              <Button type="submit">Submit Listing</Button>
+            </Group>
           </Stack>
-          <Divider w="100%" />
-          <Stack gap="xl">
-            <Text fz="lg" fw={500} c="black">
-              Vehicle Description
-            </Text>
-            <Textarea
-              w="100%"
-              radius="md"
-              label="Description"
-              placeholder="Describe your vehicle, its condition, feature, etc"
-              rows={6}
-            />
-          </Stack>
-          <Divider w="100%" />
-          <Group justify="space-between">
-            <Box />
-            <Button>Submit Listing</Button>
-          </Group>
-        </Stack>
+        </form>
       </Card>
     </Stack>
   );

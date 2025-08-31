@@ -725,6 +725,8 @@ const importantNoticeForDocument = [
   "Upload clear images of both front and back sides of your ID",
   "Verification typically takes 5-10 minutes",
 ];
+
+const vehicleTypes = ["Bike", "Cycle", "Rakshaw"];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -753,7 +755,11 @@ export const data = {
       },
     },
   },
+
   vehicleOwner: {
+    vehicleRegistration: {
+      vehicleTypes: vehicleTypes,
+    },
     usageSteps: vehicleOwnerUsageSteps,
     dashboard: {
       featureCard: featureCardList,

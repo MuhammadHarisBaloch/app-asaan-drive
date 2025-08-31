@@ -170,62 +170,62 @@ export default function VehicleOwnerDashboardSection() {
           );
         })}
       </SimpleGrid>
-      <Grid gutter="xxl">
-        <Grid.Col span={8}>
-          <Card
-            w="100%"
-            radius="md"
-            p="lg"
-            style={{ filter: "drop-shadow(1px 1px 2px #5d5d5dab)" }}
-          >
-            <Text fz="lg" c="black" fw={500} mb="xl">
-              Recent Activity
-            </Text>
-            <Stack gap="lg" pb="lg">
-              {recentActivites.map((data, i) => {
-                return (
-                  <Card
-                    key={i}
-                    px="lg"
-                    py="md"
-                    style={{
-                      borderRadius: "10px",
-                      filter: "drop-shadow(1px 1px 2px #5d5d5d3e)",
-                    }}
+      {/* <Grid gutter="xxl">
+        <Grid.Col span={8}> */}
+      <Card
+        w="100%"
+        radius="md"
+        p="xl"
+        style={{ filter: "drop-shadow(1px 1px 2px #5d5d5dab)" }}
+      >
+        <Text fz="lg" c="black" fw={500} mb="xl">
+          Recent Activity
+        </Text>
+        <Stack gap="lg" pb="lg">
+          {recentActivites.map((data, i) => {
+            return (
+              <Card
+                key={i}
+                px="lg"
+                py="md"
+                style={{
+                  borderRadius: "10px",
+                  filter: "drop-shadow(1px 1px 2px #5d5d5d3e)",
+                }}
+              >
+                <Group justify="space-between">
+                  <Flex align="center" gap="xl">
+                    <Center
+                      h={50}
+                      w={50}
+                      bg={data.iconBgColor}
+                      style={{ borderRadius: "10px" }}
+                    >
+                      {data.icon}
+                    </Center>
+                    <Stack gap="xxs">
+                      <Text fz="xs" c="black" fw={500}>
+                        {data.title}
+                      </Text>
+                      <Text fz="12px">{data.subTitle}</Text>
+                    </Stack>
+                  </Flex>
+                  <Center
+                    px="md"
+                    bg={data.statusBgColor}
+                    style={{ borderRadius: "10px" }}
                   >
-                    <Group justify="space-between">
-                      <Flex align="center" gap="md">
-                        <Center
-                          h={50}
-                          w={50}
-                          bg={data.iconBgColor}
-                          style={{ borderRadius: "10px" }}
-                        >
-                          {data.icon}
-                        </Center>
-                        <Stack gap="xxs">
-                          <Text fz="xs" c="black" fw={500}>
-                            {data.title}
-                          </Text>
-                          <Text fz="12px">{data.subTitle}</Text>
-                        </Stack>
-                      </Flex>
-                      <Center
-                        px="md"
-                        bg={data.statusBgColor}
-                        style={{ borderRadius: "10px" }}
-                      >
-                        <Text fz="12px" c={data.statusColor}>
-                          {data.status}
-                        </Text>
-                      </Center>
-                    </Group>
-                  </Card>
-                );
-              })}
-            </Stack>
-          </Card>
-        </Grid.Col>
+                    <Text fz="12px" c={data.statusColor}>
+                      {data.status}
+                    </Text>
+                  </Center>
+                </Group>
+              </Card>
+            );
+          })}
+        </Stack>
+      </Card>
+      {/* </Grid.Col>
         <Grid.Col span={4}>
           <Card
             w="100%"
@@ -256,7 +256,7 @@ export default function VehicleOwnerDashboardSection() {
             </Stack>
           </Card>
         </Grid.Col>
-      </Grid>
+      </Grid> */}
     </Stack>
   );
 }

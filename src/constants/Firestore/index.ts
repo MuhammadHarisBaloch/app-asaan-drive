@@ -1,5 +1,6 @@
 export const firebaseConstants = {
   collections: {
-    users: "Users",
+    users: "users",
+    vehicles: "vehicles",
   },
 };
