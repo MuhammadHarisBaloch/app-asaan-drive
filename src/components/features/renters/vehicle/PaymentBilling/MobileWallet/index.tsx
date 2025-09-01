@@ -1,5 +1,5 @@
-import Images from "@/constants/Images";
-import { Box, Button, Center, Flex, Stack, TextInput } from "@mantine/core";
+import { data } from "@/constants/Data";
+import { Button, Center, Flex, Stack, TextInput } from "@mantine/core";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -8,52 +8,43 @@ interface MobileWalletProps {
 }
 export default function MobileWallet({ onClick }: MobileWalletProps) {
   const [selected, setSelected] = useState<string | null>(null);
-  const options = [
-    {
-      id: "jazzcash",
-      src: Images.paymentMethods.jazzcash,
-      alt: "jazzcash-logo",
-    },
-    {
-      id: "easypaisa",
-      src: Images.paymentMethods.easypaisa,
-      alt: "easypaisa-logo",
-    },
-  ];
+
   return (
     <Stack py="lg" gap="lg">
       <Flex gap="xl">
-        {options.map((option, index) => {
-          return (
-            <Center
-              key={index}
-              w="15%"
-              bg="white.2"
-              py="md"
-              onClick={() => {
-                setSelected(option.id);
-              }}
-              style={{
-                borderRadius: "10px",
-                filter: "drop-shadow(1px 1px 2px #63636333)",
-                border: selected == option.id ? "2px solid red" : "",
-                cursor: "pointer",
-              }}
-            >
-              <Image
-                src={option.src}
-                alt={option.alt}
-                height={100}
-                width={100}
-                sizes="100vw"
-                style={{
-                  width: "50%",
-                  height: "auto",
+        {data.renter.vehicle.paymentMethods.MobileWalletOption.map(
+          (option, index) => {
+            return (
+              <Center
+                key={index}
+                w="15%"
+                bg="white.2"
+                py="md"
+                onClick={() => {
+                  setSelected(option.id);
                 }}
-              />
-            </Center>
-          );
-        })}
+                style={{
+                  borderRadius: "10px",
+                  filter: "drop-shadow(1px 1px 2px #63636333)",
+                  border: selected == option.id ? "2px solid red" : "",
+                  cursor: "pointer",
+                }}
+              >
+                <Image
+                  src={option.src}
+                  alt={option.alt}
+                  height={100}
+                  width={100}
+                  sizes="100vw"
+                  style={{
+                    width: "50%",
+                    height: "auto",
+                  }}
+                />
+              </Center>
+            );
+          }
+        )}
       </Flex>
       <TextInput
         w="100%"

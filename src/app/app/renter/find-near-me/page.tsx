@@ -1,3 +1,4 @@
+import { data } from "@/constants/Data";
 import Images from "@/constants/Images";
 import {
   Button,
@@ -13,46 +14,6 @@ import {
 } from "@mantine/core";
 import { IconCurrentLocationFilled, IconSearch } from "@tabler/icons-react";
 import Image from "next/image";
-
-const NearestVehicles = [
-  {
-    image: Images.listedVehicles.cd70,
-    name: "Honda CD 70",
-    type: "Bike",
-    rent: "Rs. 500/Day",
-    avaibility: "Available",
-    tagColor: "cyan.0",
-    tagTextColor: "green",
-  },
-  {
-    image: Images.listedVehicles.cd125,
-    name: "Honda 125",
-    type: "Bike",
-    rent: "Rs. 1200/Day",
-    avaibility: "Not available",
-    tagColor: "pink.1",
-    tagTextColor: "red.4",
-  },
-  {
-    image: Images.listedVehicles.old125,
-    name: "Honda 125",
-    type: "Bike",
-    rent: "Rs. 800/Day",
-    avaibility: "Available",
-    tagColor: "cyan.0",
-    tagTextColor: "green",
-  },
-
-  {
-    image: Images.listedVehicles.rakshaw,
-    name: "Auto Rikshaw",
-    type: "Rikshaw",
-    rent: "Rs. 1500/Day",
-    avaibility: "Not available",
-    tagColor: "pink.1",
-    tagTextColor: "red.4",
-  },
-];
 
 export default function FindNearMePage() {
   return (
@@ -95,7 +56,7 @@ export default function FindNearMePage() {
             <Text fz="sm">Click ‘Locate me’ to find vehicles Near you</Text>
           </Stack>
           <Divider w="100%" />
-          {NearestVehicles.map((data, index) => {
+          {data.renter.findNearMe.nearestVehicle.map((data, index) => {
             return (
               <Stack key={index}>
                 <Flex p="md" justify="space-between">

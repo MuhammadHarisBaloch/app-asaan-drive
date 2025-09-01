@@ -35,6 +35,7 @@ import {
   IconCalendarEventFilled,
 } from "@tabler/icons-react";
 import Images from "../Images";
+import MobileWallet from "@/components/features/renters/vehicle/PaymentBilling/MobileWallet";
 interface FooterMenu {
   title: string;
   items: {
@@ -771,6 +772,57 @@ const PaymentSummary = [
   },
 ];
 
+const options = [
+  {
+    id: "jazzcash",
+    src: Images.paymentMethods.jazzcash,
+    alt: "jazzcash-logo",
+  },
+  {
+    id: "easypaisa",
+    src: Images.paymentMethods.easypaisa,
+    alt: "easypaisa-logo",
+  },
+];
+const NearestVehicles = [
+  {
+    image: Images.listedVehicles.cd70,
+    name: "Honda CD 70",
+    type: "Bike",
+    rent: "Rs. 500/Day",
+    avaibility: "Available",
+    tagColor: "cyan.0",
+    tagTextColor: "green",
+  },
+  {
+    image: Images.listedVehicles.cd125,
+    name: "Honda 125",
+    type: "Bike",
+    rent: "Rs. 1200/Day",
+    avaibility: "Not available",
+    tagColor: "pink.1",
+    tagTextColor: "red.4",
+  },
+  {
+    image: Images.listedVehicles.old125,
+    name: "Honda 125",
+    type: "Bike",
+    rent: "Rs. 800/Day",
+    avaibility: "Available",
+    tagColor: "cyan.0",
+    tagTextColor: "green",
+  },
+
+  {
+    image: Images.listedVehicles.rakshaw,
+    name: "Auto Rikshaw",
+    type: "Rikshaw",
+    rent: "Rs. 1500/Day",
+    avaibility: "Not available",
+    tagColor: "pink.1",
+    tagTextColor: "red.4",
+  },
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -797,10 +849,16 @@ export const data = {
       documentVerification: {
         notices: importantNoticeForDocument,
       },
+      paymentMethods: {
+        MobileWalletOption: options,
+      },
       bookingConfirmation: {
         paymentSummary: PaymentSummary,
         bookingTimeDetails: BookingTimeDetails,
       },
+    },
+    findNearMe: {
+      nearestVehicle: NearestVehicles,
     },
   },
   vehicleOwner: {
