@@ -32,6 +32,7 @@ import {
   IconCalendarWeek,
   IconCircleCheck,
   IconMotorbikeFilled,
+  IconCalendarEventFilled,
 } from "@tabler/icons-react";
 import Images from "../Images";
 interface FooterMenu {
@@ -727,6 +728,49 @@ const importantNoticeForDocument = [
 ];
 
 const vehicleTypes = ["Bike", "Cycle", "Rakshaw"];
+
+const BookingTimeDetails = [
+  {
+    icon: <IconCalendarEventFilled size={30} color="gray" />,
+    title: "Start Date",
+    subTitle: "Monday, August 25, 2025",
+  },
+  {
+    icon: <IconClock size={30} color="gray" />,
+    title: "Start Time",
+    subTitle: "09:00",
+  },
+  {
+    icon: <IconCalendarEventFilled size={30} color="gray" />,
+    title: "End Date",
+    subTitle: "Thursday, August 28, 2025",
+  },
+  {
+    icon: <IconClock size={30} color="gray" />,
+    title: "End Time",
+    subTitle: "09:00",
+  },
+];
+
+const PaymentSummary = [
+  {
+    title: "Daily Rate",
+    subTitle: "Rs. 1200/day",
+  },
+  {
+    title: "Duration",
+    subTitle: "3 days",
+  },
+  {
+    title: "Subtotal",
+    subTitle: "Rs. 3600",
+  },
+  {
+    title: "Security deposit (refundable)",
+    subTitle: "Rs. 1,000",
+  },
+];
+
 export const data = {
   footer: {
     menu: footerMenu,
@@ -753,9 +797,12 @@ export const data = {
       documentVerification: {
         notices: importantNoticeForDocument,
       },
+      bookingConfirmation: {
+        paymentSummary: PaymentSummary,
+        bookingTimeDetails: BookingTimeDetails,
+      },
     },
   },
-
   vehicleOwner: {
     vehicleRegistration: {
       vehicleTypes: vehicleTypes,
