@@ -6,7 +6,6 @@ import {
   Button,
   Card,
   Divider,
-  FileInput,
   Flex,
   Group,
   NumberInput,
@@ -22,6 +21,7 @@ import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconPhoto } from "@tabler/icons-react";
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { useDisclosure } from "@mantine/hooks";
 interface VehicleRegistrationForm {
   vehicleType: string;
   vehicleModel: string;
@@ -34,18 +34,21 @@ interface VehicleRegistrationForm {
 }
 
 export default function ListYourVehicle() {
+  const [loader, { open: startLoading, close: stopLoading }] =
+    useDisclosure(false);
   const formSubmitHandler = async (values: VehicleRegistrationForm) => {
     const vehicle = await createVehicleDocument(values);
+    stopLoading();
     if (vehicle) {
       notifications.show({
         title: "Vehicle listed successfully",
-        message: "You can now sign in with your credentials",
+        message: "",
       });
       return;
     }
     notifications.show({
       title: "Listing Failed",
-      message: "You can now sign in with your credentials",
+      message: "",
     });
   };
 
@@ -67,10 +70,11 @@ export default function ListYourVehicle() {
       vehicleYear: isNotEmpty("please enter vehicle year"),
       licensePlate: isNotEmpty("please enter license plate"),
       pickupLocation: isNotEmpty("please enter pickup location"),
-      dailyRate: (value) => (value > 0 ? "" : "please enter the daily rate"),
-      weeklyRate: (value) => (value > 0 ? "" : "please enter the weekly rate"),
+      dailyRate: (value) => (value <= 0 ? "please enter the daily rate" : null),
+      weeklyRate: (value) =>
+        value <= 0 ? "please enter the weekly rate" : null,
       monthlyRate: (value) =>
-        value > 0 ? "" : "please enter the monthly rate",
+        value <= 0 ? "please enter the monthly rate" : null,
     },
   });
 
@@ -89,7 +93,8 @@ export default function ListYourVehicle() {
       <Card w="100%" withBorder radius="lg">
         <form
           onSubmit={form.onSubmit((values) => {
-            // formSubmitHandler(values);
+            startLoading();
+            formSubmitHandler(values);
             console.log("Vehicle Registration form ", values);
           })}
         >
@@ -270,7 +275,9 @@ export default function ListYourVehicle() {
             <Divider w="100%" />
             <Group justify="space-between">
               <Box />
-              <Button type="submit">Submit Listing</Button>
+              <Button type="submit" loading={loader}>
+                Submit Listing
+              </Button>
             </Group>
           </Stack>
         </form>

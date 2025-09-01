@@ -16,7 +16,11 @@ import {
   Notification,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  User,
+} from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { auth } from "../../networking/firebase";
@@ -25,6 +29,7 @@ import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { signinUser } from "@/features/auth";
 import { getUserDocument } from "@/features/user";
+import { UserModel } from "@/features/user/models/user.model";
 interface SignInForm {
   userName: string;
   password: string;

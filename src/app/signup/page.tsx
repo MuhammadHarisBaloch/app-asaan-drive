@@ -22,7 +22,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signupUser } from "../../features/auth";
 import { createUserDocument } from "../../features/user";
-
+import { UserModel } from "@/features/user/models/user.model";
 interface SignUpForm {
   userType: string;
   fullName: string;
@@ -46,6 +46,7 @@ function SignupPage() {
         userType: values.userType,
       });
     }
+
     stopLoading();
     if (user) {
       notifications.show({
