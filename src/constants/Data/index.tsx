@@ -33,6 +33,7 @@ import {
   IconCircleCheck,
   IconMotorbikeFilled,
   IconCalendarEventFilled,
+  IconCar,
 } from "@tabler/icons-react";
 import Images from "../Images";
 import MobileWallet from "@/components/features/renters/vehicle/PaymentBilling/MobileWallet";
@@ -342,52 +343,6 @@ const emergencySteps = [
   "Instantly connects you with emergency responders",
   "Shares your real-time location automatically",
   "Notifies your emergency contacts",
-];
-
-const renterfeatureCard = [
-  {
-    icon: <IconShield size={25} color="blue" />,
-    title: "Verified & Safe",
-    subTitle:
-      "All vehicles and owners are thoroughly verified for your safety and peace of mind.",
-    iconBackgroundColor: "blue.0",
-  },
-  {
-    icon: <IconClockHour5 size={25} color="green" />,
-    title: "Instant Booking",
-    subTitle:
-      "Book any vehicle instantly and start your journey within minutes of confirmation.",
-    iconBackgroundColor: "green.0",
-  },
-  {
-    icon: <IconMapPin size={25} color="purple" />,
-    title: "Wide Coverage",
-    subTitle:
-      "Available in major cities across Pakistan with thousands of vehicles to choose from.",
-    iconBackgroundColor: "purple.0",
-  },
-];
-
-const quickTips = [
-  "Complete your profile with accurate information for better matches",
-  "Upload clear photos of your documents for quick verification",
-  "Use filters to find vehicles that match your exact needs",
-  "Read vehicle reviews and owner ratings before booking",
-];
-
-const quickLinks = [
-  {
-    name: "Visit Help Center",
-    link: "/help-center",
-  },
-  {
-    name: "Contact Support",
-    link: "/contact",
-  },
-  {
-    name: "How it Works",
-    link: "/how-it-works",
-  },
 ];
 
 const listedVehicles = [
@@ -823,6 +778,119 @@ const NearestVehicles = [
     tagTextColor: "red.4",
   },
 ];
+
+const DashFeatures = [
+  {
+    icon: <IconCar size={15} color="blue" />,
+    IconBackgroundColor: "blue.1",
+    title: "Active Rentals",
+    subTitle: "2",
+  },
+  {
+    icon: <IconCalendarEventFilled size={15} color="green" />,
+    IconBackgroundColor: "green.1",
+    title: "Upcoming Bookings",
+    subTitle: "4",
+  },
+  {
+    icon: <IconClock size={15} color="red" />,
+    IconBackgroundColor: "red.1",
+    title: "Pending Requests",
+    subTitle: "1",
+  },
+  {
+    icon: <IconCurrencyDollar size={15} color="purple" />,
+    IconBackgroundColor: "purple.0",
+    title: "Total Spent This Month",
+    subTitle: "Pkr 19,500",
+  },
+];
+
+const RecentBookings = [
+  {
+    vehicleImage: Images.listedVehicles.cd70,
+    vehicleName: "Honda CD 70",
+    rentingDuration: "Oct 12, 2024 - Oct 15, 2024",
+    status: "Active",
+    statusColor: "green",
+    statusBgColor: "green.1",
+    price: "Pkr 3,000",
+  },
+  {
+    vehicleImage: Images.listedVehicles.cd125,
+    vehicleName: "Honda CD 125",
+    rentingDuration: "Oct 10, 2024 - Oct 11, 2024",
+    status: "Confirmed",
+    statusColor: "blue",
+    statusBgColor: "blue.1",
+    price: "Pkr 1,500",
+  },
+  {
+    vehicleImage: Images.listedVehicles.rakshaw,
+    vehicleName: "Rakshaw",
+    rentingDuration: "Oct 1, 2024 - Oct 15, 2024",
+    status: "Pending",
+    statusColor: "red",
+    statusBgColor: "red.1",
+    price: "Pkr 15,000",
+  },
+];
+
+const headerColumns = [
+  { label: "Vehicle", flex: 2, align: "left" as const },
+  { label: "Pickup Date", flex: 1, align: "center" as const },
+  { label: "Return Date", flex: 1, align: "center" as const },
+  { label: "Status", flex: 1, align: "center" as const },
+  { label: "Price", flex: 1, align: "right" as const },
+];
+
+const BookingFeaturesData = [
+  {
+    vehicleImage: Images.listedVehicles.cd70,
+    vehicleName: "Honda CD 70",
+    vehicleType: "bike",
+    pickupDate: "2024-10-02",
+    returnDate: "2024-10-03",
+    status: "Available",
+    statusColor: "blue",
+    statusBgColor: "blue.1",
+    price: "1000",
+  },
+  {
+    vehicleImage: Images.listedVehicles.cd125,
+    vehicleName: "Honda CD 125",
+    vehicleType: "bike",
+    pickupDate: "2024-12-05",
+    returnDate: "2024-10-07",
+    status: "Confirmed",
+    statusColor: "green",
+    statusBgColor: "green.1",
+    price: "2600",
+  },
+  {
+    vehicleImage: Images.listedVehicles.cycle,
+    vehicleName: "Mountain Cycle",
+    vehicleType: "cycle",
+    pickupDate: "2024-08-25",
+    returnDate: "2024-10-30",
+    status: "Pending",
+    statusColor: "red",
+    statusBgColor: "red.1",
+    price: "2500",
+  },
+  {
+    vehicleImage: Images.listedVehicles.rakshaw,
+    vehicleName: "CNG Rakshaw",
+    vehicleType: "Rakshaw",
+    pickupDate: "2024-08-01",
+    returnDate: "2024-10-10",
+    status: "Completed",
+    statusColor: "black",
+    statusBgColor: "gray.1",
+    price: "8000",
+  },
+];
+
 export const data = {
   footer: {
     menu: footerMenu,
@@ -831,9 +899,14 @@ export const data = {
     usageSteps: renterUsageSteps,
     inlistVehicles: listedVehicles,
     dashboard: {
-      featureCard: renterfeatureCard,
-      quickTips: quickTips,
-      quickLinks: quickLinks,
+      overView: {
+        RecentBookings: RecentBookings,
+        DashFeatures: DashFeatures,
+      },
+      myBookings: {
+        BookingFeaturesData: BookingFeaturesData,
+        headerColumns: headerColumns,
+      },
     },
     vehicle: {
       vehicleDetails: {
