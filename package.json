@@ -16,7 +16,7 @@
     "@mantine/dropzone": "^8.2.8",
     "@mantine/form": "^8.0.2",
     "@mantine/hooks": "^8.0.2",
-    "@mantine/modals": "^8.0.2",
+    "@mantine/modals": "^8.2.8",
     "@mantine/notifications": "^8.1.2",
     "@tabler/icons-react": "^3.33.0",
     "dayjs": "^1.11.13",

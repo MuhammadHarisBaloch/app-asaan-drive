@@ -8,6 +8,7 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 import BaseLayout from "@/components/layouts/BaseLayout";
 import theme from "@/styles/theme";
 import "./global.styles.css";
@@ -43,7 +44,9 @@ export default function RootLayout({
       <body>
         <MantineProvider theme={theme}>
           <Notifications />
-          <BaseLayout>{children}</BaseLayout>
+          <ModalsProvider>
+            <BaseLayout>{children}</BaseLayout>
+          </ModalsProvider>
         </MantineProvider>
       </body>
     </html>

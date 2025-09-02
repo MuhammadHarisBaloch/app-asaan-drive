@@ -9,6 +9,7 @@ import {
   Text,
 } from "@mantine/core";
 import {
+  IconAlertTriangle,
   IconCalendarEventFilled,
   IconCar,
   IconClock,
@@ -19,6 +20,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getUserDocument } from "../../../../features/user";
 import { UserModel } from "../../../../features/user/models/user.model";
+import EmergencyModal from "../EmergencyModal";
 
 const DashFeatures = [
   {
@@ -95,12 +97,26 @@ export default function DashboardSection() {
 
   return (
     <Stack p="lg" gap="xl">
-      <Stack gap={0}>
-        <Text fz="xl" c="black" fw={600}>
-          Welcome {user?.fullName ?? ""}!
-        </Text>
-        <Text fz="12px">Here's what's happening with your rentals</Text>
-      </Stack>
+      <Group justify="space-between">
+        <Stack gap={0}>
+          <Text fz="xl" c="black" fw={600}>
+            Welcome {user?.fullName ?? ""}!
+          </Text>
+          <Text fz="12px">Here's what's happening with your rentals</Text>
+        </Stack>
+        <Center
+          className="blink_me hover-pointer"
+          h={60}
+          w={60}
+          bg="red.4"
+          style={{ borderRadius: "50%" }}
+          onClick={() => {
+            EmergencyModal();
+          }}
+        >
+          <IconAlertTriangle size={30} color="white" />
+        </Center>
+      </Group>
       <SimpleGrid cols={4} spacing="lg">
         {DashFeatures.map((data, index) => {
           return (
