@@ -34,6 +34,7 @@ import {
   IconMotorbikeFilled,
   IconCalendarEventFilled,
   IconCar,
+  IconWallet,
 } from "@tabler/icons-react";
 import Images from "../Images";
 import MobileWallet from "@/components/features/renters/vehicle/PaymentBilling/MobileWallet";
@@ -374,26 +375,7 @@ const listedVehicles = [
     location: "Karachi ,Sindh",
   },
 ];
-const featureCardList = [
-  {
-    icon: <IconCurrencyDollar size={25} color="green" />,
-    title: "Rs. 15,000+",
-    subTitle: "Average monthly earnings",
-    iconBackgroundColor: "green.0",
-  },
-  {
-    icon: <IconUsers size={25} color="blue" />,
-    title: "50,000+",
-    subTitle: "Active renters",
-    iconBackgroundColor: "blue.0",
-  },
-  {
-    icon: <IconStar size={25} color="orange" />,
-    title: "4.8/5",
-    subTitle: "Average owner rating",
-    iconBackgroundColor: "orange.0",
-  },
-];
+
 const contactInfoList = [
   {
     icon: <IconMail size={25} color="red" />,
@@ -891,6 +873,123 @@ const BookingFeaturesData = [
   },
 ];
 
+const ownerFeatures = [
+  {
+    icon: <IconCar size={30} color="blue" />,
+    iconBgColor: "blue.1",
+    title: "12",
+    subTitle: "Total Vehicles",
+    description: "+2 this month",
+  },
+  {
+    icon: <IconCalendarEventFilled size={30} color="green" />,
+    iconBgColor: "green.1",
+    title: "8",
+    subTitle: "Active Bookings",
+    description: "3 pending approval",
+  },
+  {
+    icon: <IconCurrencyDollar size={30} color="orange" />,
+    iconBgColor: "orange.0",
+    title: "pkr 45,250",
+    subTitle: "Total Earnings",
+    description: "+12% from last month",
+  },
+  {
+    icon: <IconWallet size={30} color="purple" />,
+    iconBgColor: "purple.0",
+    title: "pkr 12,800",
+    subTitle: "Wallet Balance",
+    description: "Available for withdrawal",
+  },
+];
+
+const recentActivites = [
+  {
+    icon: <IconCalendarEventFilled size={25} color="orange" />,
+    iconBgColor: "orange.0",
+    title: "New booking request for Honda Civic",
+    subTitle: "5 min ago",
+    status: "pending",
+    statusBgColor: "orange.0",
+    statusColor: "orange.5",
+  },
+  {
+    icon: <IconCurrencyDollar size={25} color="green" />,
+    iconBgColor: "green.1",
+    title: "Payment received - PKR 3,500",
+    subTitle: "1 hour ago",
+    status: "success",
+    statusBgColor: "green.0",
+    statusColor: "green",
+  },
+  {
+    icon: <IconCar size={25} color="red" />,
+    iconBgColor: "red.0",
+    title: "Toyota Corolla - Maintenance reminder",
+    subTitle: "2 hours ago",
+    status: "warning",
+    statusBgColor: "red.0",
+    statusColor: "red.4",
+  },
+  {
+    icon: <IconCalendarEventFilled size={25} color="blue" />,
+    iconBgColor: "blue.1",
+    title: "Booking completed - Suzuki Alto",
+    subTitle: "3 hours ago",
+    status: "completed",
+    statusBgColor: "blue.1",
+    statusColor: "blue",
+  },
+];
+
+const ownerListedVehicles = [
+  {
+    image: Images.listedVehicles.cd125,
+    name: "Honda CD 125",
+    license: "KHI-123",
+    location: "Karachi",
+    price: "1200",
+    totalBookings: "12",
+    status: "Available",
+    statusBgColor: "green.1",
+    statusColor: "green",
+  },
+  {
+    image: Images.listedVehicles.cycle,
+    name: "Mountain Cycle",
+    license: "HAT-123",
+    location: "Hyderabad",
+    price: "500",
+    totalBookings: "3",
+    status: "Booked",
+    statusBgColor: "blue.1",
+    statusColor: "blue",
+  },
+  {
+    image: Images.listedVehicles.rakshaw,
+    name: "CNG Rakshaw",
+    license: "LAC-765",
+    location: "Larkana",
+    price: "1500",
+    totalBookings: "19",
+    status: "Available",
+    statusBgColor: "green.1",
+    statusColor: "green",
+  },
+  {
+    image: Images.listedVehicles.cd70,
+    name: "Honda CD 70",
+    license: "KHI-223",
+    location: "Karachi",
+    price: "800",
+    totalBookings: "32",
+    status: "Booked",
+    statusBgColor: "blue.1",
+    statusColor: "blue",
+  },
+];
+
 export const data = {
   footer: {
     menu: footerMenu,
@@ -940,7 +1039,13 @@ export const data = {
     },
     usageSteps: vehicleOwnerUsageSteps,
     dashboard: {
-      featureCard: featureCardList,
+      overviewSection: {
+        recentActivites: recentActivites,
+        ownerFeatures: ownerFeatures,
+      },
+      VehicleManagement: {
+        ownerListedVehicles: ownerListedVehicles,
+      },
     },
   },
   home: {
