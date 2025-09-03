@@ -10,6 +10,7 @@ import {
 } from "@mantine/core";
 import {
   IconAlertTriangle,
+  IconArrowRight,
   IconCalendarEventFilled,
   IconCar,
   IconClock,
@@ -48,18 +49,24 @@ export default function DashboardSection() {
           </Text>
           <Text fz="12px">Here's what's happening with your rentals</Text>
         </Stack>
-        <Center
-          className="blink_me hover-pointer"
-          h={60}
-          w={60}
-          bg="red.4"
-          style={{ borderRadius: "50%" }}
-          onClick={() => {
-            EmergencyModal();
-          }}
-        >
-          <IconAlertTriangle size={30} color="white" />
-        </Center>
+        <Flex align="center" gap="lg">
+          <Text fz="lg" c="red.4" fw={600}>
+            For Any Emergency
+          </Text>
+          <IconArrowRight size={25} color="red" />
+          <Center
+            className="hover-pointer"
+            h={60}
+            w={60}
+            bg="red.4"
+            style={{ borderRadius: "50%" }}
+            onClick={() => {
+              EmergencyModal();
+            }}
+          >
+            <IconAlertTriangle size={30} color="white" />
+          </Center>
+        </Flex>
       </Group>
       <SimpleGrid cols={4} spacing="lg">
         {data.renter.dashboard.overView.DashFeatures.map((data, index) => {

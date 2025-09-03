@@ -1,3 +1,4 @@
+"use client";
 import ListedVehicleCard from "@/components/features/renters/ListedVehicleCard";
 import { data } from "@/constants/Data";
 import {
@@ -11,8 +12,13 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { useState } from "react";
+
+const VehicleType = ["All", "Bikes", "Cycles", "Rikshaws"];
 
 export default function BrowseVehicle() {
+  const [selectedVehicle, setSelectedVehicle] = useState<string>("All");
+
   return (
     <Stack align="center" px="lg" py="3xl" gap="3xl">
       <Stack gap="xs" align="center">
@@ -40,16 +46,21 @@ export default function BrowseVehicle() {
               Vehicle type
             </Text>
             <Flex gap="md">
-              <Button fz="xs">All</Button>
-              <Button variant="outline" color="gray.8" fz="xs">
-                Bikes
-              </Button>
-              <Button variant="outline" color="gray.8" fz="xs">
-                Cycles
-              </Button>
-              <Button variant="outline" color="gray.8" fz="xs">
-                Riskshaws
-              </Button>
+              {VehicleType.map((data, i) => {
+                return (
+                  <Button
+                    key={i}
+                    fz="xs"
+                    variant={selectedVehicle == data ? "filled" : "outline"}
+                    color={selectedVehicle == data ? "red.4" : "gray.8"}
+                    onClick={() => {
+                      setSelectedVehicle(data);
+                    }}
+                  >
+                    {data}
+                  </Button>
+                );
+              })}
             </Flex>
           </Stack>
           <Stack w="15%">
