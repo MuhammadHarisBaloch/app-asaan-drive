@@ -1,6 +1,7 @@
 "use client";
 import DashboardSection from "@/components/features/renters/dashboard";
 import BookingsSection from "@/components/features/renters/dashboard/Bookings";
+import TrackingSection from "@/components/features/renters/dashboard/Trackings";
 import SideBar from "@/components/features/SideBar/inde";
 import { Grid, GridCol } from "@mantine/core";
 import {
@@ -9,12 +10,14 @@ import {
   IconCreditCard,
   IconBell,
   IconUser,
+  IconMapPin,
 } from "@tabler/icons-react";
 import { useState } from "react";
 
 const data = [
   { label: "Dashboard", icon: IconLayoutDashboard },
   { label: "My Bookings", icon: IconCalendarEventFilled },
+  { label: "Track My Ride", icon: IconMapPin },
   { label: "Payments", icon: IconCreditCard },
   { label: "Notifications", icon: IconBell },
   { label: "Profile", icon: IconUser },
@@ -35,7 +38,8 @@ export default function RenterPage() {
       <GridCol span={9.5}>
         {active === "Dashboard" && <DashboardSection />}
         {active === "My Bookings" && <BookingsSection />}
-        {active === "Payments" && <h1>Payments Content</h1>}
+        {active === "Track My Ride" && <TrackingSection />}
+        {active === "Payments" && <h1>Payments</h1>}
         {active === "Notifications" && <h1>Notifications Content</h1>}
         {active === "Profile" && <h1>Profile Content</h1>}
       </GridCol>

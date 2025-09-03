@@ -1,6 +1,5 @@
 import { Stack, FileInput, Text, Group, Button } from "@mantine/core";
 import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
-import DocInputBody from "./DocInputBody";
 import { Dropzone, IMAGE_MIME_TYPE, DropzoneProps } from "@mantine/dropzone";
 
 export default function DocInputSection() {
