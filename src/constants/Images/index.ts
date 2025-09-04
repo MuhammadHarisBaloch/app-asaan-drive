@@ -23,6 +23,9 @@ const Images = {
     pickupLocationMap: "/images/map/pickup-location-map.png",
     findNearMeMap: "/images/map/find-near-me-map.png",
   },
+  ProfilePicturs: {
+    OwnerProfilePicture: "/images/profilePicture/owner-profile-picture.png",
+  },
 };
 
 export default Images;

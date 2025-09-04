@@ -2,6 +2,7 @@ import { Stack, Card, Text, Input, Flex, Button } from "@mantine/core";
 import { IconCar, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import TrackingCard from "./TrackingCard";
+import BookedTrackingSection from "./BookedTrackingSection";
 
 export default function TrackingSection() {
   const [trackingId, setTrackingId] = useState<string>("");
@@ -19,15 +20,7 @@ export default function TrackingSection() {
       );
     }
     if (trackingId === demoId) {
-      return (
-        <TrackingCard
-          icon={<IconCar size={60} color="gray" />}
-          title="Booking Found Successfully"
-          subTitle=" No tracking information found for booking ID: "
-          description="Please check your booking ID and try again"
-          trackingId={trackingId}
-        />
-      );
+      return <BookedTrackingSection />;
     }
     return (
       <TrackingCard
