@@ -20,7 +20,7 @@ import { YearPickerInput } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconPhoto } from "@tabler/icons-react";
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useDisclosure } from "@mantine/hooks";
 interface VehicleRegistrationForm {
   vehicleType: string;
@@ -96,6 +96,7 @@ export default function ListYourVehicle() {
             startLoading();
             formSubmitHandler(values);
             console.log("Vehicle Registration form ", values);
+            form.reset();
           })}
         >
           <Stack p="xxl" gap="3xl">
