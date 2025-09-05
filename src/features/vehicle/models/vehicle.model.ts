@@ -7,4 +7,7 @@ export interface VehicleModel {
   dailyRate: number;
   weeklyRate: number;
   monthlyRate: number;
+  ownerID: string;
+  vehiclePhotos: string[];
+  vehicleDocs: string[];
 }

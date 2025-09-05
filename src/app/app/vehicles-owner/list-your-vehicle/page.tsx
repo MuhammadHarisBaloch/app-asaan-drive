@@ -1,6 +1,5 @@
 "use client";
 import { data } from "@/constants/Data";
-import { createVehicleDocument } from "@/features/vehicle";
 import {
   Box,
   Button,
@@ -17,11 +16,17 @@ import {
   Title,
 } from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
+import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { isNotEmpty, useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
-import { IconPhoto } from "@tabler/icons-react";
-import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useDisclosure } from "@mantine/hooks";
+import { IconPhoto } from "@tabler/icons-react";
+import { useState } from "react";
+import DropzoneImagePreview from "../../../../components/features/core/dropzone-image-preview";
+import StorageService from "../../../../features/storage";
+import { createVehicleDocument } from "../../../../features/vehicle";
+import { notifications } from "@mantine/notifications";
+import { getAuth } from "firebase/auth";
+
 interface VehicleRegistrationForm {
   vehicleType: string;
   vehicleModel: string;
@@ -34,10 +39,31 @@ interface VehicleRegistrationForm {
 }
 
 export default function ListYourVehicle() {
+  const [vehiclePhotos, setVehiclePhotos] = useState<FileWithPath[]>([]);
+  const [vehicleDocs, setVehicleDocs] = useState<FileWithPath[]>([]);
   const [loader, { open: startLoading, close: stopLoading }] =
     useDisclosure(false);
+
   const formSubmitHandler = async (values: VehicleRegistrationForm) => {
-    const vehicle = await createVehicleDocument(values);
+    const ownerID = getAuth().currentUser?.uid;
+    if (!ownerID) {
+      notifications.show({
+        title: "User not authenticated",
+        message: "Please log in to list your vehicle.",
+      });
+      return;
+    }
+    startLoading();
+    const uploadedFileIds = await Promise.all(
+      vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
+    );
+    console.log("Uploaded file IDs: ", uploadedFileIds);
+    const vehicle = await createVehicleDocument({
+      ...values,
+      ownerID,
+      vehiclePhotos: uploadedFileIds,
+      vehicleDocs: [],
+    });
     stopLoading();
     if (vehicle) {
       notifications.show({
@@ -93,7 +119,6 @@ export default function ListYourVehicle() {
       <Card w="100%" withBorder radius="lg">
         <form
           onSubmit={form.onSubmit((values) => {
-            startLoading();
             formSubmitHandler(values);
             console.log("Vehicle Registration form ", values);
             form.reset();
@@ -191,8 +216,10 @@ export default function ListYourVehicle() {
                 Vehicle Photos
               </Text>
               <Dropzone
-                onDrop={(files) => console.log("accepted files", files)}
-                onReject={(files) => console.log("rejected files", files)}
+                onDrop={setVehiclePhotos}
+                onReject={(files) =>
+                  console.log("rejected files", files[0].file.name)
+                }
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
               >
@@ -217,6 +244,7 @@ export default function ListYourVehicle() {
                   </div>
                 </Stack>
               </Dropzone>
+              <DropzoneImagePreview images={vehiclePhotos} />
             </Stack>
             <Divider w="100%" />
             <Stack gap="xl">
@@ -230,7 +258,7 @@ export default function ListYourVehicle() {
                 </Text>
               </Stack>
               <Dropzone
-                onDrop={(files) => console.log("accepted files", files)}
+                onDrop={setVehicleDocs}
                 onReject={(files) => console.log("rejected files", files)}
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
@@ -259,6 +287,7 @@ export default function ListYourVehicle() {
                   </div>
                 </Stack>
               </Dropzone>
+              <DropzoneImagePreview images={vehicleDocs} />
             </Stack>
             <Divider w="100%" />
             <Stack gap="xl">
