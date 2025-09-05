@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     appId: process.env.appId,
     developer: process.env.developer,
   },
+  images: {
+    domains: ["nyc.cloud.appwrite.io"],
+  },
 };
 
 export default nextConfig;

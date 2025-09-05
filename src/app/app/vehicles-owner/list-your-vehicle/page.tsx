@@ -19,13 +19,13 @@ import { YearPickerInput } from "@mantine/dates";
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { IconPhoto } from "@tabler/icons-react";
+import { getAuth } from "firebase/auth";
 import { useState } from "react";
 import DropzoneImagePreview from "../../../../components/features/core/dropzone-image-preview";
 import StorageService from "../../../../features/storage";
 import { createVehicleDocument } from "../../../../features/vehicle";
-import { notifications } from "@mantine/notifications";
-import { getAuth } from "firebase/auth";
 
 interface VehicleRegistrationForm {
   vehicleType: string;
@@ -57,11 +57,14 @@ export default function ListYourVehicle() {
     const uploadedFileIds = await Promise.all(
       vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
     );
+    const uploadedFileUrls = await Promise.all(
+      uploadedFileIds.map((id) => StorageService.shared.downloadFile(id))
+    );
     console.log("Uploaded file IDs: ", uploadedFileIds);
     const vehicle = await createVehicleDocument({
       ...values,
       ownerID,
-      vehiclePhotos: uploadedFileIds,
+      vehiclePhotos: uploadedFileUrls,
       vehicleDocs: [],
     });
     stopLoading();
