@@ -26,6 +26,7 @@ import { useState } from "react";
 import DropzoneImagePreview from "../../../../components/features/core/dropzone-image-preview";
 import StorageService from "../../../../features/storage";
 import { createVehicleDocument } from "../../../../features/vehicle";
+import { useRouter } from "next/navigation";
 
 interface VehicleRegistrationForm {
   vehicleType: string;
@@ -43,6 +44,7 @@ export default function ListYourVehicle() {
   const [vehicleDocs, setVehicleDocs] = useState<FileWithPath[]>([]);
   const [loader, { open: startLoading, close: stopLoading }] =
     useDisclosure(false);
+  const router = useRouter();
 
   const formSubmitHandler = async (values: VehicleRegistrationForm) => {
     const ownerID = getAuth().currentUser?.uid;
@@ -54,20 +56,28 @@ export default function ListYourVehicle() {
       return;
     }
     startLoading();
-    const uploadedFileIds = await Promise.all(
+    const uploadedPhotoIds = await Promise.all(
       vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
     );
-    const uploadedFileUrls = await Promise.all(
-      uploadedFileIds.map((id) => StorageService.shared.downloadFile(id))
+    const uploadedPhotoUrls = await Promise.all(
+      uploadedPhotoIds.map((id) => StorageService.shared.downloadFile(id))
     );
-    console.log("Uploaded file IDs: ", uploadedFileIds);
+    console.log("Uploaded Photo IDs: ", uploadedPhotoIds);
+    const uploadedDocIds = await Promise.all(
+      vehicleDocs.map((file) => StorageService.shared.uploadFile(file))
+    );
+    const uploadedDocUrls = await Promise.all(
+      uploadedDocIds.map((id) => StorageService.shared.downloadFile(id))
+    );
+    console.log("Uploaded Doc IDs: ", uploadedDocIds);
     const vehicle = await createVehicleDocument({
       ...values,
       ownerID,
-      vehiclePhotos: uploadedFileUrls,
-      vehicleDocs: [],
+      vehiclePhotos: uploadedPhotoUrls,
+      vehicleDocs: uploadedDocUrls,
     });
     stopLoading();
+    router.push(`/app/vehicles-owner`);
     if (vehicle) {
       notifications.show({
         title: "Vehicle listed successfully",

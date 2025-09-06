@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  Title,
 } from "@mantine/core";
 import { IconEdit, IconMapPin, IconTrashX } from "@tabler/icons-react";
 import { getAuth } from "firebase/auth";
@@ -65,7 +66,7 @@ export default function VehicleManagementSection() {
                     sizes="100vw"
                     style={{
                       width: "100%",
-                      height: "auto",
+                      height: "12rem",
                     }}
                   />
                 )}
@@ -73,14 +74,14 @@ export default function VehicleManagementSection() {
               <Stack pt="xs" align="center" w="100%">
                 <Group w="100%" align="flex-start" justify="space-between">
                   <Stack gap="xs">
-                    <Text fz="md" c="black" fw={600} lh={0.8}>
+                    <Text fz="md" c="black" fw={600} lh={1.2}>
                       {data.vehicleModel}
                     </Text>
                     <Text fz="xs">{data.licensePlate}</Text>
                   </Stack>
-                  <Box bg={"red"} px="md" style={{ borderRadius: "10px" }}>
-                    <Text fz="12px" c={"red"}>
-                      red
+                  <Box bg={"green.1"} px="md" style={{ borderRadius: "10px" }}>
+                    <Text fz="12px" c={"green"}>
+                      Available
                     </Text>
                   </Box>
                 </Group>
