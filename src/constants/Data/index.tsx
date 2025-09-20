@@ -35,6 +35,8 @@ import {
   IconCalendarEventFilled,
   IconCar,
   IconWallet,
+  IconTrendingUp,
+  IconDeviceMobile,
 } from "@tabler/icons-react";
 import Images from "../Images";
 import MobileWallet from "@/components/features/renters/vehicle/PaymentBilling/MobileWallet";
@@ -989,6 +991,83 @@ const ownerListedVehicles = [
     statusColor: "blue",
   },
 ];
+const monthlySalesChart = [
+  { month: "January", Sales: 1200 },
+  { month: "February", Sales: 1900 },
+  { month: "March", Sales: 400 },
+  { month: "April", Sales: 1000 },
+  { month: "May", Sales: 400 },
+  { month: "June", Sales: 750 },
+  { month: "July", Sales: 750 },
+  { month: "August", Sales: 750 },
+  { month: "September", Sales: 1500 },
+  { month: "October", Sales: 2000 },
+  { month: "November", Sales: 1000 },
+  { month: "December", Sales: 1800 },
+];
+
+const paymentCard = [
+  {
+    icon: <IconTrendingUp size={25} color="green" />,
+    iconBg: "green.0",
+    title: "This Month",
+    subTitle: "18,750",
+    description: "+23% from last month",
+    descriptionColor: "green.6",
+  },
+  {
+    icon: <IconClock size={25} color="orange" />,
+    iconBg: "orange.1",
+    title: "Pending Payouts",
+    subTitle: "5,200",
+    description: "2 transactions pending",
+    descriptionColor: "orange.3",
+  },
+];
+
+const recentTransactionHistory = [
+  {
+    title: "Honda Civic booking - Ali Hassan",
+    subTitle: "Jan 14, 2025",
+    paymentAmount: 3500,
+    status: "completed",
+  },
+  {
+    title: "Withdrawal to JazzCash",
+    subTitle: "Jan 12, 2025",
+    paymentAmount: -1500,
+    status: "completed",
+  },
+  {
+    title: "Toyota Corolla booking - Sarah Ahmed",
+    subTitle: "Jan 10, 2025",
+    paymentAmount: 2800,
+    status: "completed",
+  },
+  {
+    title: "Honda City booking - Muhammad Usman",
+    subTitle: "Jan 8, 2025",
+    paymentAmount: 4200,
+    status: "pending",
+  },
+];
+const cashWithdrawPaymentMethods = [
+  {
+    icon: <IconDeviceMobile size={20} color="orange" />,
+    iconBg: "orange.0",
+    method: "JazzCash",
+  },
+  {
+    icon: <IconDeviceMobile size={20} color="green" />,
+    iconBg: "green.1",
+    method: "Easypaisa",
+  },
+  {
+    icon: <IconDeviceMobile size={20} color="blue" />,
+    iconBg: "blue.0",
+    method: "Bank Transfer",
+  },
+];
 
 export const data = {
   footer: {
@@ -1045,6 +1124,12 @@ export const data = {
       },
       VehicleManagement: {
         ownerListedVehicles: ownerListedVehicles,
+      },
+      EarningAndPayout: {
+        recentTransactionHistory: recentTransactionHistory,
+        paymentCard: paymentCard,
+        monthlySalesChart: monthlySalesChart,
+        cashWithdrawPaymentMethods: cashWithdrawPaymentMethods,
       },
     },
   },
