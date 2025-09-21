@@ -37,6 +37,8 @@ import {
   IconWallet,
   IconTrendingUp,
   IconDeviceMobile,
+  IconAlertTriangle,
+  IconBell,
 } from "@tabler/icons-react";
 import Images from "../Images";
 import MobileWallet from "@/components/features/renters/vehicle/PaymentBilling/MobileWallet";
@@ -1069,6 +1071,44 @@ const cashWithdrawPaymentMethods = [
   },
 ];
 
+const recentNotifications = [
+  {
+    icon: <IconBell size={20} color="blue" />,
+    iconBg: "blue.0",
+    title: "New Booking Request",
+    subTitle: "Ali Hassan wants to book your Honda Civic for Jan 15-18",
+    time: "5 minutes ago",
+    priority: "high",
+    recentBookingRequest: true,
+  },
+  {
+    icon: <IconCurrencyDollar size={20} color="green" />,
+    iconBg: "green.0",
+    title: "Payment Received",
+    subTitle: "PKR 3,500 received from Sarah Ahmed for Toyota Corolla booking",
+    time: "1 hour ago",
+    priority: "medium",
+    recentBookingRequest: false,
+  },
+  {
+    icon: <IconAlertTriangle size={20} color="orange" />,
+    iconBg: "orange.0",
+    title: "Maintenance Alert",
+    subTitle: "Suzuki Alto requires scheduled maintenance check",
+    time: "2 hours ago",
+    priority: "low",
+    recentBookingRequest: false,
+  },
+  {
+    icon: <IconRosetteDiscountCheck size={20} color="blue" />,
+    iconBg: "blue.0",
+    title: "Booking Approved",
+    subTitle: "Your approval for Muhammad Usman's booking has been confirmed",
+    time: "6 hour ago",
+    priority: "medium",
+    recentBookingRequest: false,
+  },
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -1130,6 +1170,9 @@ export const data = {
         paymentCard: paymentCard,
         monthlySalesChart: monthlySalesChart,
         cashWithdrawPaymentMethods: cashWithdrawPaymentMethods,
+      },
+      notificationSection: {
+        recentNotifications: recentNotifications,
       },
     },
   },
