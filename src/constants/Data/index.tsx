@@ -1123,8 +1123,8 @@ const DocCards = [
     documentType: "Driving License",
     status: "pending",
     statusIcon: <IconClock size={20} color="orange" />,
-    uploadedDate: "Uploaded: Dec 10, 2024",
-    expiresDate: "Expires: Aug 22, 2027",
+    uploadedDate: "Dec 10, 2024",
+    expiresDate: "Aug 22, 2027",
   },
   {
     documentType: "Vehicle Insurance",
@@ -1132,6 +1132,28 @@ const DocCards = [
     statusIcon: <IconCircleX size={20} color="red" />,
     uploadedDate: "Dec 15, 2014",
     expiresDate: " Dec 15, 2024",
+  },
+];
+const tabList = [
+  {
+    value: "Upcoming",
+    icon: <IconClock size={20} />,
+    notificationValue: 2,
+  },
+  {
+    value: "Ongoing",
+    icon: <IconCalendarEventFilled size={20} />,
+    notificationValue: 1,
+  },
+  {
+    value: "Completed",
+    icon: <IconCircleCheck size={20} />,
+    notificationValue: 2,
+  },
+  {
+    value: "Cancelled",
+    icon: <IconCircleX size={20} />,
+    notificationValue: 1,
   },
 ];
 export const data = {
@@ -1186,6 +1208,9 @@ export const data = {
       overviewSection: {
         recentActivites: recentActivites,
         ownerFeatures: ownerFeatures,
+      },
+      BookingManagement: {
+        tabList: tabList,
       },
       VehicleManagement: {
         ownerListedVehicles: ownerListedVehicles,

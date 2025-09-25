@@ -1,44 +1,8 @@
-import {
-  Badge,
-  Card,
-  Center,
-  Divider,
-  Flex,
-  Stack,
-  Tabs,
-  Text,
-} from "@mantine/core";
-import {
-  IconCalendarEventFilled,
-  IconClock,
-  IconCircleCheck,
-  IconCircleX,
-} from "@tabler/icons-react";
+import { Badge, Card, Divider, Flex, Stack, Tabs, Text } from "@mantine/core";
 import { useState } from "react";
 import BookingRequestCard from "./BookingRequestCard";
+import { data } from "@/constants/Data";
 
-const tabList = [
-  {
-    value: "Upcoming",
-    icon: <IconClock size={20} />,
-    notificationValue: 2,
-  },
-  {
-    value: "Ongoing",
-    icon: <IconCalendarEventFilled size={20} />,
-    notificationValue: 1,
-  },
-  {
-    value: "Completed",
-    icon: <IconCircleCheck size={20} />,
-    notificationValue: 2,
-  },
-  {
-    value: "Cancelled",
-    icon: <IconCircleX size={20} />,
-    notificationValue: 1,
-  },
-];
 export default function BookingManagementSection() {
   const [value, setValue] = useState<string | null>("Upcoming");
   return (
@@ -56,19 +20,21 @@ export default function BookingManagementSection() {
       >
         <Tabs variant="none" value={value} onChange={setValue}>
           <Tabs.List grow className="list">
-            {tabList.map((data, index) => {
-              return (
-                <Tabs.Tab key={index} value={data.value} className="tab">
-                  <Flex align="center" justify="center" gap="sm">
-                    {data.icon}
-                    {data.value}
-                    <Badge size="lg" fw={500} color="gray.1" c="gray" circle>
-                      {data.notificationValue}
-                    </Badge>
-                  </Flex>
-                </Tabs.Tab>
-              );
-            })}
+            {data.vehicleOwner.dashboard.BookingManagement.tabList.map(
+              (data, index) => {
+                return (
+                  <Tabs.Tab key={index} value={data.value} className="tab">
+                    <Flex align="center" justify="center" gap="sm">
+                      {data.icon}
+                      {data.value}
+                      <Badge size="lg" fw={500} color="gray.1" c="gray" circle>
+                        {data.notificationValue}
+                      </Badge>
+                    </Flex>
+                  </Tabs.Tab>
+                );
+              }
+            )}
           </Tabs.List>
           <Divider w="100%" />
           <Tabs.Panel value="Upcoming">
@@ -76,7 +42,8 @@ export default function BookingManagementSection() {
               profileName={"MH"}
               userName={"Muhammad Haris"}
               vehicleName={"Honda CD 125"}
-              bookingTimming={"Jan 20 - Jan 22, 2025"}
+              startDate="Jan 20, 2025"
+              endDate="Jan 22, 2025"
               location={"Tando Adam"}
               number={923093185997}
               price={1200}
@@ -87,7 +54,8 @@ export default function BookingManagementSection() {
               profileName={"AA"}
               userName={"Aamir Ali"}
               vehicleName={"Honda CD 70"}
-              bookingTimming={"Jan 10 - Jan 12, 2025"}
+              startDate="Jan 10, 2025"
+              endDate="Jan 12, 2025"
               location={"Kotri"}
               number={923480804346}
               price={900}
@@ -100,7 +68,8 @@ export default function BookingManagementSection() {
               profileName={"SK"}
               userName={"Sanjay Kumar"}
               vehicleName={"Honda CD 125"}
-              bookingTimming={"fab 15 - fab 16, 2025"}
+              startDate="fab 15, 2025"
+              endDate="fab 16, 2025"
               location={"Umerkot"}
               number={923480804346}
               price={1200}
@@ -113,7 +82,8 @@ export default function BookingManagementSection() {
               profileName={"SA"}
               userName={"Sagar Ali"}
               vehicleName={"Mountain Cycle"}
-              bookingTimming={"mar 01 - mar 16, 2025"}
+              startDate="mar 01, 2025"
+              endDate="mar 16, 2025"
               location={"Karachi"}
               number={923133768188}
               price={500}
@@ -124,7 +94,8 @@ export default function BookingManagementSection() {
               profileName={"AS"}
               userName={"Abdul Samie"}
               vehicleName={"Honda CD 125"}
-              bookingTimming={"fab 15 - fab 16, 2025"}
+              startDate="fab 15, 2025"
+              endDate="fab 16, 2025"
               location={"Tando Adam"}
               number={923463899732}
               price={1300}
@@ -137,7 +108,8 @@ export default function BookingManagementSection() {
               profileName={"RK"}
               userName={"Rajesh Kumar"}
               vehicleName={"Honda CD 70"}
-              bookingTimming={"fab 15 - fab 16, 2025"}
+              startDate="fab 15, 2025"
+              endDate="fab 16, 2025"
               location={"Hyderabad"}
               number={923463899732}
               price={900}

@@ -1,13 +1,4 @@
-import {
-  Badge,
-  Button,
-  Card,
-  Center,
-  Flex,
-  Group,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Badge, Button, Card, Center, Flex, Stack, Text } from "@mantine/core";
 import {
   IconCalendarEventFilled,
   IconEye,
@@ -16,11 +7,13 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useState } from "react";
+import BookingViewDetailModal from "./BookingViewDetailsModal";
 interface BookingRequestCardProps {
   profileName: string;
   userName: string;
   vehicleName: string;
-  bookingTimming: string;
+  startDate: string;
+  endDate: string;
   location: string;
   number: number;
   price: number;
@@ -31,7 +24,8 @@ export default function BookingRequestCard({
   profileName,
   userName,
   vehicleName,
-  bookingTimming,
+  startDate,
+  endDate,
   location,
   number,
   price,
@@ -62,7 +56,7 @@ export default function BookingRequestCard({
   return (
     <Card mt="xl" withBorder radius="md" p="lg">
       <Flex align="center" justify="space-between">
-        <Flex w="13rem" gap="sm" align="center">
+        <Flex w="12rem" gap="sm" align="center">
           <Center h={50} w={50} bg="red.4" style={{ borderRadius: "50%" }}>
             <Text fz="md" c="white">
               {profileName}
@@ -82,7 +76,7 @@ export default function BookingRequestCard({
           <Flex gap="xs" align="center">
             <IconCalendarEventFilled size={15} color="gray" />
             <Text fz="12px" w="9rem">
-              {bookingTimming}
+              {startDate} - {endDate}
             </Text>
           </Flex>
           <Flex gap="xs" align="center">
@@ -141,6 +135,18 @@ export default function BookingRequestCard({
               color="indigo"
               fz="xs"
               leftSection={<IconEye size={15} color="blue" />}
+              onClick={() => {
+                BookingViewDetailModal({
+                  userName,
+                  number,
+                  vehicleName,
+                  vehicleStatus,
+                  startDate,
+                  endDate,
+                  price,
+                  location,
+                });
+              }}
             >
               View Details
             </Button>
