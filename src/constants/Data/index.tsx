@@ -39,6 +39,7 @@ import {
   IconDeviceMobile,
   IconAlertTriangle,
   IconBell,
+  IconCircleX,
 } from "@tabler/icons-react";
 import Images from "../Images";
 import MobileWallet from "@/components/features/renters/vehicle/PaymentBilling/MobileWallet";
@@ -1109,6 +1110,30 @@ const recentNotifications = [
     recentBookingRequest: false,
   },
 ];
+
+const DocCards = [
+  {
+    documentType: "CNIC",
+    status: "verified",
+    statusIcon: <IconCircleCheck size={20} color="green" />,
+    uploadedDate: "Dec 15, 2024",
+    expiresDate: "Dec 15, 2029",
+  },
+  {
+    documentType: "Driving License",
+    status: "pending",
+    statusIcon: <IconClock size={20} color="orange" />,
+    uploadedDate: "Uploaded: Dec 10, 2024",
+    expiresDate: "Expires: Aug 22, 2027",
+  },
+  {
+    documentType: "Vehicle Insurance",
+    status: "decline",
+    statusIcon: <IconCircleX size={20} color="red" />,
+    uploadedDate: "Dec 15, 2014",
+    expiresDate: " Dec 15, 2024",
+  },
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -1173,6 +1198,11 @@ export const data = {
       },
       notificationSection: {
         recentNotifications: recentNotifications,
+      },
+      ProfileAndSettingSection: {
+        Documents: {
+          DocCards: DocCards,
+        },
       },
     },
   },

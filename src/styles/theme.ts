@@ -79,7 +79,7 @@ const theme = createTheme({
       " #001A04",
     ],
     orange: [
-      "  #FEF9C3",
+      " #FEF9C3",
       " #FEFCE8",
       " #FFC280",
       " #FFAB4D",

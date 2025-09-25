@@ -4,6 +4,7 @@ import VehicleOwnerDashboardSection from "@/components/features/vehicle-owner/Da
 import BookingManagementSection from "@/components/features/vehicle-owner/Dashboard/BookingManagementSection";
 import EarningAndPayoutSection from "@/components/features/vehicle-owner/Dashboard/EarningAndPayoutSection";
 import NotificationSection from "@/components/features/vehicle-owner/Dashboard/NotificationSection";
+import ProfileAndSettingSection from "@/components/features/vehicle-owner/Dashboard/ProfileAndSettingSection";
 import VehicleManagementSection from "@/components/features/vehicle-owner/Dashboard/VehicleManagementSection";
 import { Grid, GridCol } from "@mantine/core";
 import {
@@ -42,7 +43,7 @@ export default function VehiclesOwnerPage() {
         {active === "Booking Management" && <BookingManagementSection />}
         {active === "Earning & Payouts" && <EarningAndPayoutSection />}
         {active === "Notifications" && <NotificationSection />}
-        {active === "Profile & Settings" && <h1>Profile & Settings Content</h1>}
+        {active === "Profile & Settings" && <ProfileAndSettingSection />}
       </GridCol>
     </Grid>
   );
