@@ -17,7 +17,7 @@ interface BookingRequestCardProps {
   location: string;
   number: number;
   price: number;
-  bookingRequestValue: boolean;
+  bookingRequestValue?: boolean;
   vehicleStatus: string;
 }
 export default function BookingRequestCard({
@@ -29,7 +29,7 @@ export default function BookingRequestCard({
   location,
   number,
   price,
-  bookingRequestValue,
+  bookingRequestValue = false,
   vehicleStatus,
 }: BookingRequestCardProps) {
   const [bookingRequest, setBookingRequest] = useState(bookingRequestValue);

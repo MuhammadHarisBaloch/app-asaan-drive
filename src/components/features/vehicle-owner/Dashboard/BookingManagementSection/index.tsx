@@ -59,7 +59,6 @@ export default function BookingManagementSection() {
               location={"Kotri"}
               number={923480804346}
               price={900}
-              bookingRequestValue={false}
               vehicleStatus="confirmed"
             />
           </Tabs.Panel>
@@ -73,7 +72,6 @@ export default function BookingManagementSection() {
               location={"Umerkot"}
               number={923480804346}
               price={1200}
-              bookingRequestValue={false}
               vehicleStatus="ongoing"
             />
           </Tabs.Panel>
@@ -87,7 +85,6 @@ export default function BookingManagementSection() {
               location={"Karachi"}
               number={923133768188}
               price={500}
-              bookingRequestValue={false}
               vehicleStatus="completed"
             />
             <BookingRequestCard
@@ -99,7 +96,6 @@ export default function BookingManagementSection() {
               location={"Tando Adam"}
               number={923463899732}
               price={1300}
-              bookingRequestValue={false}
               vehicleStatus="completed"
             />
           </Tabs.Panel>
@@ -113,7 +109,6 @@ export default function BookingManagementSection() {
               location={"Hyderabad"}
               number={923463899732}
               price={900}
-              bookingRequestValue={false}
               vehicleStatus="cancelled"
             />
           </Tabs.Panel>

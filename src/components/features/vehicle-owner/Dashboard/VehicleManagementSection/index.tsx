@@ -1,5 +1,3 @@
-import { data } from "@/constants/Data";
-import Images from "@/constants/Images";
 import {
   Box,
   Button,
@@ -10,7 +8,6 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  Title,
 } from "@mantine/core";
 import { IconEdit, IconMapPin, IconTrashX } from "@tabler/icons-react";
 import { getAuth } from "firebase/auth";
@@ -91,7 +88,7 @@ export default function VehicleManagementSection() {
                     <Text fz="xs">{data.pickupLocation}</Text>
                   </Flex>
                   <Text fz="xs" c="red.4" fw={500}>
-                    {data.dailyRate} /Day
+                    {data.dailyRate} /Day <br />
                   </Text>
                 </Group>
                 <Group w="100%" align="flex-start" justify="space-between">

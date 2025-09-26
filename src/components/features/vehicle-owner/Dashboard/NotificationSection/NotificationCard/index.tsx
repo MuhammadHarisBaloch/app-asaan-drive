@@ -30,9 +30,11 @@ export default function NotificationCard({
   recentBookingRequest,
   markReadAllNotification,
 }: NotificationCardProps) {
-  const [bookingRequest, setBookingReques] = useState(recentBookingRequest);
+  const [bookingRequest, setBookingRequest] = useState(recentBookingRequest);
   const [readNotification, setReadNotification] = useState(false);
-  const [readAllNotification, setReadAllNotification] = useState(false);
+  const [readAllNotification, setReadAllNotification] = useState(
+    markReadAllNotification
+  );
 
   useEffect(() => {
     setReadAllNotification(markReadAllNotification);
@@ -83,9 +85,7 @@ export default function NotificationCard({
               <Text fz="sm" c="black" fw={500}>
                 {title}
               </Text>
-              {readNotification || readAllNotification ? (
-                ""
-              ) : (
+              {readNotification || readAllNotification ? null : (
                 <IconPointFilled size={20} color="blue" />
               )}
             </Flex>
@@ -100,7 +100,7 @@ export default function NotificationCard({
                 bg="blue"
                 size="xs"
                 onClick={() => {
-                  setBookingReques(false);
+                  setBookingRequest(false);
                   setReadNotification(true);
                 }}
               >
@@ -109,7 +109,7 @@ export default function NotificationCard({
               <Button
                 size="xs"
                 onClick={() => {
-                  setBookingReques(false);
+                  setBookingRequest(false);
                   setReadNotification(true);
                 }}
               >

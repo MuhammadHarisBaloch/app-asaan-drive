@@ -8,20 +8,20 @@ import {
   TextInput,
 } from "@mantine/core";
 
-export default function PersonalInfoContent() {
+export default function PersonalContent() {
   return (
     <Stack py="xl" gap="xl">
       <Flex gap="md" align="center">
         <Center h={100} w={100} bg="red.4" style={{ borderRadius: "50%" }}>
           <Text fz="xxl" c="white" fw={600}>
-            SB
+            HB
           </Text>
         </Center>
         <Stack gap={0}>
           <Text fz="xl" c="black" fw={600}>
-            Sagar Baloch
+            Haris Baloch
           </Text>
-          <Text fz="xs">Vehicle Owner</Text>
+          <Text fz="xs">Renter</Text>
           <Text fz="xs" c="green" fw={500}>
             Verified Account
           </Text>
@@ -33,7 +33,7 @@ export default function PersonalInfoContent() {
           size="md"
           label="Full Name"
           radius="md"
-          defaultValue={"Sagar Baloch"}
+          defaultValue={"Haris Baloch"}
           styles={{ label: { fontSize: "14px" }, input: { fontSize: "16px" } }}
         />
         <TextInput
@@ -41,7 +41,7 @@ export default function PersonalInfoContent() {
           size="md"
           label="Email Address"
           radius="md"
-          defaultValue={"sagar@gmail.com"}
+          defaultValue={"haris@gmail.com"}
           styles={{ label: { fontSize: "14px" }, input: { fontSize: "16px" } }}
         />
       </Flex>
@@ -51,7 +51,7 @@ export default function PersonalInfoContent() {
           size="md"
           label="Phone Number"
           radius="md"
-          defaultValue={"03093185997"}
+          defaultValue={"03480804346"}
           styles={{ label: { fontSize: "14px" }, input: { fontSize: "16px" } }}
         />
         <TextInput
@@ -59,7 +59,7 @@ export default function PersonalInfoContent() {
           size="md"
           label="City"
           radius="md"
-          defaultValue={"Karachi"}
+          defaultValue={"Khairpur Mir's"}
           styles={{ label: { fontSize: "14px" }, input: { fontSize: "16px" } }}
         />
       </Flex>
@@ -69,7 +69,7 @@ export default function PersonalInfoContent() {
         size="md"
         label="Address"
         radius="md"
-        defaultValue={"123 Main Street, DHA 5, Karachi"}
+        defaultValue={"MUET Boys Hostel near grid station"}
         styles={{ label: { fontSize: "14px" }, input: { fontSize: "16px" } }}
       />
       <Button w="20%" fz="xs" size="md">

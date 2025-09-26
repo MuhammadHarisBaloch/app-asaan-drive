@@ -40,6 +40,7 @@ import {
   IconAlertTriangle,
   IconBell,
   IconCircleX,
+  IconCreditCard,
 } from "@tabler/icons-react";
 import Images from "../Images";
 import MobileWallet from "@/components/features/renters/vehicle/PaymentBilling/MobileWallet";
@@ -1156,6 +1157,37 @@ const tabList = [
     notificationValue: 1,
   },
 ];
+
+const availableNotifications = [
+  {
+    icon: <IconCircleCheck color="green" size={20} />,
+    iconBg: "green.1",
+    title: "Booking Confirmed",
+    subTitle: "Your Tesla Model 3 booking for Oct 20-22 has been confirmed",
+    time: "2 hours ago",
+  },
+  {
+    icon: <IconCreditCard color="green" size={20} />,
+    iconBg: "green.1",
+    title: "Payment Successful",
+    subTitle: "Payment of $89.00 processed successfully for Honda CD 70",
+    time: "1 day ago",
+  },
+  {
+    icon: <IconAlertTriangle color="orange" size={20} />,
+    iconBg: "orange.0",
+    title: "Return Reminder",
+    subTitle: "Please return your Honda CD 70 by 6:00 PM today",
+    time: "3 hours ago",
+  },
+  {
+    icon: <IconClock color="blue" size={20} />,
+    iconBg: "blue.1",
+    title: "Booking Pending",
+    subTitle: "Your Mountain Bike booking is waiting for confirmation",
+    time: "5 hours ago",
+  },
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -1171,6 +1203,9 @@ export const data = {
       myBookings: {
         BookingFeaturesData: BookingFeaturesData,
         headerColumns: headerColumns,
+      },
+      notifications: {
+        availableNotifications: availableNotifications,
       },
     },
     vehicle: {

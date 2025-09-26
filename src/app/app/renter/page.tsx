@@ -1,6 +1,8 @@
 "use client";
 import DashboardSection from "@/components/features/renters/dashboard";
 import BookingsSection from "@/components/features/renters/dashboard/Bookings";
+import Notifications from "@/components/features/renters/dashboard/Notifications";
+import Profile from "@/components/features/renters/dashboard/Profile";
 import TrackingSection from "@/components/features/renters/dashboard/Trackings";
 import SideBar from "@/components/features/SideBar/inde";
 import { Grid, GridCol } from "@mantine/core";
@@ -40,9 +42,10 @@ export default function RenterPage() {
         {active === "My Bookings" && <BookingsSection />}
         {active === "Track My Ride" && <TrackingSection />}
         {active === "Payments" && <h1>Payments</h1>}
-        {active === "Notifications" && <h1>Notifications Content</h1>}
-        {active === "Profile" && <h1>Profile Content</h1>}
+        {active === "Notifications" && <Notifications />}
+        {active === "Profile" && <Profile />}
       </GridCol>
     </Grid>
   );
 }
+  

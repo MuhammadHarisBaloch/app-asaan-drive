@@ -24,6 +24,8 @@ export default function BookingViewDetailModal({
   return modals.open({
     title: "Booking Details",
     size: "50%",
+    radius: "lg",
+    padding: "xl",
     children: (
       <ModalContent
         userName={userName}
