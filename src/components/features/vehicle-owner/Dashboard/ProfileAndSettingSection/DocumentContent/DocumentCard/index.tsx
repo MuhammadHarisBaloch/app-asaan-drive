@@ -26,12 +26,12 @@ export default function DocumentCard({
       bgColor = "green.1";
       break;
     case "pending":
-      color = "orange";
+      color = "orange.4";
       bgColor = "orange.0";
       break;
     case "decline":
       color = "red";
-      bgColor = "red.0";
+      bgColor = "pink.1";
       break;
     default:
       color = "transparent";

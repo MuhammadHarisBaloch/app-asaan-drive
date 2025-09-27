@@ -10,12 +10,13 @@ import {
   Text,
 } from "@mantine/core";
 import { IconFilter, IconSearch } from "@tabler/icons-react";
-import React from "react";
-import Image from "next/image";
-import Images from "@/constants/Images";
+import React, { useState } from "react";
 import { data } from "@/constants/Data";
+import BookingCard from "./BookingCard";
 
 export default function BookingsSection() {
+  const [bookings, setBookings] = useState<string | null>("All Status");
+  const [value, setValue] = useState("");
   return (
     <Stack p="lg" gap="xxl">
       <Stack gap={0}>
@@ -36,20 +37,24 @@ export default function BookingsSection() {
               radius="md"
               leftSection={<IconSearch size={15} color="gray" />}
               placeholder="Search bookings..."
+              value={value}
+              onChange={(event) => setValue(event.currentTarget.value)}
             />
             <Flex gap="sm" align="center">
               <IconFilter size={20} color="gray" />
               <Select
                 w="10rem"
                 radius="md"
-                defaultValue={"All Status"}
                 data={[
                   "All Status",
                   "Active",
                   "Confirmed",
                   "Pending",
                   "Completed",
+                  "null",
                 ]}
+                value={bookings}
+                onChange={setBookings}
               />
             </Flex>
           </Group>
@@ -74,53 +79,11 @@ export default function BookingsSection() {
             {data.renter.dashboard.myBookings.BookingFeaturesData.map(
               (data, index) => (
                 <React.Fragment key={index}>
-                  <Group px="lg" align="center">
-                    {/* Vehicle column special case */}
-                    <Flex gap="md" align="center" style={{ flex: 2 }}>
-                      <Image
-                        height={100}
-                        width={100}
-                        src={data.vehicleImage}
-                        alt={data.vehicleName}
-                        style={{ height: "auto", width: "4rem" }}
-                      />
-                      <Stack gap={2}>
-                        <Text fz="xs" fw={600} c="black">
-                          {data.vehicleName}
-                        </Text>
-                        <Text fz="12px">{data.vehicleType}</Text>
-                      </Stack>
-                    </Flex>
-
-                    {/* Other columns */}
-                    <Text fz="12px" style={{ flex: 1, textAlign: "center" }}>
-                      {data.pickupDate}
-                    </Text>
-                    <Text fz="12px" style={{ flex: 1, textAlign: "center" }}>
-                      {data.returnDate}
-                    </Text>
-                    <Center
-                      py="xxs"
-                      bg={data.statusBgColor}
-                      style={{
-                        flex: 1,
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <Text fz="12px" c={data.statusColor}>
-                        {data.status}
-                      </Text>
-                    </Center>
-                    <Text
-                      fz="xs"
-                      fw={600}
-                      c="black"
-                      style={{ flex: 1, textAlign: "right" }}
-                    >
-                      {data.price}
-                    </Text>
-                  </Group>
-                  <Divider w="100%" />
+                  {bookings === data.status || value === data.vehicleName ? (
+                    <BookingCard {...data} />
+                  ) : bookings === "All Status" ? (
+                    <BookingCard {...data} />
+                  ) : null}
                 </React.Fragment>
               )
             )}

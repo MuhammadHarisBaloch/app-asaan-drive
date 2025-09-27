@@ -804,7 +804,7 @@ const RecentBookings = [
     status: "Active",
     statusColor: "green",
     statusBgColor: "green.1",
-    price: "Pkr 3,000",
+    price: "3,000",
   },
   {
     vehicleImage: Images.listedVehicles.cd125,
@@ -813,7 +813,7 @@ const RecentBookings = [
     status: "Confirmed",
     statusColor: "blue",
     statusBgColor: "blue.1",
-    price: "Pkr 1,500",
+    price: "1,500",
   },
   {
     vehicleImage: Images.listedVehicles.rakshaw,
@@ -822,7 +822,7 @@ const RecentBookings = [
     status: "Pending",
     statusColor: "red",
     statusBgColor: "red.1",
-    price: "Pkr 15,000",
+    price: "15,000",
   },
 ];
 
@@ -841,9 +841,16 @@ const BookingFeaturesData = [
     vehicleType: "bike",
     pickupDate: "2024-10-02",
     returnDate: "2024-10-03",
-    status: "Available",
-    statusColor: "blue",
-    statusBgColor: "blue.1",
+    status: "Active",
+    price: "1000",
+  },
+  {
+    vehicleImage: Images.listedVehicles.cd70,
+    vehicleName: "Honda CD 70",
+    vehicleType: "bike",
+    pickupDate: "2024-10-02",
+    returnDate: "2024-10-03",
+    status: "Confirmed",
     price: "1000",
   },
   {
@@ -852,9 +859,7 @@ const BookingFeaturesData = [
     vehicleType: "bike",
     pickupDate: "2024-12-05",
     returnDate: "2024-10-07",
-    status: "Confirmed",
-    statusColor: "green",
-    statusBgColor: "green.1",
+    status: "Pending",
     price: "2600",
   },
   {
@@ -864,8 +869,6 @@ const BookingFeaturesData = [
     pickupDate: "2024-08-25",
     returnDate: "2024-10-30",
     status: "Pending",
-    statusColor: "red",
-    statusBgColor: "red.1",
     price: "2500",
   },
   {
@@ -875,8 +878,6 @@ const BookingFeaturesData = [
     pickupDate: "2024-08-01",
     returnDate: "2024-10-10",
     status: "Completed",
-    statusColor: "black",
-    statusBgColor: "gray.1",
     price: "8000",
   },
 ];
@@ -919,8 +920,6 @@ const recentActivites = [
     title: "New booking request for Honda Civic",
     subTitle: "5 min ago",
     status: "pending",
-    statusBgColor: "orange.0",
-    statusColor: "orange.5",
   },
   {
     icon: <IconCurrencyDollar size={25} color="green" />,
@@ -928,8 +927,6 @@ const recentActivites = [
     title: "Payment received - PKR 3,500",
     subTitle: "1 hour ago",
     status: "success",
-    statusBgColor: "green.0",
-    statusColor: "green",
   },
   {
     icon: <IconCar size={25} color="red" />,
@@ -937,8 +934,6 @@ const recentActivites = [
     title: "Toyota Corolla - Maintenance reminder",
     subTitle: "2 hours ago",
     status: "warning",
-    statusBgColor: "red.0",
-    statusColor: "red.4",
   },
   {
     icon: <IconCalendarEventFilled size={25} color="blue" />,
@@ -946,8 +941,6 @@ const recentActivites = [
     title: "Booking completed - Suzuki Alto",
     subTitle: "3 hours ago",
     status: "completed",
-    statusBgColor: "blue.1",
-    statusColor: "blue",
   },
 ];
 

@@ -1,4 +1,3 @@
-import Images from "@/constants/Images";
 import {
   Card,
   Center,
@@ -10,12 +9,13 @@ import {
 } from "@mantine/core";
 import { IconAlertTriangle, IconArrowRight } from "@tabler/icons-react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import Image from "next/image";
+
 import { useEffect, useState } from "react";
 import { getUserDocument } from "../../../../features/user";
 import { UserModel } from "../../../../features/user/models/user.model";
 import EmergencyModal from "../EmergencyModal";
 import { data } from "@/constants/Data";
+import RecentBookingCard from "./RecentBookingCard";
 
 export default function DashboardSection() {
   const [user, setUser] = useState<UserModel | null>(null);
@@ -104,53 +104,7 @@ export default function DashboardSection() {
           <Stack gap="xl" pb="lg">
             {data.renter.dashboard.overView.RecentBookings.map(
               (data, index) => {
-                return (
-                  <Card
-                    key={index}
-                    w="100%"
-                    px="xl"
-                    py="lg"
-                    radius="md"
-                    bg="white.2"
-                    style={{ filter: "drop-shadow(1px 1px 2px #78787846)" }}
-                  >
-                    <Group justify="space-between">
-                      <Flex gap="md" align="center">
-                        <Image
-                          height={100}
-                          width={100}
-                          src={data.vehicleImage}
-                          alt="cd-70"
-                          sizes="100vw"
-                          style={{
-                            height: "auto",
-                            width: "4rem",
-                          }}
-                        />
-                        <Stack gap="xxs">
-                          <Text fz="xs" c="black" fw={600}>
-                            {data.vehicleName}
-                          </Text>
-                          <Text fz="12px">{data.rentingDuration}</Text>
-                        </Stack>
-                      </Flex>
-                      <Flex gap="md">
-                        <Center
-                          bg={data.statusBgColor}
-                          px="md"
-                          style={{ borderRadius: "10px" }}
-                        >
-                          <Text fz="12px" c={data.statusColor}>
-                            {data.status}
-                          </Text>
-                        </Center>
-                        <Text fz="xs" c="black" fw={600}>
-                          {data.price}
-                        </Text>
-                      </Flex>
-                    </Group>
-                  </Card>
-                );
+                return <RecentBookingCard key={index} {...data} />;
               }
             )}
           </Stack>

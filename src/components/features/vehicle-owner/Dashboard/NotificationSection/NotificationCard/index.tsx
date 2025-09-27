@@ -46,10 +46,10 @@ export default function NotificationCard({
   switch (priority) {
     case "high":
       color = "red";
-      bg = "red.0";
+      bg = "pink.1";
       break;
     case "medium":
-      color = "orange";
+      color = "orange.4";
       bg = "orange.0";
       break;
     case "low":

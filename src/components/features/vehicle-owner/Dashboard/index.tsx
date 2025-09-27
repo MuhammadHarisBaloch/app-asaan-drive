@@ -13,6 +13,7 @@ import {
 import { IconTrendingUp } from "@tabler/icons-react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
+import RecentActivityCard from "./RecentActivityCard";
 
 export default function VehicleOwnerDashboardSection() {
   const [user, setUser] = useState<UserModel | null>(null);
@@ -89,45 +90,7 @@ export default function VehicleOwnerDashboardSection() {
         <Stack gap="lg" pb="lg">
           {data.vehicleOwner.dashboard.overviewSection.recentActivites.map(
             (data, i) => {
-              return (
-                <Card
-                  key={i}
-                  px="lg"
-                  py="md"
-                  style={{
-                    borderRadius: "10px",
-                    filter: "drop-shadow(1px 1px 2px #5d5d5d3e)",
-                  }}
-                >
-                  <Group justify="space-between">
-                    <Flex align="center" gap="xl">
-                      <Center
-                        h={50}
-                        w={50}
-                        bg={data.iconBgColor}
-                        style={{ borderRadius: "10px" }}
-                      >
-                        {data.icon}
-                      </Center>
-                      <Stack gap="xxs">
-                        <Text fz="xs" c="black" fw={500}>
-                          {data.title}
-                        </Text>
-                        <Text fz="12px">{data.subTitle}</Text>
-                      </Stack>
-                    </Flex>
-                    <Center
-                      px="md"
-                      bg={data.statusBgColor}
-                      style={{ borderRadius: "10px" }}
-                    >
-                      <Text fz="12px" c={data.statusColor}>
-                        {data.status}
-                      </Text>
-                    </Center>
-                  </Group>
-                </Card>
-              );
+              return <RecentActivityCard key={i} {...data} />;
             }
           )}
         </Stack>
