@@ -49,7 +49,7 @@ export default function NotificationCard({
       bg = "pink.1";
       break;
     case "medium":
-      color = "orange.4";
+      color = "orange";
       bg = "orange.0";
       break;
     case "low":

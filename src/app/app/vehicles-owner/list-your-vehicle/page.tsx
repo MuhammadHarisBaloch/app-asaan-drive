@@ -55,7 +55,9 @@ export default function ListYourVehicle() {
       });
       return;
     }
+
     startLoading();
+
     const uploadedPhotoIds = await Promise.all(
       vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
     );
@@ -63,6 +65,7 @@ export default function ListYourVehicle() {
       uploadedPhotoIds.map((id) => StorageService.shared.downloadFile(id))
     );
     console.log("Uploaded Photo IDs: ", uploadedPhotoIds);
+
     const uploadedDocIds = await Promise.all(
       vehicleDocs.map((file) => StorageService.shared.uploadFile(file))
     );
@@ -70,25 +73,29 @@ export default function ListYourVehicle() {
       uploadedDocIds.map((id) => StorageService.shared.downloadFile(id))
     );
     console.log("Uploaded Doc IDs: ", uploadedDocIds);
+
     const vehicle = await createVehicleDocument({
       ...values,
       ownerID,
       vehiclePhotos: uploadedPhotoUrls,
       vehicleDocs: uploadedDocUrls,
     });
-    stopLoading();
-    router.push(`/app/vehicles-owner`);
+
     if (vehicle) {
       notifications.show({
         title: "Vehicle listed successfully",
         message: "",
       });
+      router.push(`/app/vehicles-owner`);
       return;
     }
     notifications.show({
       title: "Listing Failed",
       message: "",
     });
+
+    stopLoading();
+    
   };
 
   const form = useForm<VehicleRegistrationForm>({
