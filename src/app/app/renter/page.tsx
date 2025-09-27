@@ -2,6 +2,7 @@
 import DashboardSection from "@/components/features/renters/dashboard";
 import BookingsSection from "@/components/features/renters/dashboard/Bookings";
 import Notifications from "@/components/features/renters/dashboard/Notifications";
+import Payments from "@/components/features/renters/dashboard/Payments";
 import Profile from "@/components/features/renters/dashboard/Profile";
 import TrackingSection from "@/components/features/renters/dashboard/Trackings";
 import SideBar from "@/components/features/SideBar/inde";
@@ -41,7 +42,7 @@ export default function RenterPage() {
         {active === "Dashboard" && <DashboardSection />}
         {active === "My Bookings" && <BookingsSection />}
         {active === "Track My Ride" && <TrackingSection />}
-        {active === "Payments" && <h1>Payments</h1>}
+        {active === "Payments" && <Payments />}
         {active === "Notifications" && <Notifications />}
         {active === "Profile" && <Profile />}
       </GridCol>

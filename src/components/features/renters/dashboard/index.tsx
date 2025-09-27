@@ -8,14 +8,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import {
-  IconAlertTriangle,
-  IconArrowRight,
-  IconCalendarEventFilled,
-  IconCar,
-  IconClock,
-  IconCurrencyDollar,
-} from "@tabler/icons-react";
+import { IconAlertTriangle, IconArrowRight } from "@tabler/icons-react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Image from "next/image";
 import { useEffect, useState } from "react";

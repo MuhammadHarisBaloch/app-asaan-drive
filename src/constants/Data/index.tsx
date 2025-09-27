@@ -41,6 +41,8 @@ import {
   IconBell,
   IconCircleX,
   IconCreditCard,
+  IconArrowDownLeft,
+  IconArrowUpRight,
 } from "@tabler/icons-react";
 import Images from "../Images";
 import MobileWallet from "@/components/features/renters/vehicle/PaymentBilling/MobileWallet";
@@ -1188,6 +1190,58 @@ const availableNotifications = [
     time: "5 hours ago",
   },
 ];
+
+const PaymentCards = [
+  {
+    icon: <IconCreditCard size="30" color="purple" />,
+    iconBg: "purple.0",
+    title: "Total Spent",
+    price: "1270.00",
+    subTitle: "This month",
+  },
+  {
+    icon: <IconArrowDownLeft size="30" color="blue" />,
+    iconBg: "blue.1",
+    title: "Pending Refunds",
+    price: "50.00",
+  },
+];
+
+const transactionsCard = [
+  {
+    icon: <IconArrowUpRight size={20} color="red" />,
+    iconBg: "red.0",
+    transactionType: "Payment",
+    bookingId: "BK001 ",
+    walletType: "Credit Card",
+    price: "89.00",
+    date: "2024-10-12",
+    time: "2:15 PM",
+    status: "completed",
+  },
+  {
+    icon: <IconArrowDownLeft size={20} color="blue" />,
+    iconBg: "blue.1",
+    transactionType: "Refund",
+    bookingId: "BK004 ",
+    walletType: "Jazzcash",
+    price: "50.00",
+    date: "2024-10-05",
+    time: "1:45 PM",
+    status: "Processing",
+  },
+  {
+    icon: <IconArrowUpRight size={20} color="red" />,
+    iconBg: "red.0",
+    transactionType: "Payment",
+    bookingId: "BK003  ",
+    walletType: "Easypaisa",
+    price: "45.00",
+    date: "2024-10-08 ",
+    time: "4:20 PM",
+    status: "completed",
+  },
+];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -1206,6 +1260,10 @@ export const data = {
       },
       notifications: {
         availableNotifications: availableNotifications,
+      },
+      payments: {
+        transactionsCard: transactionsCard,
+        PaymentCards: PaymentCards,
       },
     },
     vehicle: {
