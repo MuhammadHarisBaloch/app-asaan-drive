@@ -60,6 +60,11 @@ export default function TrackingSection() {
               placeholder="Enter Booking ID (e.g., BK001, BK002, BK003)"
               value={trackingId}
               onChange={(event) => setTrackingId(event.currentTarget.value)}
+              styles={{
+                input: {
+                  fontSize: "14px",
+                },
+              }}
             />
             <Button
               size="md"

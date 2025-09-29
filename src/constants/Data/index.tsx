@@ -784,7 +784,7 @@ const DashFeatures = [
   },
   {
     icon: <IconClock size={15} color="red" />,
-    IconBackgroundColor: "red.1",
+    IconBackgroundColor: "pink.1",
     title: "Pending Requests",
     subTitle: "1",
   },

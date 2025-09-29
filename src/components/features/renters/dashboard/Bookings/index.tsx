@@ -51,7 +51,6 @@ export default function BookingsSection() {
                   "Confirmed",
                   "Pending",
                   "Completed",
-                  "null",
                 ]}
                 value={bookings}
                 onChange={setBookings}
