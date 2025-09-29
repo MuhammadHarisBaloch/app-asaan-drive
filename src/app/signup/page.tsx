@@ -8,6 +8,7 @@ import {
   Group,
   PasswordInput,
   Radio,
+  Select,
   Space,
   Stack,
   Text,
@@ -27,6 +28,8 @@ interface SignUpForm {
   userType: string;
   fullName: string;
   email: string;
+  number: string;
+  city: string;
   password: string;
   confirmPassword: string;
 }
@@ -44,6 +47,8 @@ function SignupPage() {
         email: values.email,
         fullName: values.fullName,
         userType: values.userType,
+        city: values.city,
+        phoneNumber: values.number,
       });
     }
 
@@ -69,12 +74,19 @@ function SignupPage() {
       userType: "",
       fullName: "",
       email: "",
+      number: "",
+      city: "",
       password: "",
       confirmPassword: "",
     },
     validate: {
       userType: isNotEmpty("Please select your type"),
       fullName: hasLength({ min: 2 }, "Please enter your Full Name"),
+      number: (value) =>
+        /^03[0-9]{9}$/.test(value)
+          ? null
+          : "Please enter a valid 11 digit Pakistani number (e.g. 03XXXXXXXXX)",
+      city: isNotEmpty("Please select your city"),
       email: isEmail("Incorrect Email"),
       password: hasLength({ min: 2 }, "Please enter your password"),
       confirmPassword: (value, values) =>
@@ -137,6 +149,30 @@ function SignupPage() {
                 }}
                 key={form.key("email")}
                 {...form.getInputProps("email")}
+              />
+              <TextInput
+                label="Phone number"
+                w="100%"
+                styles={{
+                  label: {
+                    fontSize: "xs",
+                  },
+                }}
+                key={form.key("number")}
+                {...form.getInputProps("number")}
+              />
+              <Select
+                w="100%"
+                label="Select our city"
+                placeholder="Pick city"
+                data={["Larkana", "Sukkur", "Khairpur' Mirs", "Rohri"]}
+                styles={{
+                  label: {
+                    fontSize: "xs",
+                  },
+                }}
+                key={form.key("city")}
+                {...form.getInputProps("city")}
               />
               <PasswordInput
                 label="Password"

@@ -358,7 +358,7 @@ const listedVehicles = [
   {
     image: Images.listedVehicles.cd125,
     name: "Honda 125",
-    transmission: "Bike . Manual",
+    transmission: "Bike",
     price: "500/Day",
     rating: 4.8,
     reviews: 125,
@@ -367,7 +367,7 @@ const listedVehicles = [
   {
     image: Images.listedVehicles.cycle,
     name: "Mountain Bike",
-    transmission: "Cycle . Manual",
+    transmission: "Cycle",
     price: "200/Day",
     rating: 4.6,
     reviews: 24,
@@ -376,7 +376,7 @@ const listedVehicles = [
   {
     image: Images.listedVehicles.rakshaw,
     name: "CNG Auto Rickshaw",
-    transmission: "Rakshaw . Manual/Automatic",
+    transmission: "Rikshaw",
     price: "1000/Day",
     rating: 4.9,
     reviews: 224,
@@ -673,7 +673,7 @@ const importantNoticeForDocument = [
   "Verification typically takes 5-10 minutes",
 ];
 
-const vehicleTypes = ["Bike", "Cycle", "Rakshaw"];
+const vehicleTypes = ["Car", "Bike", "Cycle", "Rakshaw"];
 
 const BookingTimeDetails = [
   {

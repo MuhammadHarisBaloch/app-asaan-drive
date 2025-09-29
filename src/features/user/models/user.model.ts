@@ -3,4 +3,6 @@ export interface UserModel {
   userType: string;
   fullName: string;
   email: string;
+  city: string;
+  phoneNumber: string;
 }

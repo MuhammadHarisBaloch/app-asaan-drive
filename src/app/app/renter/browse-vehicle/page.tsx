@@ -12,9 +12,10 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import React from "react";
 import { useState } from "react";
 
-const VehicleType = ["All", "Bikes", "Cycles", "Rikshaws"];
+const VehicleType = ["All", "Bike", "Cycle", "Rikshaw"];
 
 export default function BrowseVehicle() {
   const [selectedVehicle, setSelectedVehicle] = useState<string>("All");
@@ -77,7 +78,15 @@ export default function BrowseVehicle() {
       </Card>
       <SimpleGrid cols={3} spacing="xl">
         {data.renter.inlistVehicles.map((data, index) => {
-          return <ListedVehicleCard key={index} {...data} />;
+          return (
+            <React.Fragment key={index}>
+              {selectedVehicle === data.transmission ? (
+                <ListedVehicleCard {...data} />
+              ) : selectedVehicle === "All" ? (
+                <ListedVehicleCard {...data} />
+              ) : null}
+            </React.Fragment>
+          );
         })}
       </SimpleGrid>
     </Stack>

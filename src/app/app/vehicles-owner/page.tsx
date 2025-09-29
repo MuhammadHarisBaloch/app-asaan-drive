@@ -1,10 +1,10 @@
 "use client";
+import ProfileAndSettingSection from "@/components/features/ProfileAndSettingSection";
 import SideBar from "@/components/features/SideBar/inde";
 import VehicleOwnerDashboardSection from "@/components/features/vehicle-owner/Dashboard";
 import BookingManagementSection from "@/components/features/vehicle-owner/Dashboard/BookingManagementSection";
 import EarningAndPayoutSection from "@/components/features/vehicle-owner/Dashboard/EarningAndPayoutSection";
 import NotificationSection from "@/components/features/vehicle-owner/Dashboard/NotificationSection";
-import ProfileAndSettingSection from "@/components/features/vehicle-owner/Dashboard/ProfileAndSettingSection";
 import VehicleManagementSection from "@/components/features/vehicle-owner/Dashboard/VehicleManagementSection";
 import { Grid, GridCol } from "@mantine/core";
 import {
