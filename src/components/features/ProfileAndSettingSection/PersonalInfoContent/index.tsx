@@ -57,7 +57,7 @@ export default function PersonalInfoContent() {
           size="md"
           label="Full Name"
           radius="md"
-          value={user?.fullName}
+          defaultValue={user?.fullName}
           styles={{ label: { fontSize: "14px" }, input: { fontSize: "16px" } }}
         />
         <TextInput
@@ -65,7 +65,7 @@ export default function PersonalInfoContent() {
           size="md"
           label="Email Address"
           radius="md"
-          value={user?.email}
+          defaultValue={user?.email}
           disabled
           styles={{
             label: { fontSize: "14px" },
@@ -84,7 +84,7 @@ export default function PersonalInfoContent() {
           size="md"
           label="Phone Number"
           radius="md"
-          value={user?.phoneNumber}
+          defaultValue={user?.phoneNumber}
           styles={{ label: { fontSize: "14px" }, input: { fontSize: "16px" } }}
         />
         <TextInput
@@ -92,7 +92,7 @@ export default function PersonalInfoContent() {
           size="md"
           label="City"
           radius="md"
-          value={user?.city}
+          defaultValue={user?.city}
           disabled
           styles={{
             label: { fontSize: "14px" },

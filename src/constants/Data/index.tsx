@@ -1235,6 +1235,7 @@ const transactionsCard = [
     status: "completed",
   },
 ];
+const availableCities = ["Sukkur", "Larkana", "Khairpur Mir's", "Rohri"];
 export const data = {
   footer: {
     menu: footerMenu,
@@ -1285,6 +1286,7 @@ export const data = {
       nearestVehicle: NearestVehicles,
     },
   },
+  availableCities: availableCities,
   vehicleOwner: {
     vehicleRegistration: {
       vehicleTypes: vehicleTypes,

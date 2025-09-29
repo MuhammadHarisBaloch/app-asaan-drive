@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   Card,
@@ -15,10 +16,15 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { listOwnerVehicleDocs } from "../../../../../features/vehicle";
 import { VehicleModel } from "../../../../../features/vehicle/models/vehicle.model";
-import StorageService from "../../../../../features/storage";
+import DeleteVehicleModal from "./DeleteVehicleModal";
+import EditVehicleModal from "./EditVehicleModal";
 
 export default function VehicleManagementSection() {
+  let color: string;
+  let bgColor: string;
+
   const [Vehicles, setVehicles] = useState<VehicleModel[]>([]);
+  const [status, setStatus] = useState("available");
 
   useEffect(() => {
     const listOwnerVehicles = async () => {
@@ -33,6 +39,21 @@ export default function VehicleManagementSection() {
       setVehicles(vehicles ?? []);
     });
   }, []);
+
+  switch (status) {
+    case "available":
+      color = "green";
+      bgColor = "green.1";
+      break;
+    case "booked":
+      color = "blue";
+      bgColor = "blue.1";
+      break;
+    case "inactive":
+      color = "black";
+      bgColor = "gray.1";
+      break;
+  }
 
   return (
     <Stack p="lg" gap="xl">
@@ -76,11 +97,16 @@ export default function VehicleManagementSection() {
                     </Text>
                     <Text fz="xs">{data.licensePlate}</Text>
                   </Stack>
-                  <Box bg={"green.1"} px="md" style={{ borderRadius: "10px" }}>
-                    <Text fz="12px" c={"green"}>
-                      Available
-                    </Text>
-                  </Box>
+                  <Badge
+                    bg={bgColor}
+                    c={color}
+                    fw={500}
+                    styles={{
+                      root: { textAlign: "center", textTransform: "lowercase" },
+                    }}
+                  >
+                    {status}
+                  </Badge>
                 </Group>
                 <Group w="100%" justify="space-between">
                   <Flex gap="sm" align="center">
@@ -105,16 +131,30 @@ export default function VehicleManagementSection() {
                     c="blue"
                     mt="sm"
                     fz="xs"
+                    onClick={() => {
+                      EditVehicleModal({
+                        vehicleName: data.vehicleModel,
+                        vehicleNumberPlate: data.licensePlate,
+                        location: data.pickupLocation,
+                        status: status,
+                      });
+                    }}
                   >
                     Edit
                   </Button>
                   <Button
                     fullWidth
                     leftSection={<IconTrashX size={20} />}
-                    bg="red.0"
+                    bg="pink.1"
                     c="red.4"
                     mt="sm"
                     fz="xs"
+                    onClick={() => {
+                      DeleteVehicleModal({
+                        vehicleName: data.vehicleModel,
+                        vehicleLicensePlate: data.licensePlate,
+                      });
+                    }}
                   >
                     Remove
                   </Button>

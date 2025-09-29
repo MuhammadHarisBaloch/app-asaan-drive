@@ -186,13 +186,14 @@ export default function ListYourVehicle() {
                   {...form.getInputProps("licensePlate")}
                 />
               </Flex>
-              <TextInput
+              <Select
                 w="100%"
                 label="Pickup Location"
                 placeholder="e.g., Khairpur Mir's"
                 radius="md"
                 key={form.key("pickupLocation")}
                 {...form.getInputProps("pickupLocation")}
+                data={data.availableCities}
               />
             </Stack>
             <Divider w="100%" />
