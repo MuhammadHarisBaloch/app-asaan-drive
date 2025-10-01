@@ -66,7 +66,7 @@ export default function BookingSummary() {
             </Group>
           );
         })}
-        <Card bg="blue.0" radius="lg" style={{ border: "1px solid #bfd8fc" }}>
+        <Card bg="blue.0" radius="md" style={{ border: "1px solid #bfd8fc" }}>
           <Stack gap="xs">
             <Flex align="center" gap="sm">
               <IconEye size={15} color="blue" />

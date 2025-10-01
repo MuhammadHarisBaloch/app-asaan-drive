@@ -1,4 +1,6 @@
+import { data } from "@/constants/Data";
 import {
+  Badge,
   Box,
   Button,
   Card,
@@ -31,6 +33,24 @@ export default function ListedCard({
   reviews,
   location,
 }: ListedVehicleCardProps) {
+  let status = "available";
+  let color: string;
+  let bgColor: string;
+
+  switch (status) {
+    case "available":
+      color = "green";
+      bgColor = "green.1";
+      break;
+    case "inactive":
+      color = "black";
+      bgColor = "gray.1";
+      break;
+    case "booked":
+      color = "blue";
+      bgColor = "blue.1";
+      break;
+  }
   return (
     <Card
       padding="lg"
@@ -58,11 +78,16 @@ export default function ListedCard({
             </Text>
             <Text fz="sm">{transmission}</Text>
           </Stack>
-          <Box bg="cyan" px="md" style={{ borderRadius: "10px" }}>
-            <Text fz="xs" c="green">
-              Available
-            </Text>
-          </Box>
+          <Badge
+            c={color}
+            bg={bgColor}
+            fw={500}
+            styles={{
+              root: { textAlign: "center", textTransform: "lowercase" },
+            }}
+          >
+            {status}
+          </Badge>
         </Group>
         <Text fz="md" c="red.4" fw={500}>
           Rs. {price}

@@ -3,7 +3,7 @@ const Images = {
     simple: "/logo/AsaanDrive.png",
     bikeLogo: "/logo/bike-logo.png",
   },
-  general: { bike: "/images/general/bike.webp" },
+  general: { vehicles: "/images/general/vehicles.png" },
   listedVehicles: {
     cd125: "/images/listedVehicles/125_bike.webp",
     cycle: "/images/listedVehicles/mountain-cycle.webp",

@@ -82,12 +82,12 @@ export default function VehicleDetails({ bookNow }: VehicleDetailsProps) {
             <Text fz="md">Choose your rental duration and Book instantly</Text>
             <Button
               variant="filled"
-              color="cyan.0"
-              c="green.8"
+              bg="green.1"
+              c="green"
               size="lg"
               fw={400}
               fz="md"
-              leftSection={<IconCircleCheck color="#0F6646" />}
+              leftSection={<IconCircleCheck color="green" />}
             >
               Available Now
             </Button>

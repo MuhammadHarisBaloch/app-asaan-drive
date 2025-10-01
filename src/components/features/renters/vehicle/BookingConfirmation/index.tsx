@@ -1,5 +1,6 @@
 import Images from "@/constants/Images";
 import {
+  Badge,
   Box,
   Button,
   Card,
@@ -55,26 +56,28 @@ export default function BookingConfirmation() {
                 <Text fz="xs">4.8 (24 reviews)</Text>
               </Flex>
               <Flex gap="md">
-                <Box
+                <Badge
+                  c="green"
                   bg="green.1"
-                  px="lg"
-                  py="xs"
-                  style={{ borderRadius: "20px" }}
+                  size="lg"
+                  fw={500}
+                  styles={{
+                    root: { textAlign: "center", textTransform: "lowercase" },
+                  }}
                 >
-                  <Text c="green" fz="xs" fw={500}>
-                    Confirmed
-                  </Text>
-                </Box>
-                <Box
+                  confirmed
+                </Badge>
+                <Badge
+                  c="blue"
                   bg="blue.1"
-                  px="lg"
-                  py="xs"
-                  style={{ borderRadius: "20px" }}
+                  size="lg"
+                  fw={500}
+                  styles={{
+                    root: { textAlign: "center", textTransform: "lowercase" },
+                  }}
                 >
-                  <Text c="blue.6" fz="xs" fw={500}>
-                    Paid Online
-                  </Text>
-                </Box>
+                  Paid Online
+                </Badge>
               </Flex>
             </Stack>
           </Flex>

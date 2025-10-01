@@ -41,10 +41,10 @@ export default function DocumentVerification({
               >
                 <IconShield size={25} color="blue" />
                 <Stack gap="xs">
-                  <Text c="blue.6" fz="sm">
+                  <Text c="blue.6" fz="sm" fw={500}>
                     Secure Document Upload
                   </Text>
-                  <Text fz="xs" c="blue.6">
+                  <Text fz="12px" c="blue.6">
                     Your documents are encrypted and securely stored. We only
                     use them for identity verification and comply with data
                     protection regulations.
