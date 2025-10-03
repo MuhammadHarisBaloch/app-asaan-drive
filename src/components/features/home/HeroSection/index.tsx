@@ -45,7 +45,7 @@ function HomeHeroSection() {
       <GridCol span={6}>
         <Image
           src={Images.general.vehicles}
-          alt="bike-image"
+          alt="vehicle-image"
           width={100}
           height={100}
           sizes="100vw"

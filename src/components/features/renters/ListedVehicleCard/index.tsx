@@ -15,28 +15,24 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface ListedVehicleCardProps {
-  image: string;
-  name: string;
-  transmission: string;
-  price: string;
-  rating: number;
-  reviews: number;
-  location: string;
+  id: string;
+  vehiclePhotos: string[];
+  vehicleModel: string;
+  vehicleType: string;
+  dailyRate: number;
+  pickupLocation: string;
 }
-
+let color: string;
+let bgColor: string;
 export default function ListedCard({
-  image,
-  name,
-  transmission,
-  price,
-  rating,
-  reviews,
-  location,
+  id,
+  vehiclePhotos,
+  vehicleModel,
+  vehicleType,
+  dailyRate,
+  pickupLocation,
 }: ListedVehicleCardProps) {
   let status = "available";
-  let color: string;
-  let bgColor: string;
-
   switch (status) {
     case "available":
       color = "green";
@@ -51,6 +47,7 @@ export default function ListedCard({
       bgColor = "blue.1";
       break;
   }
+
   return (
     <Card
       padding="lg"
@@ -59,14 +56,15 @@ export default function ListedCard({
     >
       <CardSection>
         <Image
-          src={image}
-          alt="cd-125"
+          src={vehiclePhotos[0]}
+          alt={vehicleModel}
           width={100}
           height={100}
           sizes="100vw"
+          priority
           style={{
             width: "100%",
-            height: "auto",
+            height: "15rem",
           }}
         />
       </CardSection>
@@ -74,9 +72,9 @@ export default function ListedCard({
         <Group w="100%" align="flex-start" justify="space-between">
           <Stack gap="xs">
             <Text fz="lg" c="black" fw={500} lh={0.8}>
-              {name}
+              {vehicleModel}
             </Text>
-            <Text fz="sm">{transmission}</Text>
+            <Text fz="sm">{vehicleType}</Text>
           </Stack>
           <Badge
             c={color}
@@ -90,20 +88,18 @@ export default function ListedCard({
           </Badge>
         </Group>
         <Text fz="md" c="red.4" fw={500}>
-          Rs. {price}
+          Rs. {dailyRate}/Day
         </Text>
         <Group w="100%" align="flex-start" justify="space-between">
           <Flex gap="sm" align="center">
             <IconStarFilled size={18} color="yellow" />
-            <Text fz="xs">
-              {rating} ({reviews} reviews)
-            </Text>
+            <Text fz="xs">4.8 (125 reviews)</Text>
           </Flex>
-          <Text fz="xs">{location}</Text>
+          <Text fz="xs">{pickupLocation}</Text>
         </Group>
         <Button
           component={Link}
-          href="/app/renter/vehicle"
+          href={`/app/renter/vehicle/${id}`}
           fullWidth
           mt="sm"
           fz="xs"

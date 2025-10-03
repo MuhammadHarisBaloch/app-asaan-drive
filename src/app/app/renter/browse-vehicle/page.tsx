@@ -1,6 +1,7 @@
 "use client";
 import ListedVehicleCard from "@/components/features/renters/ListedVehicleCard";
-import { data } from "@/constants/Data";
+import { listAllVehicleDocs } from "@/features/vehicle";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import {
   Button,
   Card,
@@ -12,13 +13,44 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import React from "react";
+import { getAuth } from "firebase/auth";
+import React, { useEffect } from "react";
 import { useState } from "react";
 
-const VehicleType = ["All", "Bike", "Cycle", "Rikshaw"];
+const VehicleType = ["All", "Bike", "Cycle", "Rakshaw"];
+let status = "available";
+let color: string;
+let bgColor: string;
 
+switch (status) {
+  case "available":
+    color = "green";
+    bgColor = "green.1";
+    break;
+  case "inactive":
+    color = "black";
+    bgColor = "gray.1";
+    break;
+  case "booked":
+    color = "blue";
+    bgColor = "blue.1";
+    break;
+}
 export default function BrowseVehicle() {
   const [selectedVehicle, setSelectedVehicle] = useState<string>("All");
+  const [Vehicles, setVehicles] = useState<VehicleModel[]>([]);
+
+  useEffect(() => {
+    const listAllVehicles = async () => {
+      const vehicles = await listAllVehicleDocs();
+      return vehicles;
+    };
+
+    listAllVehicles().then((vehicles) => {
+      console.log(vehicles);
+      setVehicles(vehicles ?? []);
+    });
+  }, []);
 
   return (
     <Stack align="center" px="lg" py="3xl" gap="3xl">
@@ -76,11 +108,11 @@ export default function BrowseVehicle() {
           </Stack>
         </Group>
       </Card>
-      <SimpleGrid cols={3} spacing="xl">
-        {data.renter.inlistVehicles.map((data, index) => {
+      <SimpleGrid cols={3} spacing="xxl">
+        {Vehicles.map((data) => {
           return (
-            <React.Fragment key={index}>
-              {selectedVehicle === data.transmission ? (
+            <React.Fragment key={data.id}>
+              {selectedVehicle === data.vehicleType ? (
                 <ListedVehicleCard {...data} />
               ) : selectedVehicle === "All" ? (
                 <ListedVehicleCard {...data} />
