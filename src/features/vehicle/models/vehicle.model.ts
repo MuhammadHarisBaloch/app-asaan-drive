@@ -1,4 +1,5 @@
 export interface VehicleModel {
+  id: string;
   vehicleType: string;
   vehicleModel: string;
   vehicleYear: string;

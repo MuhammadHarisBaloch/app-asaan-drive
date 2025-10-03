@@ -14,11 +14,16 @@ import { IconCircleCheck } from "@tabler/icons-react";
 import AboutVehicleCard from "./AboutVehicleCard";
 import ServicesCard from "./ServicesCard";
 import { data } from "@/constants/Data";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 
 interface VehicleDetailsProps {
   bookNow: () => void;
+  vehicle: VehicleModel;
 }
-export default function VehicleDetails({ bookNow }: VehicleDetailsProps) {
+export default function VehicleDetails({
+  bookNow,
+  vehicle,
+}: VehicleDetailsProps) {
   return (
     <Grid py="3xl" gutter="xxl">
       <GridCol span={8}>
@@ -42,27 +47,25 @@ export default function VehicleDetails({ bookNow }: VehicleDetailsProps) {
               },
             }}
           >
-            {data.renter.vehicle.vehicleDetails.vehicleImages.map(
-              (data, index) => {
-                return (
-                  <Carousel.Slide key={index}>
-                    <Image
-                      src={data.src}
-                      alt={data.alt}
-                      height={100}
-                      width={100}
-                      sizes="100vw"
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                      }}
-                    />
-                  </Carousel.Slide>
-                );
-              }
-            )}
+            {vehicle.vehiclePhotos.map((data, index) => {
+              return (
+                <Carousel.Slide key={index}>
+                  <Image
+                    src={data}
+                    alt={vehicle.vehicleModel}
+                    height={100}
+                    width={100}
+                    sizes="100vw"
+                    style={{
+                      width: "100%",
+                      height: "30rem",
+                    }}
+                  />
+                </Carousel.Slide>
+              );
+            })}
           </Carousel>
-          <AboutVehicleCard />
+          <AboutVehicleCard vehicle={vehicle} />
           <ServicesCard />
         </Stack>
       </GridCol>
@@ -94,21 +97,23 @@ export default function VehicleDetails({ bookNow }: VehicleDetailsProps) {
             <Text fz="md" c="black">
               Pricing Option
             </Text>
-            {data.renter.vehicle.vehicleDetails.vehiclePrices.map(
-              (data, index) => {
-                return (
-                  <Stack key={index}>
-                    <Group justify="space-between">
-                      <Text fz="xs">{data.option}</Text>
-                      <Text fz="xs" c="black">
-                        {data.price}
-                      </Text>
-                    </Group>
-                    <Divider w="100%" />
-                  </Stack>
-                );
-              }
-            )}
+            {[
+              { option: "Daily", price: vehicle.dailyRate },
+              { option: "Weekly", price: vehicle.weeklyRate },
+              { option: "Monthly", price: vehicle.monthlyRate },
+            ].map((data, index) => {
+              return (
+                <Stack key={index}>
+                  <Group justify="space-between">
+                    <Text fz="xs">{data.option}</Text>
+                    <Text fz="xs" c="black">
+                      {data.price}
+                    </Text>
+                  </Group>
+                  <Divider w="100%" />
+                </Stack>
+              );
+            })}
             <Button size="lg" fw={400} fz="md" onClick={bookNow}>
               Book Now
             </Button>

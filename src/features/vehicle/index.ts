@@ -2,7 +2,7 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { VehicleModel } from "./models/vehicle.model";
 import { db } from "@/networking/firebase";
 import { firebaseConstants } from "@/constants/Firestore";
-import Vehicle from "../../app/app/renter/vehicle/page";
+import Vehicle from "../../app/app/renter/vehicle/[id]/page";
 
 export async function createVehicleDocument(data: VehicleModel) {
   try {
@@ -25,5 +25,20 @@ export async function listOwnerVehicleDocs(ownerID: string) {
   const querySnapshot = await getDocs(docQuery);
   const vehicles = querySnapshot.docs.map((doc) => doc.data() as VehicleModel);
   console.log("Owner Vehicles: ", vehicles);
+  return vehicles;
+}
+
+export async function listAllVehicleDocs() {
+  const docQuery = query(
+    collection(db, firebaseConstants.collections.vehicles)
+  );
+  const querySnapshot = await getDocs(docQuery);
+  const vehicles = querySnapshot.docs.map(
+    (doc) =>
+      ({
+        id: doc.id,
+        ...doc.data(),
+      } as VehicleModel)
+  );
   return vehicles;
 }
