@@ -9,11 +9,16 @@ import CreditCardSection from "./CreditCardSection";
 import OrderSummarySection from "./OrderSummarySection";
 import CashOnPickupSection from "./CashOnPickupSection";
 import MobileWallet from "./MobileWallet";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 
 interface PaymentBillingProps {
-  onClick: () => void;
+  bookNow: () => void;
+  vehicle: VehicleModel;
 }
-export default function PaymentBilling({ onClick }: PaymentBillingProps) {
+export default function PaymentBilling({
+  bookNow,
+  vehicle,
+}: PaymentBillingProps) {
   const [value, setValue] = useState<string | null>("Debit/Credit Card");
 
   return (
@@ -54,20 +59,20 @@ export default function PaymentBilling({ onClick }: PaymentBillingProps) {
                 </Tabs.List>
                 <Divider w="100%" />
                 <Tabs.Panel value="Debit/Credit Card">
-                  <CreditCardSection onClick={onClick} />
+                  <CreditCardSection onClick={bookNow} />
                 </Tabs.Panel>
                 <Tabs.Panel value="Mobile Wallet">
-                  <MobileWallet onClick={onClick} />
+                  <MobileWallet onClick={bookNow} />
                 </Tabs.Panel>
                 <Tabs.Panel value="Cash on Pickup">
-                  <CashOnPickupSection onClick={onClick} />
+                  <CashOnPickupSection onClick={bookNow} />
                 </Tabs.Panel>
               </Tabs>
             </Stack>
           </Card>
         </Grid.Col>
         <Grid.Col span={4}>
-          <OrderSummarySection />
+          <OrderSummarySection vehicle={vehicle} />
         </Grid.Col>
       </Grid>
     </Stack>

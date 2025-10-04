@@ -27,6 +27,8 @@ import DropzoneImagePreview from "../../../../components/features/core/dropzone-
 import StorageService from "../../../../features/storage";
 import { createVehicleDocument } from "../../../../features/vehicle";
 import { useRouter } from "next/navigation";
+import { getUserDocument } from "@/features/user";
+import { UserModel } from "@/features/user/models/user.model";
 
 interface VehicleRegistrationForm {
   vehicleType: string;
@@ -42,6 +44,7 @@ interface VehicleRegistrationForm {
 export default function ListYourVehicle() {
   const [vehiclePhotos, setVehiclePhotos] = useState<FileWithPath[]>([]);
   const [vehicleDocs, setVehicleDocs] = useState<FileWithPath[]>([]);
+  const [user, setUser] = useState<UserModel | null>(null);
   const [loader, { open: startLoading, close: stopLoading }] =
     useDisclosure(false);
   const router = useRouter();
@@ -56,7 +59,11 @@ export default function ListYourVehicle() {
       return;
     }
 
-    startLoading();
+    const userData = await getUserDocument(ownerID);
+    setUser(userData);
+    console.log("Owner Data is here : ", userData);
+
+    // startLoading();
 
     const uploadedPhotoIds = await Promise.all(
       vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
@@ -79,6 +86,10 @@ export default function ListYourVehicle() {
       ownerID,
       vehiclePhotos: uploadedPhotoUrls,
       vehicleDocs: uploadedDocUrls,
+      ownerName: user?.fullName,
+      ownerNumber: user?.phoneNumber,
+      ownerEmail: user?.email,
+      ownerType: user?.userType,
     });
 
     if (vehicle) {
@@ -94,8 +105,7 @@ export default function ListYourVehicle() {
       message: "",
     });
 
-    stopLoading();
-    
+    // stopLoading();
   };
 
   const form = useForm<VehicleRegistrationForm>({

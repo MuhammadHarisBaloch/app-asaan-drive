@@ -15,7 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface ListedVehicleCardProps {
-  id: string;
+  id?: string;
   vehiclePhotos: string[];
   vehicleModel: string;
   vehicleType: string;

@@ -13,9 +13,7 @@ import Image from "next/image";
 import { IconCircleCheck } from "@tabler/icons-react";
 import AboutVehicleCard from "./AboutVehicleCard";
 import ServicesCard from "./ServicesCard";
-import { data } from "@/constants/Data";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
-
 interface VehicleDetailsProps {
   bookNow: () => void;
   vehicle: VehicleModel;
@@ -53,6 +51,7 @@ export default function VehicleDetails({
                   <Image
                     src={data}
                     alt={vehicle.vehicleModel}
+                    unoptimized
                     height={100}
                     width={100}
                     sizes="100vw"

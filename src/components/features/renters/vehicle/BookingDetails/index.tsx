@@ -18,12 +18,46 @@ import {
 } from "@tabler/icons-react";
 import { DatePickerInput, TimeInput } from "@mantine/dates";
 import BookingSummaryCard from "./BookingSummaryCard";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
+import { isNotEmpty, useForm } from "@mantine/form";
+import { useState } from "react";
 
-interface BookingDetailsProps {
-  onClick: () => void;
+export interface BookingFormValues {
+  rentalType: string;
+  duration: number;
+  pickUpDate: number | null;
+  pickUpTime: number;
 }
+interface BookingDetailsProps {
+  bookNow: () => void;
+  vehicle: VehicleModel;
+}
+let rentalCost: number;
+export default function BookingDetails({
+  bookNow,
+  vehicle,
+}: BookingDetailsProps) {
+  const [bookingDetails, setBookingDetails] =
+    useState<BookingFormValues | null>(null);
 
-export default function BookingDetails({ onClick }: BookingDetailsProps) {
+  // USE-FORM FOR VALUES :
+
+  const form = useForm<BookingFormValues>({
+    initialValues: {
+      rentalType: "",
+      duration: 0,
+      pickUpDate: null,
+      pickUpTime: 0,
+    },
+    validate: {
+      rentalType: isNotEmpty("Please select any rental type"),
+      duration: (values) =>
+        values <= 0 ? "Please select the duration time" : null,
+      pickUpDate: isNotEmpty("Select the pickup date"),
+      pickUpTime: isNotEmpty("Select the pickup time"),
+    },
+  });
+
   return (
     <Stack py="3xl">
       <Text fz="30px" fw={600} c="black" lh={0.8}>
@@ -33,93 +67,116 @@ export default function BookingDetails({ onClick }: BookingDetailsProps) {
       <Grid gutter="xxl">
         <GridCol span={8}>
           <Card withBorder radius="lg">
-            <Stack px="lg" py="lg" gap="xl">
-              <Stack gap={0}>
-                <Text fz="lg" fw={500} c="black">
-                  Rental Options
-                </Text>
-                <Flex align="flex-end" gap="xl">
+            <form
+              onSubmit={form.onSubmit((values) => {
+                setBookingDetails(values);
+                console.log("Booking Details Values :", values);
+                bookNow();
+              })}
+            >
+              <Stack px="lg" py="lg" gap="xl">
+                <Stack gap={0}>
+                  <Text fz="lg" fw={500} c="black">
+                    Rental Options
+                  </Text>
+                  <Flex align="flex-end" gap="xl">
+                    <TextInput
+                      w="100%"
+                      label="Rental Type"
+                      component="select"
+                      rightSection={<IconChevronDown size={14} stroke={1.5} />}
+                      pointer
+                      mt="md"
+                      radius="md"
+                      key={form.key("rentalType")}
+                      {...form.getInputProps("rentalType")}
+                    >
+                      <option value="1"></option>
+                      <option value="Daily">
+                        Daily (Rs: {vehicle.dailyRate}/day)
+                      </option>
+                      <option value="Weekly">
+                        Weekly (Rs: {vehicle.weeklyRate}/week)
+                      </option>
+                      <option value="Monthly">
+                        Monthly (Rs: {vehicle.monthlyRate}/month)
+                      </option>
+                    </TextInput>
+                    <NumberInput
+                      w="100%"
+                      label="Duration (Days)"
+                      radius="md"
+                      min={1}
+                      key={form.key("duration")}
+                      {...form.getInputProps("duration")}
+                    />
+                  </Flex>
+                </Stack>
+                <Stack gap="md">
+                  <Text fz="lg" fw={500} c="black">
+                    Pickup Details
+                  </Text>
+                  <Flex align="flex-end" gap="xl">
+                    <DatePickerInput
+                      radius="md"
+                      w="100%"
+                      label="Pickup Date"
+                      placeholder="7/7/2025"
+                      leftSection={<IconCalendarWeek size={20} stroke={1.5} />}
+                      rightSection={
+                        <IconCalendarMonthFilled size={20} color="black" />
+                      }
+                      key={form.key("pickUpDate")}
+                      {...form.getInputProps("pickUpDate")}
+                    />
+                    <TimeInput
+                      radius="md"
+                      w="100%"
+                      label="Pickup Time"
+                      leftSection={<IconClockFilled size={20} />}
+                      key={form.key("pickUpTime")}
+                      {...form.getInputProps("pickUpTime")}
+                    />
+                  </Flex>
+                </Stack>
+                <Stack>
                   <TextInput
-                    w="100%"
-                    label="Rental Type"
-                    component="select"
-                    rightSection={<IconChevronDown size={14} stroke={1.5} />}
-                    pointer
-                    mt="md"
                     radius="md"
-                  >
-                    <option value="1">Daily (Rs: 1000/day)</option>
-                    <option value="1">Weekly (Rs: 7500/week)</option>
-                    <option value="1">Monthly (Rs: 25000/month)</option>
-                  </TextInput>
-                  <NumberInput
-                    w="100%"
-                    label="Duration (Days)"
-                    radius="md"
-                    min={1}
+                    disabled
+                    label="Pickup Location"
+                    placeholder={vehicle.pickupLocation + " ,Pakistan"}
+                    styles={{
+                      input: {
+                        backgroundColor: "#d9d9d925",
+                      },
+                    }}
                   />
-                </Flex>
-              </Stack>
-              <Stack gap="md">
-                <Text fz="lg" fw={500} c="black">
-                  Pickup Details
+                  <Text fz="12px">
+                    Location is set to the vehicle's registered address
+                  </Text>
+                </Stack>
+                <Text fz="lg" c="black" fw={500}>
+                  Additional Information
                 </Text>
-                <Flex align="flex-end" gap="xl">
-                  <DatePickerInput
-                    radius="md"
-                    w="100%"
-                    label="Pickup Date"
-                    placeholder="7/7/2025"
-                    leftSection={<IconCalendarWeek size={20} stroke={1.5} />}
-                    rightSection={
-                      <IconCalendarMonthFilled size={20} color="black" />
-                    }
-                  />
-                  <TimeInput
-                    radius="md"
-                    w="100%"
-                    label="Pickup Time"
-                    leftSection={<IconClockFilled size={20} />}
-                  />
-                </Flex>
-              </Stack>
-              <Stack>
-                <TextInput
+                <Textarea
+                  w="100%"
                   radius="md"
-                  disabled
-                  label="Pickup Location"
-                  placeholder="Khairpur Mir's, Pakistan"
-                  styles={{
-                    input: {
-                      backgroundColor: "#d9d9d925",
-                    },
-                  }}
+                  label="Notes for Vehicle Owner (Optional)"
+                  placeholder="Add any Special Request or Question......"
+                  rows={4}
                 />
-                <Text fz="12px">
-                  Location is set to the vehicle's registered address
-                </Text>
+                <Button size="md" type="submit">
+                  Continue to Verification
+                </Button>
               </Stack>
-              <Text fz="lg" c="black" fw={500}>
-                Additional Information
-              </Text>
-              <Textarea
-                w="100%"
-                radius="md"
-                label="Notes for Vehicle Owner (Optional)"
-                placeholder="Add any Special Request or Question......"
-                rows={4}
-              />
-              <Button size="md" onClick={onClick}>
-                Continue to Payment
-              </Button>
-            </Stack>
+            </form>
           </Card>
         </GridCol>
         <GridCol
           span={4}
           style={{ position: "sticky", top: 80, alignSelf: "flex-start" }}
         >
-          <BookingSummaryCard />
+          <BookingSummaryCard vehicle={vehicle} values={form.values} />
         </GridCol>
       </Grid>
     </Stack>

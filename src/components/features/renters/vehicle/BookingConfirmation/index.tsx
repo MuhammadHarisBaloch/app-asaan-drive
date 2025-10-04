@@ -23,8 +23,14 @@ import Image from "next/image";
 import BookingIdCard from "./BookingIdCard";
 import ContactInfoSection from "./ContactInfoSection";
 import { data } from "@/constants/Data";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 
-export default function BookingConfirmation() {
+interface BookingConfirmationProps {
+  vehicle: VehicleModel;
+}
+export default function BookingConfirmation({
+  vehicle,
+}: BookingConfirmationProps) {
   return (
     <Stack py="3xl" px="8rem" gap="xl">
       <BookingIdCard />
@@ -39,16 +45,18 @@ export default function BookingConfirmation() {
             <Image
               height={100}
               width={100}
-              src={Images.listedVehicles.cd125}
-              alt="cd-125"
+              src={vehicle.vehiclePhotos[0]}
+              alt={vehicle.vehicleModel}
               sizes="100vw"
-              style={{ width: "15%", height: "auto" }}
+              style={{ width: "9rem", height: "8rem", borderRadius: "10px" }}
             />
             <Stack gap="md">
               <Text fz="xl" c="black " fw={600} lh={0.8}>
-                Honda 125
+                {vehicle.vehicleModel}
               </Text>
-              <Text fz="lg">Bike . 2025</Text>
+              <Text fz="lg">
+                {vehicle.vehicleType} . {vehicle.vehicleYear}
+              </Text>
               <Flex align="center" gap="xs">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <IconStarFilled key={i} size={18} color="yellow" />
@@ -126,7 +134,7 @@ export default function BookingConfirmation() {
                   Address
                 </Text>
                 <Text fz="sm" c="black">
-                  Karachi, Pakistan
+                  {vehicle.pickupLocation}, Pakistan
                 </Text>
                 <Text fz="12px">
                   Please contact the owner for exact location details
@@ -165,7 +173,7 @@ export default function BookingConfirmation() {
           </Stack>
         </Stack>
         <Divider w="100%" />
-        <ContactInfoSection />
+        <ContactInfoSection vehicle={vehicle} />
       </Card>
       <Flex px="lg" gap="xl">
         <Button

@@ -13,12 +13,15 @@ import { IconExclamationCircle, IconShield } from "@tabler/icons-react";
 import BookingSummary from "./BookingSummary";
 import DocInputSection from "./DocInputSection";
 import { data } from "@/constants/Data";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 
 interface DocumentVerificationProps {
-  onClick: () => void;
+  bookNow: () => void;
+  vehicle: VehicleModel;
 }
 export default function DocumentVerification({
-  onClick,
+  vehicle,
+  bookNow,
 }: DocumentVerificationProps) {
   return (
     <Stack w="100%" align="center" py="3xl" gap="xxl">
@@ -77,7 +80,7 @@ export default function DocumentVerification({
                   </Stack>
                 </Flex>
               </Box>
-              <Button size="md" onClick={onClick}>
+              <Button size="md" onClick={bookNow}>
                 Continue to Payment
               </Button>
             </Stack>
@@ -87,7 +90,7 @@ export default function DocumentVerification({
           span={4}
           style={{ position: "sticky", top: 80, alignSelf: "flex-start" }}
         >
-          <BookingSummary />
+          <BookingSummary vehicle={vehicle} />
         </GridCol>
       </Grid>
     </Stack>

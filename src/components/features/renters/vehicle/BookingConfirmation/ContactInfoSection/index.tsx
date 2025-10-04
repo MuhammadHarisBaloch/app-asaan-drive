@@ -1,3 +1,4 @@
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { Stack, Flex, Center, Button, Text } from "@mantine/core";
 import {
   IconUserCircle,
@@ -6,7 +7,12 @@ import {
   IconShieldCheck,
 } from "@tabler/icons-react";
 
-export default function ContactInfoSection() {
+interface ContactInfoSectionProps {
+  vehicle: VehicleModel;
+}
+export default function ContactInfoSection({
+  vehicle,
+}: ContactInfoSectionProps) {
   return (
     <Stack p="lg" gap="xl">
       <Text fz="lg" c="black" fw={500}>
@@ -18,10 +24,10 @@ export default function ContactInfoSection() {
         </Center>
         <Stack gap={0}>
           <Text fz="md" c="black" fw={600}>
-            Ahmed Khan
+            {vehicle.ownerName}
           </Text>
           <Text fz="sm" c="black">
-            Vehicle Owner
+            {vehicle.ownerType}
           </Text>
         </Stack>
       </Flex>
@@ -35,7 +41,7 @@ export default function ContactInfoSection() {
           variant="outline"
           color="gray"
         >
-          +923461392377
+          {vehicle.ownerNumber}
         </Button>
         <Button
           size="lg"
@@ -46,7 +52,7 @@ export default function ContactInfoSection() {
           variant="outline"
           color="gray"
         >
-          Owner Email @gmail.com
+          {vehicle.ownerEmail}
         </Button>
       </Flex>
       <Flex

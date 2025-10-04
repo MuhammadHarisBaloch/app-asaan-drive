@@ -2,7 +2,6 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { VehicleModel } from "./models/vehicle.model";
 import { db } from "@/networking/firebase";
 import { firebaseConstants } from "@/constants/Firestore";
-import Vehicle from "../../app/app/renter/vehicle/[id]/page";
 
 export async function createVehicleDocument(data: VehicleModel) {
   try {

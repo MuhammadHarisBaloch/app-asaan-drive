@@ -1,7 +1,9 @@
 import Images from "@/constants/Images";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { Card, Stack, Flex, Divider, Group, Text } from "@mantine/core";
 import { IconMapPin, IconEye } from "@tabler/icons-react";
 import Image from "next/image";
+import { BookingFormValues } from "../../BookingDetails";
 interface bookingPaymentDetails {
   title: string;
   subTitle: string;
@@ -25,7 +27,11 @@ const bookingPaymentDetails: bookingPaymentDetails[] = [
     subTitleColor: "red.4",
   },
 ];
-export default function BookingSummary() {
+interface BookingSummaryProps {
+  vehicle: VehicleModel;
+}
+
+export default function BookingSummary({ vehicle }: BookingSummaryProps) {
   return (
     <Card withBorder radius="lg" p="xl">
       <Stack>
@@ -34,24 +40,27 @@ export default function BookingSummary() {
         </Text>
         <Flex gap="lg">
           <Image
-            src={Images.listedVehicles.cd125}
-            alt="cd-125"
+            src={vehicle.vehiclePhotos[0]}
+            alt={vehicle.vehicleModel}
             height={100}
             width={100}
             sizes="100vw"
             style={{
-              width: "40%",
-              height: "auto",
+              width: "6rem",
+              height: "5rem",
+              borderRadius: "10px",
             }}
           />
           <Stack gap="xs">
             <Text fz="sm" fw={600} c="black">
-              Honda 125
+              {vehicle.vehicleModel}
             </Text>
-            <Text fz="12px">Bike . 2025</Text>
+            <Text fz="12px">
+              {vehicle.vehicleType} . {vehicle.vehicleYear}
+            </Text>
             <Flex align="center" gap="sm">
               <IconMapPin size={15} color="gray" />
-              <Text fz="12px">Khairpur Mir’s, Pakistan</Text>
+              <Text fz="12px">{vehicle.pickupLocation}, Pakistan</Text>
             </Flex>
           </Stack>
         </Flex>

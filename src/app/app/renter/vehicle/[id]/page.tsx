@@ -1,7 +1,9 @@
 "use client";
 
 import BookingConfirmation from "@/components/features/renters/vehicle/BookingConfirmation";
-import BookingDetails from "@/components/features/renters/vehicle/BookingDetails";
+import BookingDetails, {
+  BookingFormValues,
+} from "@/components/features/renters/vehicle/BookingDetails";
 import DocumentVerification from "@/components/features/renters/vehicle/DocumentVerification";
 import PaymentBilling from "@/components/features/renters/vehicle/PaymentBilling";
 import VehicleDetails from "@/components/features/renters/vehicle/VehicleDetails";
@@ -20,9 +22,17 @@ import { db } from "@/networking/firebase";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 
 export default function Vehicle() {
+  //GET URL ID OF THE VEHICLE :
+
   const { id } = useParams<{ id: string }>();
+
+  //STRORE THE VEHICLE DATA IN STATE :
+
   const [vehicle, setVehicle] = useState<VehicleModel | null>(null);
+
   const [active, setActive] = useState(0);
+
+  //FETCH THE VEHICLE DATA :
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -42,7 +52,6 @@ export default function Vehicle() {
   if (!vehicle) return <p>Loading...</p>;
 
   const handleBookNow = () => {
-    console.log("Booking vehicle:", vehicle.id);
     setActive((prev) => prev + 1);
   };
 
@@ -66,22 +75,22 @@ export default function Vehicle() {
           label="Book Details"
           icon={<IconCalendarPlus color="red" />}
         >
-          <BookingDetails onClick={handleBookNow} vehicle={vehicle} />
+          <BookingDetails bookNow={handleBookNow} vehicle={vehicle} />
         </Stepper.Step>
         <Stepper.Step
           label="Verification"
           icon={<IconRosetteDiscountCheck color="red" />}
         >
-          <DocumentVerification onClick={nextStep} />
+          <DocumentVerification bookNow={handleBookNow} vehicle={vehicle} />
         </Stepper.Step>
         <Stepper.Step label="Payment" icon={<IconCreditCard color="red" />}>
-          <PaymentBilling onClick={nextStep} />
+          <PaymentBilling bookNow={handleBookNow} vehicle={vehicle} />
         </Stepper.Step>
         <Stepper.Step
           label="Confirmation"
           icon={<IconClipboardCheck color="red" />}
         >
-          <BookingConfirmation />
+          <BookingConfirmation vehicle={vehicle} />
         </Stepper.Step>
         <Stepper.Completed>
           Completed, click back button to get to previous step

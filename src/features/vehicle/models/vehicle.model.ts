@@ -1,5 +1,5 @@
 export interface VehicleModel {
-  id: string;
+  id?: string;
   vehicleType: string;
   vehicleModel: string;
   vehicleYear: string;
@@ -9,6 +9,10 @@ export interface VehicleModel {
   weeklyRate: number;
   monthlyRate: number;
   ownerID: string;
+  ownerName?: string;
+  ownerType?: string;
+  ownerNumber?: string;
+  ownerEmail?: string;
   vehiclePhotos: string[];
   vehicleDocs: string[];
 }
