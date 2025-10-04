@@ -25,7 +25,7 @@ export default function BookingSummaryCard({
       default:
         return 0;
     }
-  }, [values.rentalType]);
+  }, [values.rentalType, values.duration]);
 
   // 2. Tax (5%)
   const tax = useMemo(() => rentalCost * 0.05, [rentalCost]);
@@ -43,7 +43,7 @@ export default function BookingSummaryCard({
       default:
         return "—";
     }
-  }, [values.rentalType]);
+  }, [values.duration, values.rentalType]);
 
   const baseRate = useMemo(() => {
     switch (values.rentalType) {

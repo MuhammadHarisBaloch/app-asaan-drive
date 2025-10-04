@@ -4,52 +4,63 @@ import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { Card, Divider, Flex, Group, Stack, Text } from "@mantine/core";
 import { IconMapPin } from "@tabler/icons-react";
 import Image from "next/image";
-import { RenterBookingFormValues } from "../../../../../../app/app/renter/vehicle/[id]/page";
-
-interface orderDetails {
-  title: string;
-  subTitle: string;
-  titleColor?: string;
-  subTitleColor?: string;
-}
-[];
-const orderDetails = [
-  {
-    title: "Rental Type:",
-    subTitle: "Daily",
-  },
-  {
-    title: "Days",
-    subTitle: "2 Days",
-  },
-  {
-    title: "Rate",
-    subTitle: "Rs. 1200 / daily",
-  },
-  {
-    title: "Return Date (Est.):",
-    subTitle: "July 28, 2025",
-  },
-];
-const subTotal = [
-  {
-    title: "Subtotal",
-    subTitle: "Rs. 2400",
-  },
-  {
-    title: "Tax (10%)",
-    subTitle: "Rs. 240",
-  },
-];
+import { useMemo } from "react";
+import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
 
 interface OrderSummarySectionProps {
-  formValues: RenterBookingFormValues;
+  formValues: Partial<RenterBookingForm> | null;
   vehicle: VehicleModel;
 }
 export default function OrderSummarySection({
   vehicle,
   formValues,
 }: OrderSummarySectionProps) {
+  // 1. Rental Cost calculate
+  const rentalCost = useMemo(() => {
+    if (!formValues?.duration) return 0;
+    switch (formValues.rentalType) {
+      case "Daily":
+        return vehicle.dailyRate * formValues?.duration;
+      case "Weekly":
+        return vehicle.weeklyRate * formValues?.duration;
+      case "Monthly":
+        return vehicle.monthlyRate * formValues?.duration;
+      default:
+        return 0;
+    }
+  }, [formValues?.rentalType, formValues?.duration]);
+
+  // 2. Tax (5%)
+  const tax = useMemo(() => rentalCost * 0.05, [rentalCost]);
+  // 3. Total = rentalCost + tax
+  const total = useMemo(() => rentalCost + tax, [rentalCost, tax]);
+
+  const vehicleDuration = useMemo(() => {
+    switch (formValues?.rentalType) {
+      case "Daily":
+        return `Day`;
+      case "Weekly":
+        return `Week`;
+      case "Monthly":
+        return `Month`;
+      default:
+        return "—";
+    }
+  }, [formValues?.rentalType, formValues?.duration]);
+
+  const baseRate = useMemo(() => {
+    switch (formValues?.rentalType) {
+      case "Daily":
+        return `${vehicle.dailyRate} /Day`;
+      case "Weekly":
+        return `${vehicle.weeklyRate} /Week`;
+      case "Monthly":
+        return `${vehicle.monthlyRate} /Month`;
+      default:
+        return "—";
+    }
+  }, [formValues?.rentalType]);
+
   return (
     <Card h="100%" withBorder radius="lg" p="xl">
       <Stack>
@@ -82,34 +93,50 @@ export default function OrderSummarySection({
           </Stack>
         </Flex>
         <Divider w="100%" />
-        {orderDetails.map((data, index) => {
-          return (
-            <Group key={index} justify="space-between">
-              <Text fz="12px ">{data.title}</Text>
-              <Text fz="12px " c="black">
-                {data.subTitle}
-              </Text>
-            </Group>
-          );
-        })}
+        <Group justify="space-between">
+          <Text fz="12px ">Rental Type</Text>
+          <Text fz="12px " c="black">
+            {formValues?.rentalType || "—"}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">{vehicleDuration}</Text>
+          <Text fz="12px " c="black">
+            {formValues?.duration || "—"}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">Rate</Text>
+          <Text fz="12px " c="black">
+            {baseRate}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">Return Date</Text>
+          <Text fz="12px " c="black">
+            -
+          </Text>
+        </Group>
         <Divider w="100%" />
-        {subTotal.map((data, index) => {
-          return (
-            <Group key={index} justify="space-between">
-              <Text fz="12px ">{data.title}</Text>
-              <Text fz="12px " c="black">
-                {data.subTitle}
-              </Text>
-            </Group>
-          );
-        })}
+        <Group justify="space-between">
+          <Text fz="12px ">Subtotal</Text>
+          <Text fz="12px " c="black">
+            {rentalCost > 0 ? `Rs. ${rentalCost.toFixed(2)}` : "—"}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">{`Tax (5%)`}</Text>
+          <Text fz="12px " c="black">
+            {rentalCost * 0.05}
+          </Text>
+        </Group>
         <Divider w="100%" />
         <Group justify="space-between">
           <Text fz="xs" c="black" fw={500}>
             Total:
           </Text>
           <Text fz="xs" c="red.4" fw={500}>
-            Rs. 1380.00
+            {total > 0 ? `Rs. ${total.toFixed(2)}` : "—"}
           </Text>
         </Group>
         {/* <Card bg="white.4" radius="lg">

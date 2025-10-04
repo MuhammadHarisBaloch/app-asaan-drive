@@ -3,35 +3,51 @@ import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { Card, Stack, Flex, Divider, Group, Text } from "@mantine/core";
 import { IconMapPin, IconEye } from "@tabler/icons-react";
 import Image from "next/image";
-import { BookingFormValues } from "../../BookingDetails";
-interface bookingPaymentDetails {
-  title: string;
-  subTitle: string;
-  subTitleColor?: string;
-}
-[];
-const bookingPaymentDetails: bookingPaymentDetails[] = [
-  {
-    title: "Rental Type:",
-    subTitle: "Daily",
-    subTitleColor: "black",
-  },
-  {
-    title: "Duration:",
-    subTitle: "1 Days",
-    subTitleColor: "black",
-  },
-  {
-    title: "Total Amount:",
-    subTitle: "Rs. 1500.00",
-    subTitleColor: "red.4",
-  },
-];
+import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
+import { useMemo } from "react";
+
 interface BookingSummaryProps {
   vehicle: VehicleModel;
+  formValues: Partial<RenterBookingForm> | null;
 }
 
-export default function BookingSummary({ vehicle }: BookingSummaryProps) {
+export default function BookingSummary({
+  vehicle,
+  formValues,
+}: BookingSummaryProps) {
+  // 1. Rental Cost calculate
+  const rentalCost = useMemo(() => {
+    if (!formValues?.duration) return 0;
+    switch (formValues?.rentalType) {
+      case "Daily":
+        return vehicle.dailyRate * formValues?.duration;
+      case "Weekly":
+        return vehicle.weeklyRate * formValues?.duration;
+      case "Monthly":
+        return vehicle.monthlyRate * formValues?.duration;
+      default:
+        return 0;
+    }
+  }, [formValues?.rentalType, formValues?.duration]);
+
+  // 2. Tax (5%)
+  const tax = useMemo(() => rentalCost * 0.05, [rentalCost]);
+  // 3. Total = rentalCost + tax
+  const total = useMemo(() => rentalCost + tax, [rentalCost, tax]);
+
+  const vehicleDuration = useMemo(() => {
+    switch (formValues?.rentalType) {
+      case "Daily":
+        return `${formValues.duration} Day`;
+      case "Weekly":
+        return `${formValues.duration} Week`;
+      case "Monthly":
+        return `${formValues.duration} Month`;
+      default:
+        return "—";
+    }
+  }, [formValues?.duration, formValues?.rentalType]);
+
   return (
     <Card withBorder radius="lg" p="xl">
       <Stack>
@@ -65,16 +81,26 @@ export default function BookingSummary({ vehicle }: BookingSummaryProps) {
           </Stack>
         </Flex>
         <Divider w="100%" />
-        {bookingPaymentDetails.map((data, index) => {
-          return (
-            <Group key={index} justify="space-between">
-              <Text fz="12px ">{data.title}</Text>
-              <Text fz="12px " c={data.subTitleColor}>
-                {data.subTitle}
-              </Text>
-            </Group>
-          );
-        })}
+
+        <Group justify="space-between">
+          <Text fz="12px ">Rental Type:</Text>
+          <Text fz="12px " c="black">
+            {formValues?.rentalType}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">Duration:</Text>
+          <Text fz="12px " c="black">
+            {vehicleDuration}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">Total Amount:</Text>
+          <Text fz="12px " c="red.4">
+            {total > 0 ? `Rs. ${total.toFixed(2)}` : "—"}
+          </Text>
+        </Group>
+
         <Card bg="blue.0" radius="md" style={{ border: "1px solid #bfd8fc" }}>
           <Stack gap="xs">
             <Flex align="center" gap="sm">

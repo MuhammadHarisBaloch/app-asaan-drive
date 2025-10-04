@@ -43,7 +43,7 @@ export default function Vehicle() {
 
   const [vehicle, setVehicle] = useState<VehicleModel | null>(null);
 
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(0);
 
   const [bookingDetails, setBookingDetails] =
     useState<Partial<RenterBookingForm> | null>(null);
@@ -74,9 +74,6 @@ export default function Vehicle() {
   const incrementStep = () => {
     setActive((prev) => prev + 1);
   };
-
-  const nextStep = () =>
-    setActive((current) => (current < 5 ? current + 1 : current));
 
   return (
     <>
@@ -113,10 +110,15 @@ export default function Vehicle() {
               setBookingDetails((prev) => ({ ...prev, ...values }));
               incrementStep();
             }}
+            formValues={bookingDetails}
           />
         </Stepper.Step>
         <Stepper.Step label="Payment" icon={<IconCreditCard color="red" />}>
-          <PaymentBilling bookNow={incrementStep} vehicle={vehicle} />
+          <PaymentBilling
+            bookNow={incrementStep}
+            vehicle={vehicle}
+            formValues={bookingDetails}
+          />
         </Stepper.Step>
         <Stepper.Step
           label="Confirmation"

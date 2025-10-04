@@ -10,10 +10,11 @@ import OrderSummarySection from "./OrderSummarySection";
 import CashOnPickupSection from "./CashOnPickupSection";
 import MobileWallet from "./MobileWallet";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
-import { RenterBookingFormValues } from "../../../../../app/app/renter/vehicle/[id]/page";
+import { BookingFormValues } from "../BookingDetails";
+import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
 
 interface PaymentBillingProps {
-  formValues: RenterBookingFormValues;
+  formValues: Partial<RenterBookingForm> | null;
   bookNow: () => void;
   vehicle: VehicleModel;
 }
@@ -75,7 +76,7 @@ export default function PaymentBilling({
           </Card>
         </Grid.Col>
         <Grid.Col span={4}>
-          <OrderSummarySection vehicle={vehicle} />
+          <OrderSummarySection vehicle={vehicle} formValues={formValues} />
         </Grid.Col>
       </Grid>
     </Stack>

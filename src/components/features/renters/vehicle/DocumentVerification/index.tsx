@@ -16,6 +16,7 @@ import { data } from "@/constants/Data";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { FileWithPath } from "@mantine/dropzone";
 import { useState } from "react";
+import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
 interface DocPhotos {
   cnicFrontSide: FileWithPath[];
   cnicBackSide: FileWithPath[];
@@ -25,10 +26,12 @@ interface DocPhotos {
 interface DocumentVerificationProps {
   vehicle: VehicleModel;
   onFormSubmit: (docs: DocPhotos) => void;
+  formValues: Partial<RenterBookingForm> | null;
 }
 export default function DocumentVerification({
   vehicle,
   onFormSubmit,
+  formValues,
 }: DocumentVerificationProps) {
   const cnicFrontSideState = useState<FileWithPath[]>([]);
   const cnicBackSideState = useState<FileWithPath[]>([]);
@@ -117,7 +120,7 @@ export default function DocumentVerification({
           span={4}
           style={{ position: "sticky", top: 80, alignSelf: "flex-start" }}
         >
-          <BookingSummary vehicle={vehicle} />
+          <BookingSummary vehicle={vehicle} formValues={formValues} />
         </GridCol>
       </Grid>
     </Stack>
