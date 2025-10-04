@@ -14,14 +14,22 @@ import BookingSummary from "./BookingSummary";
 import DocInputSection from "./DocInputSection";
 import { data } from "@/constants/Data";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
-
+import { FileWithPath } from "@mantine/dropzone";
+interface DocPhotos {
+  cnicFrontSide: FileWithPath[];
+  cnicBackSide: FileWithPath[];
+  driversLicenseFrontSide: FileWithPath[];
+  driversLicenseBackSide: FileWithPath[];
+}
 interface DocumentVerificationProps {
   bookNow: () => void;
   vehicle: VehicleModel;
+  onFormSubmit: (docs: DocPhotos) => void;
 }
 export default function DocumentVerification({
   vehicle,
   bookNow,
+  onFormSubmit,
 }: DocumentVerificationProps) {
   return (
     <Stack w="100%" align="center" py="3xl" gap="xxl">
@@ -54,7 +62,7 @@ export default function DocumentVerification({
                   </Text>
                 </Stack>
               </Flex>
-              <DocInputSection />
+              <DocInputSection onFormSubmit={onFormSubmit} />
               <Box
                 bg="orange.1"
                 p="lg"

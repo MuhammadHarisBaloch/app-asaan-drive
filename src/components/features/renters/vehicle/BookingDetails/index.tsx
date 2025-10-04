@@ -31,10 +31,11 @@ export interface BookingFormValues {
 interface BookingDetailsProps {
   bookNow: () => void;
   vehicle: VehicleModel;
+  onFormSubmit: (values: BookingFormValues) => void;
 }
-let rentalCost: number;
 export default function BookingDetails({
   bookNow,
+  onFormSubmit,
   vehicle,
 }: BookingDetailsProps) {
   const [bookingDetails, setBookingDetails] =
@@ -71,6 +72,7 @@ export default function BookingDetails({
               onSubmit={form.onSubmit((values) => {
                 setBookingDetails(values);
                 console.log("Booking Details Values :", values);
+                onFormSubmit(values);
                 bookNow();
               })}
             >
