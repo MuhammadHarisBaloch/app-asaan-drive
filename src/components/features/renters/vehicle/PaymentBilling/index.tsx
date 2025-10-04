@@ -10,13 +10,16 @@ import OrderSummarySection from "./OrderSummarySection";
 import CashOnPickupSection from "./CashOnPickupSection";
 import MobileWallet from "./MobileWallet";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
+import { RenterBookingFormValues } from "../../../../../app/app/renter/vehicle/[id]/page";
 
 interface PaymentBillingProps {
+  formValues: RenterBookingFormValues;
   bookNow: () => void;
   vehicle: VehicleModel;
 }
 export default function PaymentBilling({
   bookNow,
+  formValues,
   vehicle,
 }: PaymentBillingProps) {
   const [value, setValue] = useState<string | null>("Debit/Credit Card");

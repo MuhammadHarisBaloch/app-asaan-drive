@@ -23,7 +23,7 @@ import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { useForm } from "@mantine/form";
 import { FileWithPath } from "@mantine/dropzone";
 
-interface RenterBookingForm {
+export interface RenterBookingForm {
   rentalType: string;
   duration: number;
   pickUpDate: number | null;
@@ -43,23 +43,16 @@ export default function Vehicle() {
 
   const [vehicle, setVehicle] = useState<VehicleModel | null>(null);
 
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(1);
 
-  const form = useForm<RenterBookingForm>({
-    mode: "uncontrolled",
-    initialValues: {
-      rentalType: "",
-      duration: 0,
-      pickUpDate: null,
-      pickUpTime: null,
-      cnicFrontSide: [],
-      cnicBackSide: [],
-      driversLicenseFrontSide: [],
-      driversLicenseBackSide: [],
-    },
-  });
+  const [bookingDetails, setBookingDetails] =
+    useState<Partial<RenterBookingForm> | null>(null);
 
   //FETCH THE VEHICLE DATA :
+
+  useEffect(() => {
+    console.log("Active step changed to:", bookingDetails);
+  }, [active]);
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -78,7 +71,7 @@ export default function Vehicle() {
 
   if (!vehicle) return <p>Loading...</p>;
 
-  const handleBookNow = () => {
+  const incrementStep = () => {
     setActive((prev) => prev + 1);
   };
 
@@ -87,71 +80,54 @@ export default function Vehicle() {
 
   return (
     <>
-      <form>
-        <Stepper
-          px="xl"
-          pt="3xl"
-          color="red.4"
-          size="xs"
-          active={active}
-          onStepClick={setActive}
+      <Stepper
+        px="xl"
+        pt="3xl"
+        color="red.4"
+        size="xs"
+        active={active}
+        onStepClick={setActive}
+      >
+        <Stepper.Step label="Select Ride" icon={<IconCarFilled color="red" />}>
+          <VehicleDetails bookNow={incrementStep} vehicle={vehicle} />
+        </Stepper.Step>
+        <Stepper.Step
+          label="Book Details"
+          icon={<IconCalendarPlus color="red" />}
         >
-          <Stepper.Step
-            label="Select Ride"
-            icon={<IconCarFilled color="red" />}
-          >
-            <VehicleDetails bookNow={handleBookNow} vehicle={vehicle} />
-          </Stepper.Step>
-          <Stepper.Step
-            label="Book Details"
-            icon={<IconCalendarPlus color="red" />}
-          >
-            <BookingDetails
-              bookNow={handleBookNow}
-              vehicle={vehicle}
-              onFormSubmit={(values) => {
-                form.setFieldValue("rentalType", values.rentalType);
-                form.setFieldValue("duration", values.duration);
-                form.setFieldValue("pickUpDate", values.pickUpDate);
-                form.setFieldValue("pickUpTime", values.pickUpTime);
-              }}
-            />
-          </Stepper.Step>
-          <Stepper.Step
-            label="Verification"
-            icon={<IconRosetteDiscountCheck color="red" />}
-          >
-            <DocumentVerification
-              bookNow={handleBookNow}
-              vehicle={vehicle}
-              onFormSubmit={(values) => {
-                form.setFieldValue("cnicFrontSide", values.cnicFrontSide);
-                form.setFieldValue("cnicBackSide", values.cnicBackSide);
-                form.setFieldValue(
-                  "driversLicenseFrontSide",
-                  values.driversLicenseFrontSide
-                );
-                form.setFieldValue(
-                  "driversLicenseBackSide",
-                  values.driversLicenseBackSide
-                );
-              }}
-            />
-          </Stepper.Step>
-          <Stepper.Step label="Payment" icon={<IconCreditCard color="red" />}>
-            <PaymentBilling bookNow={handleBookNow} vehicle={vehicle} />
-          </Stepper.Step>
-          <Stepper.Step
-            label="Confirmation"
-            icon={<IconClipboardCheck color="red" />}
-          >
-            <BookingConfirmation vehicle={vehicle} />
-          </Stepper.Step>
-          <Stepper.Completed>
-            Completed, click back button to get to previous step
-          </Stepper.Completed>
-        </Stepper>
-      </form>
+          <BookingDetails
+            vehicle={vehicle}
+            onFormSubmit={(values) => {
+              setBookingDetails((prev) => ({ ...prev, ...values }));
+              incrementStep();
+            }}
+          />
+        </Stepper.Step>
+        <Stepper.Step
+          label="Verification"
+          icon={<IconRosetteDiscountCheck color="red" />}
+        >
+          <DocumentVerification
+            vehicle={vehicle}
+            onFormSubmit={(values) => {
+              setBookingDetails((prev) => ({ ...prev, ...values }));
+              incrementStep();
+            }}
+          />
+        </Stepper.Step>
+        <Stepper.Step label="Payment" icon={<IconCreditCard color="red" />}>
+          <PaymentBilling bookNow={incrementStep} vehicle={vehicle} />
+        </Stepper.Step>
+        <Stepper.Step
+          label="Confirmation"
+          icon={<IconClipboardCheck color="red" />}
+        >
+          <BookingConfirmation vehicle={vehicle} />
+        </Stepper.Step>
+        <Stepper.Completed>
+          Completed, click back button to get to previous step
+        </Stepper.Completed>
+      </Stepper>
     </>
   );
 }

@@ -3,6 +3,7 @@ import { Card, Divider, Flex, Group, Stack, Text } from "@mantine/core";
 import { IconExclamationCircle, IconMapPin } from "@tabler/icons-react";
 import Image from "next/image";
 import { BookingFormValues } from "..";
+import { useMemo } from "react";
 interface BookingSummaryCardProps {
   vehicle: VehicleModel;
   values: BookingFormValues;
@@ -13,77 +14,50 @@ export default function BookingSummaryCard({
   values,
 }: BookingSummaryCardProps) {
   // 1. Rental Cost calculate
-  const rentalCost =
-    values.rentalType === "Daily"
-      ? vehicle.dailyRate * values.duration
-      : values.rentalType === "Weekly"
-      ? vehicle.weeklyRate * values.duration
-      : values.rentalType === "Monthly"
-      ? vehicle.monthlyRate * values.duration
-      : 0;
+  const rentalCost = useMemo(() => {
+    switch (values.rentalType) {
+      case "Daily":
+        return vehicle.dailyRate * values.duration;
+      case "Weekly":
+        return vehicle.weeklyRate * values.duration;
+      case "Monthly":
+        return vehicle.monthlyRate * values.duration;
+      default:
+        return 0;
+    }
+  }, [values.rentalType]);
 
   // 2. Tax (5%)
-  const tax = rentalCost * 0.05;
-
+  const tax = useMemo(() => rentalCost * 0.05, [rentalCost]);
   // 3. Total = rentalCost + tax
-  const total = rentalCost + tax;
+  const total = useMemo(() => rentalCost + tax, [rentalCost, tax]);
 
-  const vehicleBookingDetails = [
-    {
-      title: "Rental Type:",
-      subTitle: values.rentalType || "—",
-    },
-    {
-      title: "Duration:",
-      // subTitle: values.duration ? `${values.duration} Days` : "—",
-      subTitle:
-        values.rentalType === "Daily"
-          ? `${values.duration} Day`
-          : values.rentalType === "Weekly"
-          ? `${values.duration} Week`
-          : values.rentalType === "Monthly"
-          ? `${values.duration} Month`
-          : "—",
-    },
-    {
-      title: "Pickup Date:",
-      subTitle: values.pickUpDate ? values.pickUpDate : "—",
-    },
-    {
-      title: "Pickup Time:",
-      subTitle: values.pickUpTime ? values.pickUpTime : "—",
-    },
-  ];
-  const bookingPaymentDetails = [
-    {
-      title: "Base Rate:",
-      subTitle:
-        values.rentalType === "Daily"
-          ? `${vehicle.dailyRate} Day`
-          : values.rentalType === "Weekly"
-          ? `${vehicle.weeklyRate} Week`
-          : values.rentalType === "Monthly"
-          ? `${vehicle.monthlyRate} Month`
-          : "—",
-      subTitleColor: "black",
-    },
-    {
-      title: "Rental Cost:",
-      subTitle: rentalCost > 0 ? `Rs. ${rentalCost.toFixed(2)}` : "—",
-      subTitleColor: "black",
-    },
-    {
-      title: "Tax (5%):",
-      subTitle: rentalCost > 0 ? `Rs. ${tax.toFixed(2)}` : "—",
-      subTitleColor: "black",
-    },
-    {
-      title: "Total:",
-      subTitle: total > 0 ? `Rs. ${total.toFixed(2)}` : "—",
-      titleColor: "black",
-      subTitleColor: "red.4",
-    },
-  ];
+  const vehicleDuration = useMemo(() => {
+    switch (values.rentalType) {
+      case "Daily":
+        return `${values.duration} Day`;
+      case "Weekly":
+        return `${values.duration} Week`;
+      case "Monthly":
+        return `${values.duration} Month`;
+      default:
+        return "—";
+    }
+  }, [values.rentalType]);
+
+  const baseRate = useMemo(() => {
+    switch (values.rentalType) {
+      case "Daily":
+        return `${vehicle.dailyRate} Day`;
+      case "Weekly":
+        return `${vehicle.weeklyRate} Week`;
+      case "Monthly":
+        return `${vehicle.monthlyRate} Month`;
+      default:
+        return "—";
+    }
+  }, [values.rentalType]);
+
   return (
     <Card withBorder radius="lg" p="xl">
       <Stack>
@@ -117,29 +91,57 @@ export default function BookingSummaryCard({
           </Stack>
         </Flex>
         <Divider w="100%" />
-        {vehicleBookingDetails.map((data, index) => {
-          return (
-            <Group key={index} justify="space-between">
-              <Text fz="12px ">{data.title}</Text>
-              <Text fz="12px " c="black">
-                {data.subTitle}
-              </Text>
-            </Group>
-          );
-        })}
+        <Group justify="space-between">
+          <Text fz="12px ">Rental Type: </Text>
+          <Text fz="12px " c="black">
+            {values.rentalType || "—"}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">Duration: </Text>
+          <Text fz="12px " c="black">
+            {vehicleDuration || "—"}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">Pickup Date: </Text>
+          <Text fz="12px " c="black">
+            {values.pickUpDate ?? "—"}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">Pickup Time: </Text>
+          <Text fz="12px " c="black">
+            {values.pickUpTime ?? "—"}
+          </Text>
+        </Group>
+
         <Divider w="100%" />
-        {bookingPaymentDetails.map((data, index) => {
-          return (
-            <Group key={index} justify="space-between">
-              <Text fz="12px " c={data.titleColor}>
-                {data.title}
-              </Text>
-              <Text fz="12px " c={data.subTitleColor}>
-                {data.subTitle}
-              </Text>
-            </Group>
-          );
-        })}
+        <Group justify="space-between">
+          <Text fz="12px ">Base Rate: </Text>
+          <Text fz="12px " c="black">
+            {baseRate}
+          </Text>
+        </Group>
+
+        <Group justify="space-between">
+          <Text fz="12px ">Rental Cost: </Text>
+          <Text fz="12px " c="black">
+            {rentalCost > 0 ? `Rs. ${rentalCost.toFixed(2)}` : "—"}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">{`Tax (5%): `}</Text>
+          <Text fz="12px " c="black">
+            {rentalCost * 0.05}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Text fz="12px ">{`Total: `}</Text>
+          <Text fz="12px " c="black">
+            {total > 0 ? `Rs. ${total.toFixed(2)}` : "—"}
+          </Text>
+        </Group>
         <Card bg="white.4" radius="lg">
           <Stack gap="xs">
             <Flex align="center" gap="sm">

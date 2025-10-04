@@ -4,6 +4,7 @@ import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { Card, Divider, Flex, Group, Stack, Text } from "@mantine/core";
 import { IconMapPin } from "@tabler/icons-react";
 import Image from "next/image";
+import { RenterBookingFormValues } from "../../../../../../app/app/renter/vehicle/[id]/page";
 
 interface orderDetails {
   title: string;
@@ -42,10 +43,12 @@ const subTotal = [
 ];
 
 interface OrderSummarySectionProps {
+  formValues: RenterBookingFormValues;
   vehicle: VehicleModel;
 }
 export default function OrderSummarySection({
   vehicle,
+  formValues,
 }: OrderSummarySectionProps) {
   return (
     <Card h="100%" withBorder radius="lg" p="xl">

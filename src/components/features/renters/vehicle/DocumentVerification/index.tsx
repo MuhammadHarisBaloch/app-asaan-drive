@@ -15,6 +15,7 @@ import DocInputSection from "./DocInputSection";
 import { data } from "@/constants/Data";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { FileWithPath } from "@mantine/dropzone";
+import { useState } from "react";
 interface DocPhotos {
   cnicFrontSide: FileWithPath[];
   cnicBackSide: FileWithPath[];
@@ -22,15 +23,18 @@ interface DocPhotos {
   driversLicenseBackSide: FileWithPath[];
 }
 interface DocumentVerificationProps {
-  bookNow: () => void;
   vehicle: VehicleModel;
   onFormSubmit: (docs: DocPhotos) => void;
 }
 export default function DocumentVerification({
   vehicle,
-  bookNow,
   onFormSubmit,
 }: DocumentVerificationProps) {
+  const cnicFrontSideState = useState<FileWithPath[]>([]);
+  const cnicBackSideState = useState<FileWithPath[]>([]);
+  const driversLicenseFrontSideState = useState<FileWithPath[]>([]);
+  const driversLicenseBackSideState = useState<FileWithPath[]>([]);
+
   return (
     <Stack w="100%" align="center" py="3xl" gap="xxl">
       <Stack align="center" gap="xxs">
@@ -62,7 +66,12 @@ export default function DocumentVerification({
                   </Text>
                 </Stack>
               </Flex>
-              <DocInputSection onFormSubmit={onFormSubmit} />
+              <DocInputSection
+                cnicFrontSideState={cnicFrontSideState}
+                cnicBackSideState={cnicBackSideState}
+                driversLicenseFrontSideState={driversLicenseFrontSideState}
+                driversLicenseBackSideState={driversLicenseBackSideState}
+              />
               <Box
                 bg="orange.1"
                 p="lg"
@@ -88,7 +97,17 @@ export default function DocumentVerification({
                   </Stack>
                 </Flex>
               </Box>
-              <Button size="md" onClick={bookNow}>
+              <Button
+                size="md"
+                onClick={() => {
+                  onFormSubmit({
+                    cnicFrontSide: cnicFrontSideState[0],
+                    cnicBackSide: cnicBackSideState[0],
+                    driversLicenseFrontSide: driversLicenseFrontSideState[0],
+                    driversLicenseBackSide: driversLicenseBackSideState[0],
+                  });
+                }}
+              >
                 Continue to Payment
               </Button>
             </Stack>

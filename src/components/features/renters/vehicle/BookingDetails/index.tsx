@@ -29,12 +29,10 @@ export interface BookingFormValues {
   pickUpTime: number;
 }
 interface BookingDetailsProps {
-  bookNow: () => void;
   vehicle: VehicleModel;
   onFormSubmit: (values: BookingFormValues) => void;
 }
 export default function BookingDetails({
-  bookNow,
   onFormSubmit,
   vehicle,
 }: BookingDetailsProps) {
@@ -73,7 +71,6 @@ export default function BookingDetails({
                 setBookingDetails(values);
                 console.log("Booking Details Values :", values);
                 onFormSubmit(values);
-                bookNow();
               })}
             >
               <Stack px="lg" py="lg" gap="xl">

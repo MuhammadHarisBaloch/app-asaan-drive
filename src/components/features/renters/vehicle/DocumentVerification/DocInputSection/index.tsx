@@ -1,50 +1,30 @@
-import { Stack, Text, Button } from "@mantine/core";
+import { Button, Stack, Text } from "@mantine/core";
+import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconUpload } from "@tabler/icons-react";
-import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
-interface DocPhotos {
-  cnicFrontSide: FileWithPath[];
-  cnicBackSide: FileWithPath[];
-  driversLicenseFrontSide: FileWithPath[];
-  driversLicenseBackSide: FileWithPath[];
-}
-interface DocInputSectionpProps {
-  onFormSubmit: (docs: DocPhotos) => void;
+interface DocInputSectionProps {
+  cnicFrontSideState: [
+    FileWithPath[],
+    Dispatch<SetStateAction<FileWithPath[]>>
+  ];
+  cnicBackSideState: [FileWithPath[], Dispatch<SetStateAction<FileWithPath[]>>];
+  driversLicenseFrontSideState: [
+    FileWithPath[],
+    Dispatch<SetStateAction<FileWithPath[]>>
+  ];
+  driversLicenseBackSideState: [
+    FileWithPath[],
+    Dispatch<SetStateAction<FileWithPath[]>>
+  ];
 }
 
 export default function DocInputSection({
-  onFormSubmit,
-}: DocInputSectionpProps) {
-  const [cnicFrontSide, setCnicFrontSide] = useState<FileWithPath[]>([]);
-  const [cnicBackSide, setCnicBackSide] = useState<FileWithPath[]>([]);
-  const [driversLicenseFrontSide, setDriversLicenseFrontSide] = useState<
-    FileWithPath[]
-  >([]);
-  const [driversLicenseBackSide, setDriversLicenseBackSide] = useState<
-    FileWithPath[]
-  >([]);
-
-  useEffect(() => {
-    if (
-      cnicFrontSide.length > 0 &&
-      cnicBackSide.length > 0 &&
-      driversLicenseFrontSide.length > 0 &&
-      driversLicenseBackSide.length > 0
-    ) {
-      onFormSubmit({
-        cnicFrontSide,
-        cnicBackSide,
-        driversLicenseFrontSide,
-        driversLicenseBackSide,
-      });
-    }
-  }, [
-    cnicFrontSide,
-    cnicBackSide,
-    driversLicenseFrontSide,
-    driversLicenseBackSide,
-  ]);
+  cnicFrontSideState,
+  cnicBackSideState,
+  driversLicenseFrontSideState,
+  driversLicenseBackSideState,
+}: DocInputSectionProps) {
   return (
     <>
       <Stack gap="xxs">
@@ -60,7 +40,7 @@ export default function DocInputSection({
           Front Side
         </Text>
         <Dropzone
-          onDrop={setDriversLicenseFrontSide}
+          onDrop={driversLicenseFrontSideState[1]}
           onReject={(files) => console.log("rejected files", files)}
           maxSize={5 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
@@ -95,7 +75,7 @@ export default function DocInputSection({
           Back Side
         </Text>
         <Dropzone
-          onDrop={setDriversLicenseBackSide}
+          onDrop={driversLicenseBackSideState[1]}
           onReject={(files) => console.log("rejected files", files)}
           maxSize={5 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
@@ -139,7 +119,7 @@ export default function DocInputSection({
           Front Side
         </Text>
         <Dropzone
-          onDrop={setCnicFrontSide}
+          onDrop={cnicFrontSideState[1]}
           onReject={(files) => console.log("rejected files", files)}
           maxSize={5 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
@@ -174,7 +154,7 @@ export default function DocInputSection({
           Back Side
         </Text>
         <Dropzone
-          onDrop={setCnicBackSide}
+          onDrop={cnicBackSideState[1]}
           onReject={(files) => console.log("rejected files", files)}
           maxSize={5 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
