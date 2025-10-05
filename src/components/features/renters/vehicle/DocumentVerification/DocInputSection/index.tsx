@@ -1,3 +1,4 @@
+import DropzoneImagePreview from "@/components/features/core/dropzone-image-preview";
 import { Button, Stack, Text } from "@mantine/core";
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconUpload } from "@tabler/icons-react";
@@ -69,6 +70,7 @@ export default function DocInputSection({
             </div>
           </Stack>
         </Dropzone>
+        <DropzoneImagePreview images={driversLicenseFrontSideState[0]} />
       </Stack>
       <Stack pt="md">
         <Text fz="sm" fw={500} c="black" lh={0.1}>
@@ -104,6 +106,7 @@ export default function DocInputSection({
             </div>
           </Stack>
         </Dropzone>
+        <DropzoneImagePreview images={driversLicenseBackSideState[0]} />
       </Stack>
       <Stack gap="xxs">
         <Text fz="lg" c="black" fw={600}>
@@ -148,6 +151,7 @@ export default function DocInputSection({
             </div>
           </Stack>
         </Dropzone>
+        <DropzoneImagePreview images={cnicFrontSideState[0]} />
       </Stack>
       <Stack pt="md">
         <Text fz="sm" fw={500} c="black" lh={0.1}>
@@ -183,6 +187,7 @@ export default function DocInputSection({
             </div>
           </Stack>
         </Dropzone>
+        <DropzoneImagePreview images={cnicBackSideState[0]} />
       </Stack>
     </>
   );

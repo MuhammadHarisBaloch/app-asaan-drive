@@ -26,7 +26,8 @@ import { FileWithPath } from "@mantine/dropzone";
 export interface RenterBookingForm {
   rentalType: string;
   duration: number;
-  pickUpDate: number | null;
+  pickUpDate: string | null;
+  returnDate: string | null;
   pickUpTime: number | null;
   cnicFrontSide: FileWithPath[];
   cnicBackSide: FileWithPath[];
@@ -118,13 +119,19 @@ export default function Vehicle() {
             bookNow={incrementStep}
             vehicle={vehicle}
             formValues={bookingDetails}
+            onFormSubmit={(returnDate) => {
+              setBookingDetails((prev) => ({ ...prev, returnDate }));
+            }}
           />
         </Stepper.Step>
         <Stepper.Step
           label="Confirmation"
           icon={<IconClipboardCheck color="red" />}
         >
-          <BookingConfirmation vehicle={vehicle} />
+          <BookingConfirmation
+            vehicle={vehicle}
+            bookingValues={bookingDetails}
+          />
         </Stepper.Step>
         <Stepper.Completed>
           Completed, click back button to get to previous step

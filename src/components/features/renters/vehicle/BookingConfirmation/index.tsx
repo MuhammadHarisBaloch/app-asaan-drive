@@ -12,6 +12,8 @@ import {
   Text,
 } from "@mantine/core";
 import {
+  IconCalendarEventFilled,
+  IconClock,
   IconCurrentLocationFilled,
   IconMapPin,
   IconPrinter,
@@ -24,13 +26,63 @@ import BookingIdCard from "./BookingIdCard";
 import ContactInfoSection from "./ContactInfoSection";
 import { data } from "@/constants/Data";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
+import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
+import { useMemo } from "react";
 
 interface BookingConfirmationProps {
   vehicle: VehicleModel;
+  bookingValues: Partial<RenterBookingForm> | null;
 }
 export default function BookingConfirmation({
   vehicle,
+  bookingValues,
 }: BookingConfirmationProps) {
+  // 1. Rental Cost calculate
+  const rentalCost = useMemo(() => {
+    if (!bookingValues?.duration) return 0;
+    switch (bookingValues?.rentalType) {
+      case "Daily":
+        return vehicle.dailyRate * bookingValues.duration;
+      case "Weekly":
+        return vehicle.weeklyRate * bookingValues.duration;
+      case "Monthly":
+        return vehicle.monthlyRate * bookingValues.duration;
+      default:
+        return 0;
+    }
+  }, [bookingValues?.rentalType, bookingValues?.duration]);
+
+  // 2. Tax (5%)
+  const tax = useMemo(() => rentalCost * 0.05, [rentalCost]);
+  // 3. Total = rentalCost + tax
+  const total = useMemo(() => rentalCost + tax, [rentalCost, tax]);
+
+  const vehicleDuration = useMemo(() => {
+    switch (bookingValues?.rentalType) {
+      case "Daily":
+        return `${bookingValues.duration} Day`;
+      case "Weekly":
+        return `${bookingValues.duration} Week`;
+      case "Monthly":
+        return `${bookingValues.duration} Month`;
+      default:
+        return "—";
+    }
+  }, [bookingValues?.duration, bookingValues?.rentalType]);
+
+  const baseRate = useMemo(() => {
+    switch (bookingValues?.rentalType) {
+      case "Daily":
+        return `${vehicle.dailyRate}/Day`;
+      case "Weekly":
+        return `${vehicle.weeklyRate}/Week`;
+      case "Monthly":
+        return `${vehicle.monthlyRate}/Month`;
+      default:
+        return "—";
+    }
+  }, [bookingValues?.rentalType]);
+
   return (
     <Stack py="3xl" px="8rem" gap="xl">
       <BookingIdCard />
@@ -95,23 +147,50 @@ export default function BookingConfirmation({
               Booking Details
             </Text>
             <SimpleGrid cols={2} spacing="lg" verticalSpacing="xxl">
-              {data.renter.vehicle.bookingConfirmation.bookingTimeDetails.map(
-                (data, i) => {
-                  return (
-                    <Flex key={i} gap="md" align="flex-start">
-                      {data.icon}
-                      <Stack gap="xxs">
-                        <Text fz="xs" fw={500}>
-                          {data.title}
-                        </Text>
-                        <Text fz="sm" c="black">
-                          {data.subTitle}
-                        </Text>
-                      </Stack>
-                    </Flex>
-                  );
-                }
-              )}
+              <Flex gap="md" align="flex-start">
+                <IconCalendarEventFilled size={30} color="gray" />
+                <Stack gap="xxs">
+                  <Text fz="xs" fw={500}>
+                    Start Date
+                  </Text>
+                  <Text fz="sm" c="black">
+                    {bookingValues?.pickUpDate}
+                  </Text>
+                </Stack>
+              </Flex>
+              <Flex gap="md" align="flex-start">
+                <IconClock size={30} color="gray" />
+                <Stack gap="xxs">
+                  <Text fz="xs" fw={500}>
+                    Start Time
+                  </Text>
+                  <Text fz="sm" c="black">
+                    {bookingValues?.pickUpTime}
+                  </Text>
+                </Stack>
+              </Flex>
+              <Flex gap="md" align="flex-start">
+                <IconCalendarEventFilled size={30} color="gray" />
+                <Stack gap="xxs">
+                  <Text fz="xs" fw={500}>
+                    End Date
+                  </Text>
+                  <Text fz="sm" c="black">
+                    {bookingValues?.returnDate}
+                  </Text>
+                </Stack>
+              </Flex>
+              <Flex gap="md" align="flex-start">
+                <IconClock size={30} color="gray" />
+                <Stack gap="xxs">
+                  <Text fz="xs" fw={500}>
+                    End Time
+                  </Text>
+                  <Text fz="sm" c="black">
+                    {bookingValues?.pickUpTime}
+                  </Text>
+                </Stack>
+              </Flex>
             </SimpleGrid>
           </Stack>
           <Divider w="100%" />
@@ -147,27 +226,35 @@ export default function BookingConfirmation({
             <Text fz="lg" c="black" fw={500}>
               Payment Summary
             </Text>
-            {data.renter.vehicle.bookingConfirmation.paymentSummary.map(
-              (data, i) => {
-                return (
-                  <Flex key={i} justify="space-between">
-                    <Text fz="sm" c="black" fw={500}>
-                      {data.title}
-                    </Text>
-                    <Text fz="sm" c="black">
-                      {data.subTitle}
-                    </Text>
-                  </Flex>
-                );
-              }
-            )}
+
+            <Flex justify="space-between">
+              <Text fz="sm" c="black" fw={500}>
+                {bookingValues?.rentalType} Rate
+              </Text>
+              <Text fz="sm">{baseRate}</Text>
+            </Flex>
+
+            <Flex justify="space-between">
+              <Text fz="sm" c="black" fw={500}>
+                Duration
+              </Text>
+              <Text fz="sm">{bookingValues?.duration}</Text>
+            </Flex>
+
+            <Flex justify="space-between">
+              <Text fz="sm" c="black" fw={500}>
+                Subtotal
+              </Text>
+              <Text fz="sm">{`Rs. ${rentalCost}`}</Text>
+            </Flex>
+
             <Divider w="100%" />
             <Flex justify="space-between">
               <Text fz="lg" c="black" fw={500}>
                 Total Paid
               </Text>
               <Text fz="lg" c="red.4">
-                Rs: 3600
+                {`Rs. ${total}`}
               </Text>
             </Flex>
           </Stack>

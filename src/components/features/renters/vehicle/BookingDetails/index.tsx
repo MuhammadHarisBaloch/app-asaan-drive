@@ -25,7 +25,7 @@ import { useState } from "react";
 export interface BookingFormValues {
   rentalType: string;
   duration: number;
-  pickUpDate: number | null;
+  pickUpDate: string | null;
   pickUpTime: number;
 }
 interface BookingDetailsProps {

@@ -17,11 +17,13 @@ interface PaymentBillingProps {
   formValues: Partial<RenterBookingForm> | null;
   bookNow: () => void;
   vehicle: VehicleModel;
+  onFormSubmit: (returnDate: string | null) => void;
 }
 export default function PaymentBilling({
   bookNow,
   formValues,
   vehicle,
+  onFormSubmit,
 }: PaymentBillingProps) {
   const [value, setValue] = useState<string | null>("Debit/Credit Card");
 
@@ -76,7 +78,11 @@ export default function PaymentBilling({
           </Card>
         </Grid.Col>
         <Grid.Col span={4}>
-          <OrderSummarySection vehicle={vehicle} formValues={formValues} />
+          <OrderSummarySection
+            vehicle={vehicle}
+            formValues={formValues}
+            onFormSubmit={onFormSubmit}
+          />
         </Grid.Col>
       </Grid>
     </Stack>

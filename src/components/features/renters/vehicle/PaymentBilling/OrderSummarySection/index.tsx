@@ -1,19 +1,21 @@
-import { data } from "@/constants/Data";
-import Images from "@/constants/Images";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { Card, Divider, Flex, Group, Stack, Text } from "@mantine/core";
 import { IconMapPin } from "@tabler/icons-react";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
+import dayjs from "dayjs";
 
 interface OrderSummarySectionProps {
   formValues: Partial<RenterBookingForm> | null;
   vehicle: VehicleModel;
+  onFormSubmit: (returnDate: string | null) => void;
 }
+
 export default function OrderSummarySection({
   vehicle,
   formValues,
+  onFormSubmit,
 }: OrderSummarySectionProps) {
   // 1. Rental Cost calculate
   const rentalCost = useMemo(() => {
@@ -28,7 +30,7 @@ export default function OrderSummarySection({
       default:
         return 0;
     }
-  }, [formValues?.rentalType, formValues?.duration]);
+  }, [formValues?.rentalType, formValues?.duration, formValues?.pickUpDate]);
 
   // 2. Tax (5%)
   const tax = useMemo(() => rentalCost * 0.05, [rentalCost]);
@@ -48,6 +50,24 @@ export default function OrderSummarySection({
     }
   }, [formValues?.rentalType, formValues?.duration]);
 
+  const returnDate = useMemo(() => {
+    if (!formValues?.duration) return 0;
+    switch (formValues?.rentalType) {
+      case "Daily":
+        return dayjs(formValues.pickUpDate)
+          .add(formValues?.duration, "day")
+          .format("YYYY-MM-DD");
+      case "Weekly":
+        return dayjs(formValues.pickUpDate)
+          .add(formValues?.duration, "week")
+          .format("YYYY-MM-DD");
+      case "Monthly":
+        return dayjs(formValues.pickUpDate)
+          .add(formValues?.duration, "month")
+          .format("YYYY-MM-DD");
+    }
+  }, [formValues?.rentalType, formValues?.duration]);
+
   const baseRate = useMemo(() => {
     switch (formValues?.rentalType) {
       case "Daily":
@@ -60,6 +80,12 @@ export default function OrderSummarySection({
         return "—";
     }
   }, [formValues?.rentalType]);
+
+  useEffect(() => {
+    if (returnDate) {
+      onFormSubmit(returnDate);
+    }
+  }, [returnDate, onFormSubmit]);
 
   return (
     <Card h="100%" withBorder radius="lg" p="xl">
@@ -114,7 +140,7 @@ export default function OrderSummarySection({
         <Group justify="space-between">
           <Text fz="12px ">Return Date</Text>
           <Text fz="12px " c="black">
-            -
+            {returnDate}
           </Text>
         </Group>
         <Divider w="100%" />
@@ -139,21 +165,6 @@ export default function OrderSummarySection({
             {total > 0 ? `Rs. ${total.toFixed(2)}` : "—"}
           </Text>
         </Group>
-        {/* <Card bg="white.4" radius="lg">
-          <Stack gap="xs">
-            <Flex align="center" gap="sm">
-              <IconExclamationCircle size={15} color="red" />
-              <Text fz="12px" fw={500} c="black">
-                Important Information
-              </Text>
-            </Flex>
-            <Text fz="10px">
-              You'll be charged only after the owner accepts your booking
-              request. Please be on time for pickup and return the vehicle in
-              the same condition.
-            </Text>
-          </Stack>
-        </Card> */}
       </Stack>
     </Card>
   );
