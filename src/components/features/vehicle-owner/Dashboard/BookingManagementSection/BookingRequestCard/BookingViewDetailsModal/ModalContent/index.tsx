@@ -9,9 +9,10 @@ import {
 
 interface ModalContentProps {
   userName: string;
-  number: number;
+  number: string;
   vehicleName: string;
   vehicleStatus: string;
+  duration: number;
   startDate: string;
   endDate: string;
   price: number;
@@ -23,6 +24,7 @@ export default function ModalContent({
   vehicleName,
   vehicleStatus,
   startDate,
+  duration,
   endDate,
   price,
   location,
@@ -149,13 +151,13 @@ export default function ModalContent({
               <Stack w="50%" gap="xs">
                 <Text fz="xs">Duration</Text>
                 <Text fz="sm" c="black" fw={500}>
-                  2 days
+                  {duration} Day
                 </Text>
               </Stack>
               <Stack gap="xs">
                 <Text fz="xs">Total Amount</Text>
                 <Text fz="sm" c="black" fw={500}>
-                  PKR {price}
+                  Rs: {price}
                 </Text>
               </Stack>
             </Flex>

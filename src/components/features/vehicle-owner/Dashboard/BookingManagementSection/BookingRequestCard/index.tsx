@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Center, Flex, Stack, Text } from "@mantine/core";
+import { Avatar, Badge, Button, Card, Flex, Stack, Text } from "@mantine/core";
 import {
   IconCalendarEventFilled,
   IconEye,
@@ -6,100 +6,152 @@ import {
   IconPhone,
   IconUser,
 } from "@tabler/icons-react";
-import { useState } from "react";
 import BookingViewDetailModal from "./BookingViewDetailsModal";
+import { doc, updateDoc } from "firebase/firestore";
+import { firebaseConstants } from "@/constants/Firestore";
+import { db } from "@/networking/firebase";
+
 interface BookingRequestCardProps {
-  profileName: string;
-  userName: string;
+  renterName: string;
   vehicleName: string;
-  startDate: string;
-  endDate: string;
-  location: string;
-  number: number;
-  price: number;
-  bookingRequestValue?: boolean;
-  vehicleStatus: string;
+  pickUpDate: string;
+  returnDate: string;
+  city: string;
+  phoneNumber: string;
+  status: string;
+  bookingId: string;
+  totalPrice: number;
+  duration: number;
+  onApprove?: (bookingId: string) => void;
+  onDecline?: (bookingId: string) => void;
 }
+
 export default function BookingRequestCard({
-  profileName,
-  userName,
+  renterName,
   vehicleName,
-  startDate,
-  endDate,
-  location,
-  number,
-  price,
-  bookingRequestValue = false,
-  vehicleStatus,
+  pickUpDate,
+  returnDate,
+  city,
+  phoneNumber,
+  status,
+  bookingId,
+  totalPrice,
+  duration,
+  onApprove,
+  onDecline,
 }: BookingRequestCardProps) {
-  const [bookingRequest, setBookingRequest] = useState(bookingRequestValue);
+  const handleApprove = async (bookingId: string) => {
+    console.log("Booking ID in Approve Handler:", bookingId);
+    try {
+      const bookingRef = doc(
+        db,
+        firebaseConstants.collections.bookings,
+        bookingId
+      );
+      await updateDoc(bookingRef, { status: "confirmed" });
 
-  let color: string;
+      console.log("Booking approved and updated in Firestore!");
 
-  switch (vehicleStatus) {
-    case "cancelled":
-      color = "#f20000";
-      break;
-    case "confirmed":
-      color = "indigo";
-      break;
-    case "completed":
-      color = "#7a7a7a";
-      break;
-    case "ongoing":
-      color = "teal";
-      break;
-    default:
-      color = "#ea7a26";
-  }
+      // 🔹 notify parent to refresh UI
+      onApprove?.(bookingId);
+    } catch (error) {
+      console.error("Error approving booking:", error);
+    }
+  };
+
+  const handleDecline = async (bookingId: string) => {
+    console.log("Booking ID in Decline Handler:", bookingId);
+    try {
+      const bookingRef = doc(
+        db,
+        firebaseConstants.collections.bookings,
+        bookingId
+      );
+      await updateDoc(bookingRef, { status: "cancelled" });
+
+      console.log("Booking cancelled and updated in Firestore!");
+
+      // 🔹 notify parent to refresh UI
+      onDecline?.(bookingId);
+    } catch (error) {
+      console.error("Error approving booking:", error);
+    }
+  };
+
+  const getStatusStyle = (status: string) => {
+    if (!status) {
+      return { color: "transparent", bgColor: "transparent" }; // fallback agar status missing ho
+    }
+    switch (status.toLowerCase()) {
+      case "ongoing":
+        return { color: "green", bgColor: "green.1" };
+      case "confirmed":
+        return { color: "blue", bgColor: "blue.1" };
+      case "pending":
+        return { color: "red", bgColor: "pink.1" };
+      case "completed":
+        return { color: "black", bgColor: "gray.1" };
+      case "cancelled":
+        return { color: "red", bgColor: "red.1" };
+      default:
+        return { color: "transparent", bgColor: "transparent" };
+    }
+  };
+
+  const { color, bgColor } = getStatusStyle(status);
 
   return (
-    <Card mt="xl" withBorder radius="md" p="lg">
+    <Card mt="xl" withBorder radius="md" py="lg" px="sm">
       <Flex align="center" justify="space-between">
         <Flex w="12rem" gap="sm" align="center">
-          <Center h={50} w={50} bg="red.4" style={{ borderRadius: "50%" }}>
-            <Text fz="md" c="white">
-              {profileName}
-            </Text>
-          </Center>
+          <Avatar
+            size="md"
+            h="3rem"
+            w="3rem"
+            key={renterName}
+            name={renterName}
+            color="#ff0000ff"
+          />
           <Stack gap={0} align="flex-start">
-            <Text fz="sm" c="black" fw={500}>
+            <Text fz="12px" c="black" fw={600}>
               {vehicleName}
             </Text>
-            <Flex gap="xs">
-              <IconUser size={15} color="gray" />
-              <Text fz="12px">{userName}</Text>
+            <Flex gap="xs" align="center">
+              <IconUser size={12} color="gray" />
+              <Text fz="12px">{renterName}</Text>
             </Flex>
           </Stack>
         </Flex>
         <Flex>
           <Flex gap="xs" align="center">
             <IconCalendarEventFilled size={15} color="gray" />
-            <Text fz="12px" w="9rem">
-              {startDate} - {endDate}
+            <Text fz="12px" w="10rem">
+              {pickUpDate} - {returnDate}
             </Text>
           </Flex>
           <Flex gap="xs" align="center">
             <IconMapPin size={15} color="gray" />
             <Text fz="12px" w="6rem">
-              {location}
+              {city}
             </Text>
           </Flex>
           <Flex gap="xs" align="center">
             <IconPhone size={15} color="gray" />
             <Text fz="12px" w="6rem">
-              {number}
+              {phoneNumber}
             </Text>
           </Flex>
         </Flex>
         <Flex w="15rem" align="center" justify="space-between">
           <Stack gap="xs" align="center">
-            <Text fz="sm" c="black" fw={500}>
-              Pkr {price}
+            <Text fz="12px" c="black" fw={600}>
+              Pkr {totalPrice}
             </Text>
             <Badge
               variant="light"
-              color={color}
+              size="xs"
+              c={color}
+              bg={bgColor}
               styles={{
                 root: {
                   textTransform: "lowercase",
@@ -109,42 +161,45 @@ export default function BookingRequestCard({
               }}
               fw={600}
             >
-              {vehicleStatus}
+              {status}
             </Badge>
           </Stack>
-          {bookingRequest === true ? (
+          {status === "pending" ? (
             <Stack>
               <Button
-                w="8rem"
+                size="xs"
                 bg="blue"
-                fz="xs"
-                onClick={() => {
-                  setBookingRequest(false);
-                }}
+                fz="12px"
+                onClick={() => handleApprove(bookingId!)}
               >
                 Approve
               </Button>
-              <Button fz="xs" w="8rem">
+              <Button
+                fz="12px"
+                size="xs"
+                onClick={() => handleDecline(bookingId!)}
+              >
                 Decline
               </Button>
             </Stack>
           ) : (
             <Button
-              w="8rem"
+              size="xs"
               variant="light"
               color="indigo"
-              fz="xs"
-              leftSection={<IconEye size={15} color="blue" />}
+              fz="12px"
+              leftSection={<IconEye size={12} color="blue" />}
               onClick={() => {
                 BookingViewDetailModal({
-                  userName,
-                  number,
-                  vehicleName,
-                  vehicleStatus,
-                  startDate,
-                  endDate,
-                  price,
-                  location,
+                  userName: renterName,
+                  number: phoneNumber,
+                  vehicleName: vehicleName,
+                  vehicleStatus: status,
+                  startDate: pickUpDate,
+                  endDate: returnDate,
+                  price: totalPrice,
+                  location: city,
+                  duration: duration,
                 });
               }}
             >

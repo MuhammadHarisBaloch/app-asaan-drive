@@ -3,8 +3,9 @@ import ModalContent from "./ModalContent";
 
 interface BookingViewDetailModalProps {
   userName: string;
-  number: number;
+  number: string;
   vehicleName: string;
+  duration: number;
   vehicleStatus: string;
   startDate: string;
   endDate: string;
@@ -15,6 +16,7 @@ export default function BookingViewDetailModal({
   userName,
   number,
   vehicleName,
+  duration,
   vehicleStatus,
   startDate,
   endDate,
@@ -32,6 +34,7 @@ export default function BookingViewDetailModal({
         number={number}
         vehicleName={vehicleName}
         vehicleStatus={vehicleStatus}
+        duration={duration}
         price={price}
         location={location}
         startDate={startDate}

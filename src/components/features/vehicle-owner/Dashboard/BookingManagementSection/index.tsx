@@ -1,10 +1,51 @@
 import { Badge, Card, Divider, Flex, Stack, Tabs, Text } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookingRequestCard from "./BookingRequestCard";
 import { data } from "@/constants/Data";
+import { fetchOwnerVehicleBookings } from "@/features/booking";
+import { BookingModel } from "@/features/booking/models/booking.model";
+import { getUserDocument } from "@/features/user";
+import { getAuth } from "firebase/auth";
+import React from "react";
+import BookingList from "./BookingList";
 
 export default function BookingManagementSection() {
   const [value, setValue] = useState<string | null>("Upcoming");
+  const [bookings, setBookings] = useState<BookingModel[]>([]);
+
+  useEffect(() => {
+    const listOwnerBookings = async () => {
+      const user = getAuth().currentUser;
+      if (!user) return;
+
+      // 🔹 pehle fetch karo
+      const bookings = await fetchOwnerVehicleBookings(user.uid);
+
+      // 🔹 phir renter data merge karo
+      const bookingsWithRenter = await Promise.all(
+        (bookings ?? []).map(async (booking) => {
+          const renter = await getUserDocument(booking.renterId);
+          return { ...booking, renter };
+        })
+      );
+
+      setBookings(bookingsWithRenter);
+      console.log("Bookings with renter:", bookingsWithRenter);
+    };
+
+    listOwnerBookings();
+  }, []);
+  const handleBookingApprove = (bookingId: string) => {
+    setBookings((prev) =>
+      prev.map((b) => (b.id === bookingId ? { ...b, status: "confirmed" } : b))
+    );
+  };
+  const handleBookingDecline = (bookingId: string) => {
+    setBookings((prev) =>
+      prev.map((b) => (b.id === bookingId ? { ...b, status: "cancelled" } : b))
+    );
+  };
+
   return (
     <Stack p="lg" gap="xl">
       <Stack gap={0}>
@@ -38,78 +79,38 @@ export default function BookingManagementSection() {
           </Tabs.List>
           <Divider w="100%" />
           <Tabs.Panel value="Upcoming">
-            <BookingRequestCard
-              profileName={"MH"}
-              userName={"Muhammad Haris"}
-              vehicleName={"Honda CD 125"}
-              startDate="Jan 20, 2025"
-              endDate="Jan 22, 2025"
-              location={"Tando Adam"}
-              number={923093185997}
-              price={1200}
-              bookingRequestValue={true}
-              vehicleStatus="pending"
-            />
-            <BookingRequestCard
-              profileName={"AA"}
-              userName={"Aamir Ali"}
-              vehicleName={"Honda CD 70"}
-              startDate="Jan 10, 2025"
-              endDate="Jan 12, 2025"
-              location={"Kotri"}
-              number={923480804346}
-              price={900}
-              vehicleStatus="confirmed"
+            <BookingList
+              bookings={bookings}
+              statusFilter={["pending", "confirmed"]}
+              onApprove={handleBookingApprove}
+              onDecline={handleBookingDecline}
             />
           </Tabs.Panel>
+
           <Tabs.Panel value="Ongoing">
-            <BookingRequestCard
-              profileName={"SK"}
-              userName={"Sanjay Kumar"}
-              vehicleName={"Honda CD 125"}
-              startDate="fab 15, 2025"
-              endDate="fab 16, 2025"
-              location={"Umerkot"}
-              number={923480804346}
-              price={1200}
-              vehicleStatus="ongoing"
+            <BookingList
+              bookings={bookings}
+              statusFilter="ongoing"
+              onApprove={handleBookingApprove}
+              onDecline={handleBookingDecline}
             />
           </Tabs.Panel>
+
           <Tabs.Panel value="Completed">
-            <BookingRequestCard
-              profileName={"SA"}
-              userName={"Sagar Ali"}
-              vehicleName={"Mountain Cycle"}
-              startDate="mar 01, 2025"
-              endDate="mar 16, 2025"
-              location={"Karachi"}
-              number={923133768188}
-              price={500}
-              vehicleStatus="completed"
-            />
-            <BookingRequestCard
-              profileName={"AS"}
-              userName={"Abdul Samie"}
-              vehicleName={"Honda CD 125"}
-              startDate="fab 15, 2025"
-              endDate="fab 16, 2025"
-              location={"Tando Adam"}
-              number={923463899732}
-              price={1300}
-              vehicleStatus="completed"
+            <BookingList
+              bookings={bookings}
+              statusFilter="completed"
+              onApprove={handleBookingApprove}
+              onDecline={handleBookingDecline}
             />
           </Tabs.Panel>
+
           <Tabs.Panel value="Cancelled">
-            <BookingRequestCard
-              profileName={"RK"}
-              userName={"Rajesh Kumar"}
-              vehicleName={"Honda CD 70"}
-              startDate="fab 15, 2025"
-              endDate="fab 16, 2025"
-              location={"Hyderabad"}
-              number={923463899732}
-              price={900}
-              vehicleStatus="cancelled"
+            <BookingList
+              bookings={bookings}
+              statusFilter="cancelled"
+              onApprove={handleBookingApprove}
+              onDecline={handleBookingDecline}
             />
           </Tabs.Panel>
         </Tabs>
