@@ -3,10 +3,7 @@ import { Button, Center, Flex, Stack, TextInput } from "@mantine/core";
 import Image from "next/image";
 import { useState } from "react";
 
-interface MobileWalletProps {
-  onClick: () => void;
-}
-export default function MobileWallet({ onClick }: MobileWalletProps) {
+export default function MobileWallet({ onConfirm }: { onConfirm: () => void }) {
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
@@ -79,7 +76,7 @@ export default function MobileWallet({ onClick }: MobileWalletProps) {
           },
         }}
       />
-      <Button mt="lg" size="md" onClick={onClick}>
+      <Button mt="lg" size="md" onClick={onConfirm}>
         Pay Now - Rs.2650
       </Button>
     </Stack>

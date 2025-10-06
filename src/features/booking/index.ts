@@ -22,7 +22,24 @@ export async function fetchBookingDocs(renterID: string) {
     where("renterId", "==", renterID)
   );
   const querySnapshot = await getDocs(docQuery);
-  const bookings = querySnapshot.docs.map((doc) => doc.data() as BookingModel);
-  console.log("Owner Vehicles: ", bookings);
+  const bookings = querySnapshot.docs.map((doc) => ({
+    id: doc.id, // include Firestore doc id
+    ...(doc.data() as BookingModel),
+  }));
+  console.log("Renter Bookings: ", bookings);
+  return bookings;
+}
+
+export async function fetchOwnerVehicleBookings(ownerID: string) {
+  const docQuery = query(
+    collection(db, firebaseConstants.collections.bookings),
+    where("vehicleOwnerId", "==", ownerID)
+  );
+  const querySnapshot = await getDocs(docQuery);
+  const bookings = querySnapshot.docs.map((doc) => ({
+    id: doc.id, // include Firestore doc id
+    ...(doc.data() as BookingModel),
+  }));
+  console.log("Owner Vehicles Bookings: ", bookings);
   return bookings;
 }

@@ -1,15 +1,23 @@
+import { UserModel } from "@/features/user/models/user.model";
+import { FileWithPath } from "@mantine/dropzone";
+
 export interface BookingModel {
-  vehicleName: string;
-  vehicleType: string;
-  vehicleYear: string;
+  id?: string;
+  vehicleOwnerId: string;
   renterId: string;
-  rentalType: string;
-  duration: number;
-  pickUpDate: number | null;
-  pickUpTime: number;
-  totalCostWithTax: number;
-  drivingLicense?: string[];
-  cnic?: string[];
+  vehicleName?: string;
   vehiclePhotos: string[];
-  rentalCost: number;
+  vehicleType?: string;
+  rentalType: string;
+  totalPrice: number;
+  status: string;
+  duration: number;
+  pickUpDate: string | null;
+  returnDate: string | null;
+  pickUpTime: number | null;
+  renter?: UserModel | null;
+  cnicFrontSide: FileWithPath[];
+  cnicBackSide: FileWithPath[];
+  driversLicenseFrontSide: FileWithPath[];
+  driversLicenseBackSide: FileWithPath[];
 }

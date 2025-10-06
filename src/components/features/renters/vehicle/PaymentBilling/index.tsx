@@ -1,3 +1,4 @@
+// file: components/features/renters/vehicle/PaymentBilling.tsx
 import { Text, Stack, Card, Grid, Tabs, Flex, Divider } from "@mantine/core";
 import {
   IconCash,
@@ -10,20 +11,30 @@ import OrderSummarySection from "./OrderSummarySection";
 import CashOnPickupSection from "./CashOnPickupSection";
 import MobileWallet from "./MobileWallet";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
-import { BookingFormValues } from "../BookingDetails";
 import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
 
-interface PaymentBillingProps {
-  formValues: Partial<RenterBookingForm> | null;
-  bookNow: () => void;
-  vehicle: VehicleModel;
-  onFormSubmit: (returnDate: string | null) => void;
+interface PaymentSummary {
+  returnDate: string | null;
+  rentalCost: number;
+  tax: number;
+  total: number;
+  baseRate: string;
+  vehicleDurationLabel: string;
 }
+
+interface PaymentBillingProps {
+  formValues: Partial<RenterBookingForm>;
+  // bookNow optionally accepts returnDate, but we'll call without args
+  bookNow: (returnDate?: string | null) => Promise<void>;
+  vehicle: VehicleModel;
+  paymentSummary: PaymentSummary;
+}
+
 export default function PaymentBilling({
   bookNow,
   formValues,
   vehicle,
-  onFormSubmit,
+  paymentSummary,
 }: PaymentBillingProps) {
   const [value, setValue] = useState<string | null>("Debit/Credit Card");
 
@@ -33,7 +44,7 @@ export default function PaymentBilling({
         <Text fz="30px" fw={600} c="black">
           Payment
         </Text>
-        <Text fz="md">Complete your payment for Honda 125</Text>
+        <Text fz="md">Complete your payment for {vehicle.vehicleModel}</Text>
       </Stack>
       <Grid w="100%" gutter="xxl">
         <Grid.Col span={8}>
@@ -64,24 +75,26 @@ export default function PaymentBilling({
                   </Tabs.Tab>
                 </Tabs.List>
                 <Divider w="100%" />
+                {/* NOTE: call bookNow() only on user click (Confirm/Pay inside sections) */}
                 <Tabs.Panel value="Debit/Credit Card">
-                  <CreditCardSection onClick={bookNow} />
+                  <CreditCardSection onConfirm={() => bookNow()} />
                 </Tabs.Panel>
                 <Tabs.Panel value="Mobile Wallet">
-                  <MobileWallet onClick={bookNow} />
+                  <MobileWallet onConfirm={() => bookNow()} />
                 </Tabs.Panel>
                 <Tabs.Panel value="Cash on Pickup">
-                  <CashOnPickupSection onClick={bookNow} />
+                  <CashOnPickupSection onConfirm={() => bookNow()} />
                 </Tabs.Panel>
               </Tabs>
             </Stack>
           </Card>
         </Grid.Col>
         <Grid.Col span={4}>
+          {/* pass the computed summary (stateless) */}
           <OrderSummarySection
             vehicle={vehicle}
             formValues={formValues}
-            onFormSubmit={onFormSubmit}
+            paymentSummary={paymentSummary}
           />
         </Grid.Col>
       </Grid>

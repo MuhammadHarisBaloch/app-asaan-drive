@@ -1,10 +1,11 @@
 import { Button, Flex, Stack, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 
-interface CreditCardSectionProps {
-  onClick: () => void;
-}
-export default function CreditCardSection({ onClick }: CreditCardSectionProps) {
+export default function CreditCardSection({
+  onConfirm,
+}: {
+  onConfirm: () => void;
+}) {
   return (
     <Stack py="lg" gap="lg">
       <TextInput
@@ -76,7 +77,7 @@ export default function CreditCardSection({ onClick }: CreditCardSectionProps) {
           }}
         />
       </Flex>
-      <Button mt="lg" size="md" onClick={onClick}>
+      <Button mt="lg" size="md" onClick={onConfirm}>
         Pay Now - Rs.2650
       </Button>
     </Stack>

@@ -1,91 +1,33 @@
+// file: components/features/renters/vehicle/OrderSummarySection.tsx
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { Card, Divider, Flex, Group, Stack, Text } from "@mantine/core";
 import { IconMapPin } from "@tabler/icons-react";
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
 import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
-import dayjs from "dayjs";
+
+interface PaymentSummary {
+  returnDate: string | null;
+  rentalCost: number;
+  tax: number;
+  total: number;
+  baseRate: string;
+  vehicleDurationLabel: string;
+}
 
 interface OrderSummarySectionProps {
-  formValues: Partial<RenterBookingForm> | null;
+  formValues: Partial<RenterBookingForm>;
   vehicle: VehicleModel;
-  onFormSubmit: (returnDate: string | null) => void;
+  paymentSummary: PaymentSummary;
 }
 
 export default function OrderSummarySection({
   vehicle,
   formValues,
-  onFormSubmit,
+  paymentSummary,
 }: OrderSummarySectionProps) {
-  // 1. Rental Cost calculate
-  const rentalCost = useMemo(() => {
-    if (!formValues?.duration) return 0;
-    switch (formValues.rentalType) {
-      case "Daily":
-        return vehicle.dailyRate * formValues?.duration;
-      case "Weekly":
-        return vehicle.weeklyRate * formValues?.duration;
-      case "Monthly":
-        return vehicle.monthlyRate * formValues?.duration;
-      default:
-        return 0;
-    }
-  }, [formValues?.rentalType, formValues?.duration, formValues?.pickUpDate]);
-
-  // 2. Tax (5%)
-  const tax = useMemo(() => rentalCost * 0.05, [rentalCost]);
-  // 3. Total = rentalCost + tax
-  const total = useMemo(() => rentalCost + tax, [rentalCost, tax]);
-
-  const vehicleDuration = useMemo(() => {
-    switch (formValues?.rentalType) {
-      case "Daily":
-        return `Day`;
-      case "Weekly":
-        return `Week`;
-      case "Monthly":
-        return `Month`;
-      default:
-        return "—";
-    }
-  }, [formValues?.rentalType, formValues?.duration]);
-
-  const returnDate = useMemo(() => {
-    if (!formValues?.duration) return 0;
-    switch (formValues?.rentalType) {
-      case "Daily":
-        return dayjs(formValues.pickUpDate)
-          .add(formValues?.duration, "day")
-          .format("YYYY-MM-DD");
-      case "Weekly":
-        return dayjs(formValues.pickUpDate)
-          .add(formValues?.duration, "week")
-          .format("YYYY-MM-DD");
-      case "Monthly":
-        return dayjs(formValues.pickUpDate)
-          .add(formValues?.duration, "month")
-          .format("YYYY-MM-DD");
-    }
-  }, [formValues?.rentalType, formValues?.duration]);
-
-  const baseRate = useMemo(() => {
-    switch (formValues?.rentalType) {
-      case "Daily":
-        return `${vehicle.dailyRate} /Day`;
-      case "Weekly":
-        return `${vehicle.weeklyRate} /Week`;
-      case "Monthly":
-        return `${vehicle.monthlyRate} /Month`;
-      default:
-        return "—";
-    }
-  }, [formValues?.rentalType]);
-
-  useEffect(() => {
-    if (returnDate) {
-      onFormSubmit(returnDate);
-    }
-  }, [returnDate, onFormSubmit]);
+  // child is now purely presentational — no useEffect that updates parent
+  const { returnDate, rentalCost, tax, total, baseRate, vehicleDurationLabel } =
+    paymentSummary;
 
   return (
     <Card h="100%" withBorder radius="lg" p="xl">
@@ -126,7 +68,7 @@ export default function OrderSummarySection({
           </Text>
         </Group>
         <Group justify="space-between">
-          <Text fz="12px ">{vehicleDuration}</Text>
+          <Text fz="12px ">{vehicleDurationLabel}</Text>
           <Text fz="12px " c="black">
             {formValues?.duration || "—"}
           </Text>
@@ -140,7 +82,7 @@ export default function OrderSummarySection({
         <Group justify="space-between">
           <Text fz="12px ">Return Date</Text>
           <Text fz="12px " c="black">
-            {returnDate}
+            {returnDate ?? "—"}
           </Text>
         </Group>
         <Divider w="100%" />
@@ -153,7 +95,7 @@ export default function OrderSummarySection({
         <Group justify="space-between">
           <Text fz="12px ">{`Tax (5%)`}</Text>
           <Text fz="12px " c="black">
-            {rentalCost * 0.05}
+            {tax > 0 ? `Rs. ${tax.toFixed(2)}` : "—"}
           </Text>
         </Group>
         <Divider w="100%" />
