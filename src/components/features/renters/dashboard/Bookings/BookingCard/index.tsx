@@ -1,35 +1,27 @@
 import { fetchBookingDocs } from "@/features/booking";
-import { BookingModel } from "@/features/booking/models/booking.model";
-import {
-  Group,
-  Flex,
-  Stack,
-  Center,
-  Divider,
-  Text,
-  Badge,
-} from "@mantine/core";
+import { Group, Flex, Stack, Divider, Text, Badge } from "@mantine/core";
 import { getAuth } from "firebase/auth";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export default function BookingCard() {
-  const [bookings, setBookings] = useState<BookingModel[]>([]);
-
-  useEffect(() => {
-    const fetchBookings = async () => {
-      const user = getAuth().currentUser;
-      if (!user) return;
-      const bookings = await fetchBookingDocs(user.uid);
-      return bookings;
-    };
-
-    fetchBookings().then((bookings) => {
-      console.log("Recently Bookings", bookings);
-      setBookings(bookings ?? []);
-    });
-  }, []);
-
+interface BookingCardProps {
+  vehiclePhotos: string;
+  vehicleName: string;
+  vehicleType: string;
+  pickUpDate: string;
+  returnDate: string;
+  status: string;
+  totalPrice: number;
+}
+export default function BookingCard({
+  vehicleName,
+  vehiclePhotos,
+  vehicleType,
+  pickUpDate,
+  returnDate,
+  status,
+  totalPrice,
+}: BookingCardProps) {
   const getStatusStyle = (status: string) => {
     if (!status) {
       return { color: "transparent", bgColor: "transparent" }; // fallback agar status missing ho
@@ -49,66 +41,60 @@ export default function BookingCard() {
         return { color: "transparent", bgColor: "transparent" };
     }
   };
+  const { color, bgColor } = getStatusStyle(status);
 
   return (
     <>
-      {bookings.map((booking, i) => {
-        const { color, bgColor } = getStatusStyle(booking.status);
-        return (
-          <>
-            <Group key={i} px="lg" align="center">
-              {/* Vehicle column special case */}
-              <Flex gap="md" align="center" style={{ flex: 2 }}>
-                <Image
-                  height={100}
-                  width={100}
-                  src={booking.vehiclePhotos[0]}
-                  alt={booking.vehicleName ?? "Vehicle"}
-                  style={{
-                    height: "40%",
-                    width: "40%",
-                    borderRadius: "5px",
-                  }}
-                />
-                <Stack gap={2}>
-                  <Text fz="xs" fw={600} c="black">
-                    {booking.vehicleName}
-                  </Text>
-                  <Text fz="12px">{booking.vehicleType}</Text>
-                </Stack>
-              </Flex>
+      <Group px="lg" align="center">
+        {/* Vehicle column special case */}
+        <Flex gap="md" align="center" style={{ flex: 2 }}>
+          <Image
+            height={100}
+            width={100}
+            src={vehiclePhotos}
+            alt={vehicleName ?? "Vehicle"}
+            style={{
+              height: "40%",
+              width: "40%",
+              borderRadius: "5px",
+            }}
+          />
+          <Stack gap={2}>
+            <Text fz="xs" fw={600} c="black">
+              {vehicleName}
+            </Text>
+            <Text fz="12px">{vehicleType}</Text>
+          </Stack>
+        </Flex>
 
-              {/* Other columns */}
-              <Text fz="12px" style={{ flex: 1, textAlign: "center" }}>
-                {booking.pickUpDate}
-              </Text>
-              <Text fz="12px" style={{ flex: 1, textAlign: "center" }}>
-                {booking.returnDate}
-              </Text>
-              <Badge
-                c={color}
-                bg={bgColor}
-                fw={500}
-                styles={{
-                  root: { textAlign: "center", textTransform: "lowercase" },
-                }}
-                style={{ flex: 0.8 }}
-              >
-                {booking.status}
-              </Badge>
-              <Text
-                fz="xs"
-                fw={600}
-                c="black"
-                style={{ flex: 1, textAlign: "right" }}
-              >
-                Rs: {booking.totalPrice}
-              </Text>
-            </Group>
-            <Divider w="100%" />
-          </>
-        );
-      })}
+        {/* Other columns */}
+        <Text fz="12px" style={{ flex: 1, textAlign: "center" }}>
+          {pickUpDate}
+        </Text>
+        <Text fz="12px" style={{ flex: 1, textAlign: "center" }}>
+          {returnDate}
+        </Text>
+        <Badge
+          c={color}
+          bg={bgColor}
+          fw={500}
+          styles={{
+            root: { textAlign: "center", textTransform: "lowercase" },
+          }}
+          style={{ flex: 0.8 }}
+        >
+          {status}
+        </Badge>
+        <Text
+          fz="xs"
+          fw={600}
+          c="black"
+          style={{ flex: 1, textAlign: "right" }}
+        >
+          Rs: {totalPrice}
+        </Text>
+      </Group>
+      <Divider w="100%" />
     </>
   );
 }

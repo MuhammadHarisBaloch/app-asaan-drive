@@ -10,13 +10,33 @@ import {
   Text,
 } from "@mantine/core";
 import { IconFilter, IconSearch } from "@tabler/icons-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { data } from "@/constants/Data";
 import BookingCard from "./BookingCard";
+import { fetchBookingDocs } from "@/features/booking";
+import { BookingModel } from "@/features/booking/models/booking.model";
+import { getAuth } from "firebase/auth";
 
 export default function BookingsSection() {
-  const [bookings, setBookings] = useState<string | null>("All Status");
-  const [value, setValue] = useState("");
+  const [bookingsFilter, setBookingsFilter] = useState<string | null>(
+    "all status"
+  );
+  const [bookings, setBookings] = useState<BookingModel[]>([]);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      const user = getAuth().currentUser;
+      if (!user) return;
+      const bookings = await fetchBookingDocs(user.uid);
+      return bookings;
+    };
+
+    fetchBookings().then((bookings) => {
+      console.log("Recently Bookings", bookings);
+      setBookings(bookings ?? []);
+    });
+  }, []);
+
   return (
     <Stack p="lg" gap="xxl">
       <Stack gap={0}>
@@ -37,8 +57,6 @@ export default function BookingsSection() {
               radius="md"
               leftSection={<IconSearch size={15} color="gray" />}
               placeholder="Search bookings..."
-              value={value}
-              onChange={(event) => setValue(event.currentTarget.value)}
             />
             <Flex gap="sm" align="center">
               <IconFilter size={20} color="gray" />
@@ -46,14 +64,15 @@ export default function BookingsSection() {
                 w="10rem"
                 radius="md"
                 data={[
-                  "All Status",
-                  "Active",
-                  "Confirmed",
-                  "Pending",
-                  "Completed",
+                  "all status",
+                  "active",
+                  "confirmed",
+                  "pending",
+                  "completed",
+                  "cancelled",
                 ]}
-                value={bookings}
-                onChange={setBookings}
+                value={bookingsFilter}
+                onChange={setBookingsFilter}
               />
             </Flex>
           </Group>
@@ -74,19 +93,35 @@ export default function BookingsSection() {
               ))}
             </Group>
             <Divider w="100%" />
-            {/* Rows
-            {data.renter.dashboard.myBookings.BookingFeaturesData.map(
-              (data, index) => (
-                <React.Fragment key={index}>
-                  {bookings === data.status || value === data.vehicleName ? (
-                    <BookingCard {...data} />
-                  ) : bookings === "All Status" ? (
-                    <BookingCard {...data} />
+            {bookings.map((booking, i) => {
+              return (
+                <React.Fragment key={i}>
+                  {bookingsFilter === booking.status ? (
+                    <BookingCard
+                      key={i}
+                      vehiclePhotos={booking.vehiclePhotos[0]}
+                      vehicleName={booking.vehicleName ?? ""}
+                      vehicleType={booking.vehicleType ?? ""}
+                      pickUpDate={booking.pickUpDate ?? ""}
+                      returnDate={booking.returnDate ?? ""}
+                      status={booking.status}
+                      totalPrice={booking.totalPrice}
+                    />
+                  ) : bookingsFilter === "all status" ? (
+                    <BookingCard
+                      key={i}
+                      vehiclePhotos={booking.vehiclePhotos[0]}
+                      vehicleName={booking.vehicleName ?? ""}
+                      vehicleType={booking.vehicleType ?? ""}
+                      pickUpDate={booking.pickUpDate ?? ""}
+                      returnDate={booking.returnDate ?? ""}
+                      status={booking.status}
+                      totalPrice={booking.totalPrice}
+                    />
                   ) : null}
                 </React.Fragment>
-              )
-            )} */}
-            <BookingCard />
+              );
+            })}
           </Stack>
         </Stack>
       </Card>
