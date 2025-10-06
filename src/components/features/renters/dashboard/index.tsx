@@ -102,11 +102,7 @@ export default function DashboardSection() {
             Recent Bookings
           </Text>
           <Stack gap="xl" pb="lg">
-            {data.renter.dashboard.overView.RecentBookings.map(
-              (data, index) => {
-                return <RecentBookingCard key={index} {...data} />;
-              }
-            )}
+            <RecentBookingCard />
           </Stack>
         </Stack>
       </Card>

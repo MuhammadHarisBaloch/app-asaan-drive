@@ -1,86 +1,109 @@
+import { fetchBookingDocs } from "@/features/booking";
+import { BookingModel } from "@/features/booking/models/booking.model";
 import { Card, Group, Flex, Stack, Text, Badge } from "@mantine/core";
+import { IconPointFilled } from "@tabler/icons-react";
+import { getAuth } from "firebase/auth";
 import Image from "next/image";
-interface RecentBookingCardProps {
-  vehicleImage: string;
-  vehicleName: string;
-  rentingDuration: string;
-  status: string;
-  price: string;
-}
-export default function RecentBookingCard({
-  vehicleName,
-  vehicleImage,
-  rentingDuration,
-  status,
-  price,
-}: RecentBookingCardProps) {
-  let color: string;
-  let bgColor: string;
-  switch (status) {
-    case "Active":
-      color = "green";
-      bgColor = "green.1";
-      break;
-    case "Confirmed":
-      color = "blue";
-      bgColor = "blue.1";
-      break;
-    case "Pending":
-      color = "red";
-      bgColor = "pink.1";
-      break;
-    default:
-      color = "transparent";
-      bgColor = "transparent";
-  }
+import { useEffect, useState } from "react";
+
+export default function RecentBookingCard() {
+  const [bookings, setBookings] = useState<BookingModel[]>([]);
+
+    useEffect(() => {
+      const fetchBookings = async () => {
+        const user = getAuth().currentUser;
+        if (!user) return;
+        const bookings = await fetchBookingDocs(user.uid);
+        return bookings;
+      };
+
+      fetchBookings().then((bookings) => {
+        console.log("Recently Bookings", bookings);
+        setBookings(bookings ?? []);
+      });
+    }, []);
+
+  const getStatusStyle = (status: string) => {
+    if (!status) {
+      return { color: "transparent", bgColor: "transparent" }; // fallback agar status missing ho
+    }
+    switch (status.toLowerCase()) {
+      case "active":
+        return { color: "blue", bgColor: "blue.1" };
+      case "confirmed":
+        return { color: "green", bgColor: "green.1" };
+      case "pending":
+        return { color: "red", bgColor: "pink.1" };
+      case "completed":
+        return { color: "black", bgColor: "gray.1" };
+      case "cancelled":
+        return { color: "red", bgColor: "red.1" };
+      default:
+        return { color: "transparent", bgColor: "transparent" };
+    }
+  };
+
   return (
-    <Card
-      w="100%"
-      px="xl"
-      py="lg"
-      radius="md"
-      bg="white.2"
-      style={{ filter: "drop-shadow(1px 1px 2px #78787846)" }}
-    >
-      <Group justify="space-between">
-        <Flex gap="md" align="center">
-          <Image
-            height={100}
-            width={100}
-            src={vehicleImage}
-            alt={vehicleName}
-            sizes="100vw"
-            style={{
-              height: "auto",
-              width: "4rem",
-            }}
-          />
-          <Stack gap="xxs">
-            <Text fz="xs" c="black" fw={600}>
-              {vehicleName}
-            </Text>
-            <Text fz="12px">{rentingDuration}</Text>
-          </Stack>
-        </Flex>
-        <Flex gap="md">
-          <Badge
-            c={color}
-            bg={bgColor}
-            fw={500}
-            styles={{
-              root: {
-                textAlign: "center",
-                textTransform: "lowercase",
-              },
-            }}
+    <>
+      {bookings.map((booking, i) => {
+        const { color, bgColor } = getStatusStyle(booking.status);
+        return (
+          <Card
+            key={i}
+            w="100%"
+            px="xl"
+            py="lg"
+            radius="md"
+            bg="white.2"
+            style={{ filter: "drop-shadow(1px 1px 2px #78787846)" }}
           >
-            {status}
-          </Badge>
-          <Text fz="xs" c="black" fw={600}>
-            Pkr {price}
-          </Text>
-        </Flex>
-      </Group>
-    </Card>
+            <Flex justify="space-between" align="center">
+              <Flex gap="md" align="center">
+                <Image
+                  height={100}
+                  width={100}
+                  src={booking.vehiclePhotos[0]}
+                  alt={booking.vehicleName ?? "-"}
+                  sizes="100vw"
+                  style={{
+                    height: "100%",
+                    width: "10%",
+                    borderRadius: "5px",
+                  }}
+                />
+                <Stack gap="xxs">
+                  <Text fz="xs" c="black" fw={600}>
+                    {booking.vehicleName}
+                  </Text>
+                  <Flex gap="sm" align="center">
+                    <Text fz="12px">{booking.pickUpDate}</Text>
+                    <IconPointFilled size={10} color="gray" />
+                    <Text fz="12px">{booking.returnDate}</Text>
+                  </Flex>
+                </Stack>
+              </Flex>
+              <Flex w="30%" gap="md" justify="flex-end">
+                <Badge
+                  c={color}
+                  bg={bgColor}
+                  fw={500}
+                  styles={{
+                    root: {
+                      textAlign: "center",
+                      textTransform: "lowercase",
+                    },
+                  }}
+                >
+                  {booking.status}
+                </Badge>
+                <Text fz="xs" c="black" fw={600}>
+                  Rs: {booking.totalPrice}
+                </Text>
+              </Flex>
+            </Flex>
+          </Card>
+        );
+      })}
+    </>
   );
 }

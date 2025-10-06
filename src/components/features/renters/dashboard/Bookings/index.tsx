@@ -74,7 +74,7 @@ export default function BookingsSection() {
               ))}
             </Group>
             <Divider w="100%" />
-            {/* Rows */}
+            {/* Rows
             {data.renter.dashboard.myBookings.BookingFeaturesData.map(
               (data, index) => (
                 <React.Fragment key={index}>
@@ -85,7 +85,8 @@ export default function BookingsSection() {
                   ) : null}
                 </React.Fragment>
               )
-            )}
+            )} */}
+            <BookingCard />
           </Stack>
         </Stack>
       </Card>
