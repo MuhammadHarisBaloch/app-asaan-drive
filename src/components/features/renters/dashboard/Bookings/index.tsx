@@ -16,8 +16,19 @@ import BookingCard from "./BookingCard";
 import { fetchBookingDocs } from "@/features/booking";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { getAuth } from "firebase/auth";
+export interface BookingStats {
+  activeRentals: number;
+  upcomingBookings: number;
+  pendingRequests: number;
+  totalSpent: number;
+}
 
-export default function BookingsSection() {
+interface BookingsSectionProps {
+  onStatsUpdate?: (stats: BookingStats) => void;
+}
+export default function BookingsSection({
+  onStatsUpdate,
+}: BookingsSectionProps) {
   const [bookingsFilter, setBookingsFilter] = useState<string | null>(
     "all status"
   );
@@ -36,6 +47,20 @@ export default function BookingsSection() {
       setBookings(bookings ?? []);
     });
   }, []);
+
+  // 🔹 Calculate dynamic counts
+  useEffect(() => {
+    if (onStatsUpdate) {
+      const stats: BookingStats = {
+        activeRentals: bookings.filter((b) => b.status === "active").length,
+        upcomingBookings: bookings.filter((b) => b.status === "confirmed")
+          .length,
+        pendingRequests: bookings.filter((b) => b.status === "pending").length,
+        totalSpent: bookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0),
+      };
+      onStatsUpdate(stats);
+    }
+  }, [bookings, onStatsUpdate]);
 
   return (
     <Stack p="lg" gap="xxl">
