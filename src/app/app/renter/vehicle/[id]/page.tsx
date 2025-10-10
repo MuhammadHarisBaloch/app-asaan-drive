@@ -8,7 +8,7 @@ import PaymentBilling from "@/components/features/renters/vehicle/PaymentBilling
 import VehicleDetails from "@/components/features/renters/vehicle/VehicleDetails";
 import { Stepper } from "@mantine/core";
 import { useParams } from "next/navigation";
-import { doc, getDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, getDoc, serverTimestamp } from "firebase/firestore";
 import {
   IconCalendarPlus,
   IconCarFilled,
@@ -24,6 +24,9 @@ import { getAuth } from "firebase/auth";
 import { notifications } from "@mantine/notifications";
 import { createBookingDocument } from "@/features/booking";
 import dayjs from "dayjs";
+import { getUserDocument } from "@/features/user";
+import { sendNotification } from "@/features/notification";
+import { firebaseConstants } from "@/constants/Firestore";
 
 export interface RenterBookingForm {
   rentalType: string;
@@ -39,6 +42,8 @@ export interface RenterBookingForm {
 }
 
 export default function Vehicle() {
+  const [createdBookingId, setCreatedBookingId] = useState<string | null>(null);
+
   let bookingStatus: string = "pending";
 
   // params sai vehicle ka id nikalna
@@ -173,6 +178,7 @@ export default function Vehicle() {
   // payment billing form mai booking create krna
   const handlePaymentBillingSubmit = useCallback(
     async (returnDate?: string | null) => {
+      console.log("handlePaymentBillingSubmit triggered");
       // use provided returnDate or computed one from parent
       const finalReturnDate = returnDate ?? computedReturnDate ?? null;
 
@@ -196,10 +202,15 @@ export default function Vehicle() {
       }
 
       try {
+        const bookingRef = doc(
+          collection(db, firebaseConstants.collections.bookings)
+        );
         // firestore mai booking create krna - finalReturnDate use karo
         const booking = await createBookingDocument({
+          bookingId: bookingRef.id,
           vehicleOwnerId: vehicle!.ownerID,
           renterId: renterID,
+          vehicleId: vehicle?.id,
           vehicleName: vehicle?.vehicleModel,
           vehiclePhotos: vehicle?.vehiclePhotos ?? [],
           vehicleType: vehicle?.vehicleType,
@@ -223,6 +234,18 @@ export default function Vehicle() {
             title: "Booking Completed",
             message: "Please Wait for the Approval from owner side",
           });
+
+          const renterData = await getUserDocument(renterID);
+          setCreatedBookingId(bookingRef.id);
+          await sendNotification({
+            userId: vehicle!.ownerID, // vehicle owner ko notify karna hai
+            title: "New Booking Request",
+            message: `${
+              renterData?.fullName || "A user"
+            } has requested to book your vehicle "${vehicle?.vehicleModel}".`,
+            type: "booking",
+          });
+
           setActive(4); // aglay step par jao (confirmation)
         }
       } catch (error) {
@@ -307,6 +330,7 @@ export default function Vehicle() {
           <BookingConfirmation
             vehicle={vehicle}
             bookingValues={bookingDetails}
+            bookingId={createdBookingId}
           />
         </Stepper.Step>
       </Stepper>

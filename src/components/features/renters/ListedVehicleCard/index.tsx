@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { IconStarFilled } from "@tabler/icons-react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface ListedVehicleCardProps {
   id?: string;
@@ -21,6 +21,7 @@ interface ListedVehicleCardProps {
   vehicleType: string;
   dailyRate: number;
   pickupLocation: string;
+  status: string;
 }
 let color: string;
 let bgColor: string;
@@ -31,8 +32,10 @@ export default function ListedCard({
   vehicleType,
   dailyRate,
   pickupLocation,
+  status,
 }: ListedVehicleCardProps) {
-  let status = "available";
+  const router = useRouter();
+
   switch (status) {
     case "available":
       color = "green";
@@ -98,11 +101,15 @@ export default function ListedCard({
           <Text fz="xs">{pickupLocation}</Text>
         </Group>
         <Button
-          component={Link}
-          href={`/app/renter/vehicle/${id}`}
           fullWidth
           mt="sm"
           fz="xs"
+          disabled={status === "booked" || status === "inactive"}
+          onClick={() => {
+            if (status === "available") {
+              router.push(`/app/renter/vehicle/${id}`);
+            }
+          }}
         >
           View Details
         </Button>

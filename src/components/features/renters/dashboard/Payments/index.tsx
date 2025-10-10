@@ -1,10 +1,33 @@
-import { Button, Card, Group, SimpleGrid, Stack, Text } from "@mantine/core";
-import { IconDownload } from "@tabler/icons-react";
+import {
+  Button,
+  Card,
+  Flex,
+  Group,
+  SimpleGrid,
+  Stack,
+  Text,
+} from "@mantine/core";
+import {
+  IconAlertTriangle,
+  IconArrowDownLeft,
+  IconCreditCard,
+  IconCurrencyDollar,
+  IconDownload,
+} from "@tabler/icons-react";
 import PaymentCard from "./PaymentCard";
 import TransactionsCard from "./TransactionsCard";
 import { data } from "@/constants/Data";
+import BookingsSection, { BookingStats } from "../Bookings";
+import { useState } from "react";
 
 export default function Payments() {
+  const [stats, setStats] = useState<BookingStats>({
+    activeRentals: 0,
+    upcomingBookings: 0,
+    pendingRequests: 0,
+    totalSpent: 0,
+    totalRefund: 0,
+  });
   return (
     <Stack p="lg" gap="xl">
       <Stack gap={0}>
@@ -13,11 +36,23 @@ export default function Payments() {
         </Text>
         <Text fz="12px">Manage your payments and transaction history</Text>
       </Stack>
-      <SimpleGrid cols={3} spacing="xl">
-        {data.renter.dashboard.payments.PaymentCards.map((data, i) => {
-          return <PaymentCard key={i} {...data} />;
-        })}
-      </SimpleGrid>
+      <Flex gap="md">
+        <PaymentCard
+          icon={<IconCreditCard size="30" color="purple" />}
+          iconBg="purple.0"
+          title="Total Spent This Month"
+          price={stats.totalSpent.toFixed(0)}
+          subTitle="Your total rental expenses"
+        />
+
+        <PaymentCard
+          icon={<IconArrowDownLeft size="30" color="blue" />}
+          iconBg="blue.1"
+          title="Refunds"
+          price={stats.totalRefund.toFixed(0)}
+          subTitle="Cancelled ride refunds"
+        />
+      </Flex>
       <Card
         radius="md"
         p="xl"
@@ -45,6 +80,10 @@ export default function Payments() {
           </Stack>
         </Stack>
       </Card>
+      {/* Hidden bookings fetcher for stats update */}
+      <div style={{ display: "none" }}>
+        <BookingsSection onStatsUpdate={setStats} />
+      </div>
     </Stack>
   );
 }

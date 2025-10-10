@@ -54,8 +54,8 @@ export default function BookingCard({
             src={vehiclePhotos}
             alt={vehicleName ?? "Vehicle"}
             style={{
-              height: "40%",
-              width: "40%",
+              height: "4rem",
+              width: "6rem",
               borderRadius: "5px",
             }}
           />

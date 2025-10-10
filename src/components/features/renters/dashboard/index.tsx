@@ -32,6 +32,7 @@ export default function DashboardSection() {
     upcomingBookings: 0,
     pendingRequests: 0,
     totalSpent: 0,
+    totalRefund: 0,
   });
 
   const auth = getAuth();
@@ -150,14 +151,14 @@ export default function DashboardSection() {
             <Stack gap="xs">
               <Text fz="12px">Total Spent This Month</Text>
               <Text fz="xs" c="black" fw={600}>
-                PKR {stats.totalSpent.toLocaleString()}
+                Pkr {stats.totalSpent.toLocaleString()}
               </Text>
             </Stack>
           </Flex>
         </Card>
       </SimpleGrid>
 
-      {/* 🔹 Recent Bookings */}
+      {/* Recent Bookings */}
       <Card
         w="100%"
         px="lg"
@@ -174,7 +175,7 @@ export default function DashboardSection() {
         </Stack>
       </Card>
 
-      {/* 👇 Hidden bookings fetcher for stats update */}
+      {/* Hidden bookings fetcher for stats update */}
       <div style={{ display: "none" }}>
         <BookingsSection onStatsUpdate={setStats} />
       </div>

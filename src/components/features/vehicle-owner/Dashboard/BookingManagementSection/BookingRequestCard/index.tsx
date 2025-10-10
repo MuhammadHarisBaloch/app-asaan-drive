@@ -83,16 +83,16 @@ export default function BookingRequestCard({
       return { color: "transparent", bgColor: "transparent" }; // fallback agar status missing ho
     }
     switch (status.toLowerCase()) {
-      case "ongoing":
-        return { color: "green", bgColor: "green.1" };
-      case "confirmed":
+      case "active":
         return { color: "blue", bgColor: "blue.1" };
+      case "confirmed":
+        return { color: "green", bgColor: "green.1" };
       case "pending":
-        return { color: "red", bgColor: "pink.1" };
+        return { color: "orange", bgColor: "orange.0" };
       case "completed":
         return { color: "black", bgColor: "gray.1" };
       case "cancelled":
-        return { color: "red", bgColor: "red.1" };
+        return { color: "red", bgColor: "pink.1" };
       default:
         return { color: "transparent", bgColor: "transparent" };
     }

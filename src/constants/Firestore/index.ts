@@ -3,5 +3,6 @@ export const firebaseConstants = {
     users: "users",
     vehicles: "vehicles",
     bookings: "bookings",
+    notifications: "notifications",
   },
 };

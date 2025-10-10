@@ -1,7 +1,10 @@
 import { Card, Stack, Center, Box, Text } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 
-export default function BookingIdCard() {
+interface BookingIdCardProps {
+  bookingId: string | null;
+}
+export default function BookingIdCard({ bookingId }: BookingIdCardProps) {
   return (
     <Card
       w="100%"
@@ -31,7 +34,7 @@ export default function BookingIdCard() {
           }}
         >
           <Text fz="lg" c="black">
-            Booking ID: <span style={{ fontWeight: 500 }}>BKG 9955667</span>
+            Booking ID: <span style={{ fontWeight: 500 }}>{bookingId}</span>
           </Text>
         </Box>
       </Stack>

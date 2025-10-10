@@ -61,10 +61,17 @@ const vehicleOwnerMenu: HeaderMenuItem[] = [
     link: "/app/vehicles-owner/list-your-vehicle",
   },
 ];
+const adminMenu: HeaderMenuItem[] = [
+  {
+    name: "",
+    link: "",
+  },
+];
 
 function getHeaderMenu(pathname: string): HeaderMenuItem[] {
   if (pathname.startsWith("/app/renter")) return renterMenu;
   if (pathname.startsWith("/app/vehicles-owner")) return vehicleOwnerMenu;
+  if (pathname.startsWith("/app/admin")) return adminMenu;
   return websiteMenu;
 }
 

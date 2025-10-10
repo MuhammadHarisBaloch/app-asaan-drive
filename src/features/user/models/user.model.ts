@@ -5,4 +5,5 @@ export interface UserModel {
   email: string;
   city: string;
   phoneNumber: string;
+  walletBalance?: number;
 }

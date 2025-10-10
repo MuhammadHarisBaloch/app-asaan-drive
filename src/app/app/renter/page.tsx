@@ -6,6 +6,7 @@ import Notifications from "@/components/features/renters/dashboard/Notifications
 import Payments from "@/components/features/renters/dashboard/Payments";
 import TrackingSection from "@/components/features/renters/dashboard/Trackings";
 import SideBar from "@/components/features/SideBar/inde";
+import { autoUpdateBookingStatus } from "@/utils/updateBookingStatus";
 import { Grid, GridCol } from "@mantine/core";
 import {
   IconLayoutDashboard,
@@ -15,7 +16,7 @@ import {
   IconUser,
   IconMapPin,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const data = [
   { label: "Dashboard", icon: IconLayoutDashboard },
@@ -28,6 +29,12 @@ const data = [
 
 export default function RenterPage() {
   const [active, setActive] = useState("Dashboard");
+
+  useEffect(() => {
+    console.log("Auto update function triggered...");
+    autoUpdateBookingStatus();
+  }, []);
+
   return (
     <Grid px="sm">
       <GridCol span={2.5}>
@@ -49,4 +56,3 @@ export default function RenterPage() {
     </Grid>
   );
 }
-  

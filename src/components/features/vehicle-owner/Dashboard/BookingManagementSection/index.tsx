@@ -1,4 +1,14 @@
-import { Badge, Card, Divider, Flex, Stack, Tabs, Text } from "@mantine/core";
+import {
+  Badge,
+  Card,
+  Divider,
+  Flex,
+  Group,
+  Loader,
+  Stack,
+  Tabs,
+  Text,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 import BookingRequestCard from "./BookingRequestCard";
 import { data } from "@/constants/Data";
@@ -8,44 +18,142 @@ import { getUserDocument } from "@/features/user";
 import { getAuth } from "firebase/auth";
 import React from "react";
 import BookingList from "./BookingList";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
+import { listOwnerVehicleDocs } from "@/features/vehicle";
+import { firebaseConstants } from "@/constants/Firestore";
+import { db } from "@/networking/firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import { sendNotification } from "@/features/notification";
 
 export default function BookingManagementSection() {
   const [value, setValue] = useState<string | null>("Upcoming");
   const [bookings, setBookings] = useState<BookingModel[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const listOwnerBookings = async () => {
+    const fetchData = async () => {
       const user = getAuth().currentUser;
       if (!user) return;
+      setLoading(true);
 
-      // 🔹 pehle fetch karo
-      const bookings = await fetchOwnerVehicleBookings(user.uid);
+      const bookingsData = await fetchOwnerVehicleBookings(user.uid);
 
-      // 🔹 phir renter data merge karo
       const bookingsWithRenter = await Promise.all(
-        (bookings ?? []).map(async (booking) => {
+        (bookingsData ?? []).map(async (booking) => {
           const renter = await getUserDocument(booking.renterId);
           return { ...booking, renter };
         })
       );
 
       setBookings(bookingsWithRenter);
-      console.log("Bookings with renter:", bookingsWithRenter);
+      setLoading(false);
     };
 
-    listOwnerBookings();
+    fetchData();
   }, []);
-  const handleBookingApprove = (bookingId: string) => {
+
+  // helper function to update vehicle status in Firestore
+
+  const updateVehicleStatus = async (
+    vehicleId: string,
+    status: "available" | "booked"
+  ) => {
+    try {
+      const vehicleRef = doc(
+        db,
+        firebaseConstants.collections.vehicles,
+        vehicleId
+      );
+      await updateDoc(vehicleRef, { status });
+      console.log(`Vehicle ${vehicleId} status updated to ${status}`);
+    } catch (error) {
+      console.error("Error updating vehicle status:", error);
+    }
+  };
+
+  const handleBookingApprove = async (bookingId: string) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking?.vehicleId || !booking?.renterId) return;
+
+    // 🔹 Local UI update
     setBookings((prev) =>
       prev.map((b) => (b.id === bookingId ? { ...b, status: "confirmed" } : b))
     );
-  };
-  const handleBookingDecline = (bookingId: string) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === bookingId ? { ...b, status: "cancelled" } : b))
-    );
+
+    await updateVehicleStatus(booking.vehicleId, "booked");
+
+    try {
+      // 🔹 Firestore update
+      const bookingRef = doc(
+        db,
+        firebaseConstants.collections.bookings,
+        bookingId
+      );
+      await updateDoc(bookingRef, { status: "confirmed" });
+
+      // 🔔 Notification for renter
+      const ownerData = await getUserDocument(getAuth().currentUser?.uid);
+
+      await sendNotification({
+        userId: booking.renterId,
+        title: "Booking Approved",
+        message: `${
+          ownerData?.fullName || "The owner"
+        } has approved your booking for "${booking.vehicleName}".`,
+        type: "booking",
+      });
+
+      console.log(`Booking ${bookingId} approved and renter notified.`);
+    } catch (error) {
+      console.error("Error approving booking:", error);
+    }
   };
 
+  const handleBookingDecline = async (bookingId: string) => {
+    console.log("Booking ID in Decline Handler:", bookingId);
+
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking?.vehicleId) return;
+
+    try {
+      // 🔹 Local UI update (status: cancelled)
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.id === bookingId ? { ...b, status: "cancelled" } : b
+        )
+      );
+
+      // 🔹 Firestore update
+      const bookingRef = doc(
+        db,
+        firebaseConstants.collections.bookings,
+        bookingId
+      );
+      await updateDoc(bookingRef, { status: "cancelled" });
+      await updateVehicleStatus(booking.vehicleId, "available");
+
+      console.log("Booking cancelled and updated in Firestore!");
+
+      // 🔹 Notification to renter
+      await sendNotification({
+        userId: booking.renterId, // renter ko notify karna
+        title: "Booking Declined",
+        message: `Your booking for "${booking.vehicleName}" has been declined by the owner.`,
+        type: "booking",
+      });
+      console.log("Notification sent to renter for declined booking");
+    } catch (error) {
+      console.error("Error declining booking:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Group justify="center" align="center" mt="xl">
+        <Loader color="red.4" size="lg" />
+      </Group>
+    );
+  }
   return (
     <Stack p="lg" gap="xl">
       <Stack gap={0}>
@@ -90,7 +198,7 @@ export default function BookingManagementSection() {
           <Tabs.Panel value="Ongoing">
             <BookingList
               bookings={bookings}
-              statusFilter="ongoing"
+              statusFilter="active"
               onApprove={handleBookingApprove}
               onDecline={handleBookingDecline}
             />

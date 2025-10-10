@@ -113,9 +113,15 @@ export default function BrowseVehicle() {
           return (
             <React.Fragment key={data.id}>
               {selectedVehicle === data.vehicleType ? (
-                <ListedVehicleCard {...data} />
+                <ListedVehicleCard
+                  {...data}
+                  status={data.status ?? "available"}
+                />
               ) : selectedVehicle === "All" ? (
-                <ListedVehicleCard {...data} />
+                <ListedVehicleCard
+                  {...data}
+                  status={data.status ?? "available"}
+                />
               ) : null}
             </React.Fragment>
           );

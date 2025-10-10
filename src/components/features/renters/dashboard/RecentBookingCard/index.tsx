@@ -37,7 +37,7 @@ export default function RecentBookingCard() {
       case "completed":
         return { color: "black", bgColor: "gray.1" };
       case "cancelled":
-        return { color: "red", bgColor: "red.1" };
+        return { color: "red", bgColor: "pink.1" };
       default:
         return { color: "transparent", bgColor: "transparent" };
     }
@@ -66,8 +66,8 @@ export default function RecentBookingCard() {
                   alt={booking.vehicleName ?? "-"}
                   sizes="100vw"
                   style={{
-                    height: "100%",
-                    width: "10%",
+                    height: "3rem",
+                    width: "5rem",
                     borderRadius: "5px",
                   }}
                 />

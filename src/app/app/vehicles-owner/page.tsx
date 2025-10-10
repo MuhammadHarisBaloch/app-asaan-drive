@@ -6,6 +6,7 @@ import BookingManagementSection from "@/components/features/vehicle-owner/Dashbo
 import EarningAndPayoutSection from "@/components/features/vehicle-owner/Dashboard/EarningAndPayoutSection";
 import NotificationSection from "@/components/features/vehicle-owner/Dashboard/NotificationSection";
 import VehicleManagementSection from "@/components/features/vehicle-owner/Dashboard/VehicleManagementSection";
+import { autoUpdateBookingStatus } from "@/utils/updateBookingStatus";
 import { Grid, GridCol } from "@mantine/core";
 import {
   IconLayoutDashboard,
@@ -14,7 +15,7 @@ import {
   IconBell,
   IconUser,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const data = [
   { label: "Dashboard", icon: IconLayoutDashboard },
@@ -27,6 +28,11 @@ const data = [
 
 export default function VehiclesOwnerPage() {
   const [active, setActive] = useState("Dashboard");
+
+  useEffect(() => {
+    autoUpdateBookingStatus();
+  }, []);
+
   return (
     <Grid px="sm">
       <GridCol span={2.5}>

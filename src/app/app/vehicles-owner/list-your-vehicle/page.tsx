@@ -63,7 +63,7 @@ export default function ListYourVehicle() {
     setUser(userData);
     console.log("Owner Data is here : ", userData);
 
-    // startLoading();
+    startLoading();
 
     const uploadedPhotoIds = await Promise.all(
       vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
@@ -105,7 +105,7 @@ export default function ListYourVehicle() {
       message: "",
     });
 
-    // stopLoading();
+    stopLoading();
   };
 
   const form = useForm<VehicleRegistrationForm>({

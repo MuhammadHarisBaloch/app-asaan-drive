@@ -1,6 +1,12 @@
 import { Button, Card, Stack, Text, PasswordInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
+import {
+  EmailAuthProvider,
+  getAuth,
+  reauthenticateWithCredential,
+  updatePassword,
+} from "firebase/auth";
 
 export default function SettingContent() {
   const form = useForm({
@@ -18,26 +24,50 @@ export default function SettingContent() {
         value !== values.newPassword ? "Passwords did not match" : null,
     },
   });
+
+  const handlePasswordUpdate = async (values: typeof form.values) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user || !user.email) {
+      notifications.show({
+        title: "Error",
+        message: "No user is currently logged in.",
+        color: "red",
+      });
+      return;
+    }
+
+    try {
+      // Step 1: Reauthenticate user
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        values.currentPassword
+      );
+      await reauthenticateWithCredential(user, credential);
+
+      // Step 2: Update password
+      await updatePassword(user, values.newPassword);
+
+      notifications.show({
+        title: "Password Updated Successfully",
+        message: "Your password has been changed.",
+        color: "green",
+      });
+
+      form.reset();
+    } catch (error) {
+      notifications.show({
+        title: "Something went wrong",
+        message: `${error}`,
+        color: "red",
+      });
+    }
+  };
+
   return (
     <Card withBorder radius="md" my="xl">
-      <form
-        onSubmit={form.onSubmit((values) => {
-          try {
-            notifications.show({
-              title: "Password Change Successfully",
-              message: "",
-              color: "green",
-            });
-            console.log(values);
-          } catch (error) {
-            notifications.show({
-              title: "Something Wrong",
-              message: `${error}`,
-              color: "red",
-            });
-          }
-        })}
-      >
+      <form onSubmit={form.onSubmit(handlePasswordUpdate)}>
         <Stack gap="xl" p="lg">
           <Text fz="md" fw={500} c="black">
             Change Password

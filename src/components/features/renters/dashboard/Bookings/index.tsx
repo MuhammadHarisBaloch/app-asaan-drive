@@ -21,6 +21,7 @@ export interface BookingStats {
   upcomingBookings: number;
   pendingRequests: number;
   totalSpent: number;
+  totalRefund: number;
 }
 
 interface BookingsSectionProps {
@@ -51,13 +52,23 @@ export default function BookingsSection({
   // 🔹 Calculate dynamic counts
   useEffect(() => {
     if (onStatsUpdate) {
+      const totalSpent = bookings
+        .filter((b) => b.status !== "cancelled")
+        .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+
+      const totalRefund = bookings
+        .filter((b) => b.status === "cancelled")
+        .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+
       const stats: BookingStats = {
         activeRentals: bookings.filter((b) => b.status === "active").length,
         upcomingBookings: bookings.filter((b) => b.status === "confirmed")
           .length,
         pendingRequests: bookings.filter((b) => b.status === "pending").length,
-        totalSpent: bookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0),
+        totalSpent,
+        totalRefund, // 👈 add here
       };
+
       onStatsUpdate(stats);
     }
   }, [bookings, onStatsUpdate]);

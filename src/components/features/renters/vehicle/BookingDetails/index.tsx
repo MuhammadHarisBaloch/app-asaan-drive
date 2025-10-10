@@ -121,6 +121,7 @@ export default function BookingDetails({
                       w="100%"
                       label="Pickup Date"
                       placeholder="7/7/2025"
+                      minDate={new Date()}
                       leftSection={<IconCalendarWeek size={20} stroke={1.5} />}
                       rightSection={
                         <IconCalendarMonthFilled size={20} color="black" />

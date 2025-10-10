@@ -2,7 +2,8 @@ import { UserModel } from "@/features/user/models/user.model";
 import { FileWithPath } from "@mantine/dropzone";
 
 export interface BookingModel {
-  id?: string;
+  bookingId?: string;
+  vehicleId?: string;
   vehicleOwnerId: string;
   renterId: string;
   vehicleName?: string;

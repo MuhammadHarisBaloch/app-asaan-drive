@@ -24,18 +24,19 @@ import {
 import Image from "next/image";
 import BookingIdCard from "./BookingIdCard";
 import ContactInfoSection from "./ContactInfoSection";
-import { data } from "@/constants/Data";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { RenterBookingForm } from "@/app/app/renter/vehicle/[id]/page";
 import { useMemo } from "react";
-
+import Link from "next/link";
 interface BookingConfirmationProps {
+  bookingId: string | null;
   vehicle: VehicleModel;
   bookingValues: Partial<RenterBookingForm> | null;
 }
 export default function BookingConfirmation({
   vehicle,
   bookingValues,
+  bookingId,
 }: BookingConfirmationProps) {
   // 1. Rental Cost calculate
   const rentalCost = useMemo(() => {
@@ -85,7 +86,7 @@ export default function BookingConfirmation({
 
   return (
     <Stack py="3xl" px="8rem" gap="xl">
-      <BookingIdCard />
+      <BookingIdCard bookingId={bookingId} />
       <Card
         w="100%"
         radius="md"
@@ -117,15 +118,15 @@ export default function BookingConfirmation({
               </Flex>
               <Flex gap="md">
                 <Badge
-                  c="green"
-                  bg="green.1"
+                  c="orange"
+                  bg="orange.0"
                   size="lg"
                   fw={500}
                   styles={{
                     root: { textAlign: "center", textTransform: "lowercase" },
                   }}
                 >
-                  confirmed
+                  pending
                 </Badge>
                 <Badge
                   c="blue"
@@ -273,6 +274,8 @@ export default function BookingConfirmation({
           Track Your Ride
         </Button>
         <Button
+          component={Link}
+          href={`/app/renter`}
           size="lg"
           bg="white"
           fz="md"
