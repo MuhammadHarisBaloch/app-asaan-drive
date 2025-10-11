@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { signupUser } from "../../features/auth";
 import { createUserDocument } from "../../features/user";
 import { UserModel } from "@/features/user/models/user.model";
+import { serverTimestamp } from "firebase/firestore";
 interface SignUpForm {
   userType: string;
   fullName: string;
@@ -40,32 +41,38 @@ function SignupPage() {
     useDisclosure(false);
 
   const registerUser = async (values: SignUpForm) => {
-    const user = await signupUser(values.email, values.password);
-    if (user) {
-      await createUserDocument({
-        id: user.uid,
-        email: values.email,
-        fullName: values.fullName,
-        userType: values.userType,
-        city: values.city,
-        phoneNumber: values.number,
-      });
-    }
-
-    stopLoading();
-    if (user) {
+    startLoading();
+    const userCred = await signupUser(values.email, values.password);
+    if (!userCred) {
+      stopLoading();
       notifications.show({
-        title: "Account created successfully!",
-        message: "You can now sign in with your credentials",
+        title: "Registration Failed",
+        message: "Failed to register new user",
       });
-      console.log("user type is ", values.userType);
-      router.push(`/app/${values.userType}`);
       return;
     }
-    notifications.show({
-      title: "Registration Failed",
-      message: "Failed to register new user",
+
+    const createResult = await createUserDocument({
+      id: userCred.uid,
+      email: values.email,
+      fullName: values.fullName,
+      userType: values.userType,
+      city: values.city,
+      phoneNumber: values.number,
+      // createdAt removed here because createUserDocument will set serverTimestamp()
+      // you can also pass joined if you want a specific fallback
     });
+
+    console.log("created user doc:", createResult?.data);
+
+    stopLoading();
+    notifications.show({
+      title: "Account created successfully!",
+      message: "You can now sign in",
+    });
+
+    // If you rely on createdAt immediately in UI, you can inspect createResult?.data.createdAt or createResult?.data.joined
+    router.push(`/app/${values.userType}`);
   };
 
   const form = useForm<SignUpForm>({

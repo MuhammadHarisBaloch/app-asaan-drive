@@ -19,6 +19,7 @@ import { isNotEmpty, useForm } from "@mantine/form";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
   User,
 } from "firebase/auth";
 import Link from "next/link";
@@ -62,24 +63,48 @@ export default function SignInPage() {
 
   const signInUser = async (values: SignInForm) => {
     const authUser = await signinUser(values.userName, values.password);
-    if (authUser) {
-      const fetchUser = await getUserDocument(authUser.uid);
+    if (!authUser) {
       stopLoading();
-      if (fetchUser) {
-        notifications.show({
-          title: "Signed in successfully",
-          message: "",
-        });
-        router.push(`/app/${fetchUser.userType}`);
-        return;
-      }
+      notifications.show({
+        title: "Sign in failed",
+        message: "Invalid user credentials",
+        color: "red",
+      });
       return;
     }
+
+    const fetchUser: UserModel | null = await getUserDocument(authUser.uid);
+
+    // Check if user document actually exists
+    if (!fetchUser) {
+      stopLoading();
+      notifications.show({
+        title: "Sign in failed",
+        message: "User record not found in database.",
+        color: "red",
+      });
+      return;
+    }
+
+    // Blocked user check
+    if (fetchUser.status === "Blocked") {
+      notifications.show({
+        title: "Account Blocked",
+        message: "Your account has been blocked by the admin.",
+        color: "red",
+      });
+      await signOut(auth);
+      return;
+    }
+
+    // ✅ Proceed normally if everything is fine
     stopLoading();
     notifications.show({
-      title: "Sign in failed",
-      message: "Invalid user credentials",
+      title: "Signed in successfully",
+      message: "",
     });
+
+    router.push(`/app/${fetchUser.userType}`);
   };
 
   return (
