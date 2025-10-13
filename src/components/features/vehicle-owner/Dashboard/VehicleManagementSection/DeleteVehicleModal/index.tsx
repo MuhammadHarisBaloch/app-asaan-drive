@@ -1,12 +1,16 @@
 import { modals } from "@mantine/modals";
 import ModalContent from "./ModalContent";
 interface DeleteVehicleModalProps {
+  vehicleId: string;
   vehicleName: string;
   vehicleLicensePlate: string;
+  onRefresh: () => Promise<void>;
 }
 export default function DeleteVehicleModal({
+  vehicleId,
   vehicleLicensePlate,
   vehicleName,
+  onRefresh,
 }: DeleteVehicleModalProps) {
   return modals.open({
     title: "Delete Vehicle",
@@ -15,8 +19,10 @@ export default function DeleteVehicleModal({
     children: (
       <>
         <ModalContent
+          vehicleId={vehicleId}
           vehicleLicensePlate={vehicleLicensePlate}
           vehicleName={vehicleName}
+          onRefresh={onRefresh}
         />
       </>
     ),

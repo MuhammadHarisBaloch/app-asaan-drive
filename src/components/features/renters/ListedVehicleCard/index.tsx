@@ -42,8 +42,8 @@ export default function ListedCard({
       bgColor = "green.1";
       break;
     case "inactive":
-      color = "black";
-      bgColor = "gray.1";
+      color = "red";
+      bgColor = "pink.1";
       break;
     case "booked":
       color = "blue";
@@ -68,6 +68,7 @@ export default function ListedCard({
           style={{
             width: "100%",
             height: "15rem",
+            objectFit: "cover",
           }}
         />
       </CardSection>

@@ -1,6 +1,6 @@
 "use client";
 import ListedVehicleCard from "@/components/features/renters/ListedVehicleCard";
-import { listAllVehicleDocs } from "@/features/vehicle";
+import { listAllVehicleDocs, listAvailableVehicles } from "@/features/vehicle";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import {
   Button,
@@ -22,34 +22,16 @@ let status = "available";
 let color: string;
 let bgColor: string;
 
-switch (status) {
-  case "available":
-    color = "green";
-    bgColor = "green.1";
-    break;
-  case "inactive":
-    color = "black";
-    bgColor = "gray.1";
-    break;
-  case "booked":
-    color = "blue";
-    bgColor = "blue.1";
-    break;
-}
 export default function BrowseVehicle() {
   const [selectedVehicle, setSelectedVehicle] = useState<string>("All");
   const [Vehicles, setVehicles] = useState<VehicleModel[]>([]);
 
   useEffect(() => {
-    const listAllVehicles = async () => {
-      const vehicles = await listAllVehicleDocs();
-      return vehicles;
-    };
-
-    listAllVehicles().then((vehicles) => {
-      console.log(vehicles);
+    const fetchAvailableVehicles = async () => {
+      const vehicles = await listAvailableVehicles(); // 👈 only available ones
       setVehicles(vehicles ?? []);
-    });
+    };
+    fetchAvailableVehicles();
   }, []);
 
   return (

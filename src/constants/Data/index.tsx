@@ -673,7 +673,7 @@ const importantNoticeForDocument = [
   "Verification typically takes 5-10 minutes",
 ];
 
-const vehicleTypes = ["Car", "Bike", "Cycle", "Rakshaw"];
+const vehicleTypes = ["Bike", "Cycle", "Rakshaw"];
 
 const BookingTimeDetails = [
   {

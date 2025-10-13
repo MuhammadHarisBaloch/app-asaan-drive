@@ -58,6 +58,7 @@ export default function VehicleDetails({
                     style={{
                       width: "100%",
                       height: "30rem",
+                      objectFit: "cover",
                     }}
                   />
                 </Carousel.Slide>

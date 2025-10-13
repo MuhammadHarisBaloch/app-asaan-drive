@@ -1,15 +1,56 @@
+import { deleteVehicle, listOwnerVehicleDocs } from "@/features/vehicle";
+import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
+import { auth } from "@/networking/firebase";
 import { Stack, Center, Card, Flex, Button, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
+import { notifications, showNotification } from "@mantine/notifications";
 import { IconAlertTriangle } from "@tabler/icons-react";
+import { useState } from "react";
 
 interface ModalContentProps {
+  vehicleId: string;
   vehicleName: string;
   vehicleLicensePlate: string;
+  onRefresh: () => Promise<void>;
 }
 export default function ModalContent({
+  vehicleId,
   vehicleName,
   vehicleLicensePlate,
+  onRefresh,
 }: ModalContentProps) {
+  const [loading, setLoading] = useState(false);
+
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      await deleteVehicle(vehicleId);
+      modals.closeAll();
+
+      notifications.show({
+        title: "Deleted",
+        message: `${vehicleName} has been successfully deleted.`,
+        color: "green",
+      });
+
+      // Try refreshing but don’t block or trigger error notification if it fails
+      try {
+        await onRefresh();
+      } catch (refreshError) {
+        console.warn("Vehicle deleted, but refresh failed:", refreshError);
+      }
+    } catch (error) {
+      console.error("Delete vehicle error:", error);
+      notifications.show({
+        title: "Error",
+        message: "Failed to delete vehicle. Please try again.",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Stack align="center" px="md" pb="lg">
       <Center h={60} w={60} bg="pink.1" style={{ borderRadius: "50%" }}>
@@ -48,7 +89,7 @@ export default function ModalContent({
         >
           Cancel
         </Button>
-        <Button fullWidth h="2.5rem">
+        <Button fullWidth h="2.5rem" loading={loading} onClick={handleDelete}>
           Delete Vehicle
         </Button>
       </Flex>

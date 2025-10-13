@@ -60,6 +60,15 @@ export default function ListYourVehicle() {
     }
 
     const userData = await getUserDocument(ownerID);
+
+    if (!userData) {
+      notifications.show({
+        title: "User data not found",
+        message: "Please re-login and try again.",
+      });
+      return;
+    }
+
     setUser(userData);
     console.log("Owner Data is here : ", userData);
 
@@ -84,12 +93,12 @@ export default function ListYourVehicle() {
     const vehicle = await createVehicleDocument({
       ...values,
       ownerID,
+      ownerName: userData.fullName || "",
+      ownerNumber: userData.phoneNumber || "",
+      ownerEmail: userData.email || "",
+      ownerType: userData.userType || "",
       vehiclePhotos: uploadedPhotoUrls,
       vehicleDocs: uploadedDocUrls,
-      ownerName: user?.fullName,
-      ownerNumber: user?.phoneNumber,
-      ownerEmail: user?.email,
-      ownerType: user?.userType,
     });
 
     if (vehicle) {
@@ -98,6 +107,7 @@ export default function ListYourVehicle() {
         message: "",
       });
       router.push(`/app/vehicles-owner`);
+      stopLoading();
       return;
     }
     notifications.show({

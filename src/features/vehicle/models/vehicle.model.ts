@@ -12,7 +12,7 @@ export interface VehicleModel {
   ownerName?: string;
   ownerType?: string;
   ownerNumber?: string;
-  status?: "available" | "booked" | "inactive";
+  status?: "available" | "booked" | "inactive" | "pending" | "active";
   ownerEmail?: string;
   vehiclePhotos: string[];
   vehicleDocs: string[];

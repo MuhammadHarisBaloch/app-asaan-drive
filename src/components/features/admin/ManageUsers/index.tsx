@@ -161,10 +161,10 @@ export default function ManageUsersSection() {
     <Stack p="lg" gap="xxl">
       {/* 🔹 Header */}
       <Stack gap={0}>
-        <Text fz="xl" fw={600}>
+        <Text fz="xl" fw={600} c="black">
           Manage Users
         </Text>
-        <Text fz="md" c="dimmed">
+        <Text fz="md">
           View and manage all registered users on the platform.
         </Text>
       </Stack>

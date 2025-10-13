@@ -19,10 +19,23 @@ import { listOwnerVehicleDocs } from "../../../../../features/vehicle";
 import { VehicleModel } from "../../../../../features/vehicle/models/vehicle.model";
 import DeleteVehicleModal from "./DeleteVehicleModal";
 import EditVehicleModal from "./EditVehicleModal";
+import { auth } from "@/networking/firebase";
 
 export default function VehicleManagementSection() {
   const [Vehicles, setVehicles] = useState<VehicleModel[]>([]);
   const [loading, setLoading] = useState(true);
+
+  async function fetchVehicles() {
+    const ownerID = auth.currentUser?.uid;
+    if (!ownerID) return;
+    const docs = await listOwnerVehicleDocs(ownerID);
+    setVehicles(docs);
+  }
+
+  // Call it once when page loads
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
 
   useEffect(() => {
     const listOwnerVehicles = async () => {
@@ -49,14 +62,25 @@ export default function VehicleManagementSection() {
         color = "green";
         bgColor = "green.1";
         break;
+      case "pending":
+        color = "orange.4";
+        bgColor = "orange.0";
+        break;
       case "booked":
         color = "blue";
         bgColor = "blue.1";
         break;
       case "inactive":
-        color = "black";
-        bgColor = "gray.1";
+        color = "red";
+        bgColor = "pink.1";
         break;
+      case "active":
+        color = "blue";
+        bgColor = "blue.1";
+        break;
+      default:
+        color = "transparent";
+        bgColor = "transparent";
     }
     return { color, bgColor };
   };
@@ -83,9 +107,7 @@ export default function VehicleManagementSection() {
       </Stack>
       <SimpleGrid pb="xl" cols={3} spacing="lg" verticalSpacing="xxl">
         {Vehicles.map((data, i) => {
-          const { color, bgColor } = getStatusColors(
-            data.status ?? "available"
-          );
+          const { color, bgColor } = getStatusColors(data.status ?? "-");
           return (
             <Card
               key={i}
@@ -108,6 +130,7 @@ export default function VehicleManagementSection() {
                     style={{
                       width: "100%",
                       height: "12rem",
+                      objectFit: "cover",
                     }}
                   />
                 )}
@@ -131,7 +154,7 @@ export default function VehicleManagementSection() {
                       },
                     }}
                   >
-                    {data.status ?? "available"}
+                    {data.status ?? "-"}
                   </Badge>
                 </Group>
                 <Group w="100%" justify="space-between">
@@ -149,42 +172,24 @@ export default function VehicleManagementSection() {
                     {0}
                   </Text>
                 </Group>
-                <Flex w="100%" gap="md" justify="space-between">
-                  <Button
-                    fullWidth
-                    leftSection={<IconEdit size={20} />}
-                    bg="blue.1"
-                    c="blue"
-                    mt="sm"
-                    fz="xs"
-                    onClick={() => {
-                      EditVehicleModal({
-                        vehicleName: data.vehicleModel,
-                        vehicleNumberPlate: data.licensePlate,
-                        location: data.pickupLocation,
-                        status: data.status ?? "available",
-                      });
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    fullWidth
-                    leftSection={<IconTrashX size={20} />}
-                    bg="pink.1"
-                    c="red.4"
-                    mt="sm"
-                    fz="xs"
-                    onClick={() => {
-                      DeleteVehicleModal({
-                        vehicleName: data.vehicleModel,
-                        vehicleLicensePlate: data.licensePlate,
-                      });
-                    }}
-                  >
-                    Remove
-                  </Button>
-                </Flex>
+                <Button
+                  fullWidth
+                  leftSection={<IconTrashX size={20} />}
+                  bg="pink.1"
+                  c="red.4"
+                  mt="sm"
+                  fz="xs"
+                  onClick={() => {
+                    DeleteVehicleModal({
+                      vehicleId: data.id!,
+                      vehicleName: data.vehicleModel,
+                      vehicleLicensePlate: data.licensePlate,
+                      onRefresh: fetchVehicles,
+                    });
+                  }}
+                >
+                  Remove
+                </Button>
               </Stack>
             </Card>
           );

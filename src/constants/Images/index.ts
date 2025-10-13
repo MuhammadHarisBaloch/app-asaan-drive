@@ -26,6 +26,14 @@ const Images = {
   ProfilePicturs: {
     OwnerProfilePicture: "/images/profilePicture/owner-profile-picture.png",
   },
+  dummyDocs: {
+    doc1: "/dummyDoc/1.jpeg",
+    doc2: "/dummyDoc/2.jpeg",
+    doc3: "/dummyDoc/3.jpeg",
+    doc4: "/dummyDoc/4.jpeg",
+    doc5: "/dummyDoc/5.jpeg",
+    doc6: "/dummyDoc/6.jpeg",
+  },
 };
 
 export default Images;
