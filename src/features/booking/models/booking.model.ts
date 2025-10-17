@@ -17,8 +17,4 @@ export interface BookingModel {
   returnDate: string | null;
   pickUpTime: number | null;
   renter?: UserModel | null;
-  cnicFrontSide: FileWithPath[];
-  cnicBackSide: FileWithPath[];
-  driversLicenseFrontSide: FileWithPath[];
-  driversLicenseBackSide: FileWithPath[];
 }

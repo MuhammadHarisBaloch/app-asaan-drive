@@ -11,7 +11,15 @@ const nextConfig: NextConfig = {
     developer: process.env.developer,
   },
   images: {
-    domains: ["nyc.cloud.appwrite.io"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "nyc.cloud.appwrite.io",
+        pathname: "/v1/storage/buckets/**",
+      },
+    ],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };
 

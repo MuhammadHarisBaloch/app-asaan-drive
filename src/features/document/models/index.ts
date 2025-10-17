@@ -1,14 +1,14 @@
-import { Timestamp } from "firebase/firestore";
-export interface UserDocumentModel {
+// src/features/document/models/index.ts
+export type DocumentStatus = "Pending" | "Verified" | "Rejected";
+
+export interface DocumentModel {
   id?: string;
   userId: string;
-  userRole: "owner" | "renter";
-  relatedId?: string | null;
-  purpose: "user_verification" | "renter_booking" | "vehicle_documents";
-  files: { [key: string]: string };
-  status: "pending" | "approved" | "declined";
-  uploadedAt: Timestamp;
-  rejectedReason?: string;
-  verifiedBy?: string;
-  verifiedAt?: Timestamp;
+  documentType: "CNIC-Front" | "CNIC-Back" | "License" | "Other";
+  fileUrl: string;
+  status: DocumentStatus;
+  uploadedAt: string; // ISO string
+  reviewedAt?: string;
+  reviewerId?: string;
+  remarks?: string;
 }

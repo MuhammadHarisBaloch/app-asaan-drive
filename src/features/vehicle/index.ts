@@ -5,7 +5,6 @@ import {
   doc,
   getDocs,
   query,
-  serverTimestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -131,15 +130,15 @@ export async function deleteVehicle(vehicleId: string, reason?: string) {
     // ✅ Only send notification if both ownerID and vehicleModel exist
     if (vehicle?.ownerID && vehicle?.vehicleModel) {
       console.log("Skipping sendNotification for now", vehicle.ownerID);
-      // await sendNotification({
-      //   userId: vehicle.ownerID,
-      //   title: "Vehicle Deleted",
-      //   message:
-      //     reason && reason.trim() !== ""
-      //       ? `Your vehicle "${vehicle.vehicleModel}" was deleted by admin. Reason: ${reason}`
-      //       : `Your vehicle "${vehicle.vehicleModel}" was deleted by admin.`,
-      //   type: "vehicle_deleted",
-      // });
+      await sendNotification({
+        userId: vehicle.ownerID,
+        title: "Vehicle Deleted",
+        message:
+          reason && reason.trim() !== ""
+            ? `Your vehicle "${vehicle.vehicleModel}" was deleted by admin. Reason: ${reason}`
+            : `Your vehicle "${vehicle.vehicleModel}" was deleted by admin.`,
+        type: "vehicle_deleted",
+      });
     } else {
       console.warn(
         "Missing ownerID or vehicleModel in deleted vehicle:",

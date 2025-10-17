@@ -1,35 +1,45 @@
+// src/components/DocumentCard.tsx
 import { Card, Stack, Group, Flex, Badge, Button, Text } from "@mantine/core";
 import { IconUpload } from "@tabler/icons-react";
-import { JSX } from "react";
 import ReUploadDocModal from "./ReUploadDocModal";
+import { DocumentModel } from "@/features/document/models";
+import { JSX } from "react";
+import { modals } from "@mantine/modals";
 
 interface DocumentCardProps {
   documentType: string;
   status: string;
-  statusIcon: JSX.Element;
-  uploadedDate: string;
-  expiresDate: string;
+  statusIcon?: JSX.Element;
+  uploadedDate?: string;
+  expiresDate?: string;
+  docRecord?: DocumentModel | null;
 }
+
 export default function DocumentCard({
   documentType,
   status,
   statusIcon,
   uploadedDate,
   expiresDate,
+  docRecord,
 }: DocumentCardProps) {
   let color: string;
   let bgColor: string;
 
   switch (status) {
+    case "Verified":
     case "verified":
       color = "green";
       bgColor = "green.1";
       break;
+    case "Pending":
     case "pending":
       color = "orange.4";
       bgColor = "orange.0";
       break;
+    case "Rejected":
     case "decline":
+    case "Rejected":
       color = "red";
       bgColor = "pink.1";
       break;
@@ -72,10 +82,19 @@ export default function DocumentCard({
           fw={500}
           leftSection={<IconUpload size={20} />}
           onClick={() => {
-            ReUploadDocModal({ documentType });
+            modals.open({
+              title: `${docRecord ? "Re-upload" : "Upload"} ${documentType}`,
+              children: (
+                <ReUploadDocModal
+                  documentType={documentType}
+                  preselectedFile={null}
+                  existingDoc={docRecord ?? undefined}
+                />
+              ),
+            });
           }}
         >
-          Re-upload
+          {docRecord ? "Re-upload / View" : "Upload"}
         </Button>
       </Stack>
     </Card>

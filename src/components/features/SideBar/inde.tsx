@@ -1,12 +1,5 @@
 "use client";
-import React, { Dispatch, JSX, SetStateAction } from "react";
-import {
-  IconBell,
-  IconCalendarEventFilled,
-  IconCreditCard,
-  IconLayoutDashboard,
-  IconUser,
-} from "@tabler/icons-react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Group, Text } from "@mantine/core";
 import classes from "./SideBar.module.css";
 

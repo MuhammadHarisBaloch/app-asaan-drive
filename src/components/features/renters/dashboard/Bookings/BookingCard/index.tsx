@@ -49,13 +49,12 @@ export default function BookingCard({
         {/* Vehicle column special case */}
         <Flex gap="md" align="center" style={{ flex: 2 }}>
           <Image
-            height={100}
-            width={100}
             src={vehiclePhotos}
             alt={vehicleName ?? "Vehicle"}
+            height={60}
+            width={100}
             style={{
-              height: "4rem",
-              width: "6rem",
+              objectFit: "cover",
               borderRadius: "5px",
             }}
           />

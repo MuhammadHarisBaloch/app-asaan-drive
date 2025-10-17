@@ -3,13 +3,17 @@ import { UserModel } from "@/features/user/models/user.model";
 import {
   Avatar,
   Button,
-  Center,
   Flex,
   Stack,
   Text,
   Textarea,
   TextInput,
 } from "@mantine/core";
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconRosetteDiscountCheck,
+} from "@tabler/icons-react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 
@@ -30,6 +34,21 @@ export default function PersonalInfoContent() {
     });
   }, []);
 
+  // Determine verification status and color (based on your actual types)
+  const status = user?.documentStatus;
+  const isVerified = status === "Verified";
+
+  const verificationText =
+    status === "Pending"
+      ? "Unverified (Pending Verification)"
+      : status === "Rejected"
+      ? "Unverified (Rejected)"
+      : status === "Not Uploaded"
+      ? "Unverified (No Documents)"
+      : isVerified
+      ? "Verified Account"
+      : "Unverified Account";
+
   return (
     <Stack py="xl" gap="xl">
       <Flex gap="md" align="center">
@@ -46,9 +65,16 @@ export default function PersonalInfoContent() {
             {user?.fullName}
           </Text>
           <Text fz="xs">{user?.userType}</Text>
-          <Text fz="xs" c="green" fw={500}>
-            Verified Account
-          </Text>
+          <Flex gap="xs" align="center">
+            <Text fz="xs" c={isVerified ? "green" : "red.4"} fw={500}>
+              {verificationText}
+            </Text>
+            {isVerified ? (
+              <IconRosetteDiscountCheck color="green" size={18} />
+            ) : (
+              <IconCircleX color="red" size={18} />
+            )}
+          </Flex>
         </Stack>
       </Flex>
       <Flex gap="xl">
@@ -78,6 +104,7 @@ export default function PersonalInfoContent() {
           }}
         />
       </Flex>
+
       <Flex gap="xl">
         <TextInput
           w="100%"
@@ -105,6 +132,7 @@ export default function PersonalInfoContent() {
           }}
         />
       </Flex>
+
       <Textarea
         w="100%"
         rows={4}
@@ -113,6 +141,7 @@ export default function PersonalInfoContent() {
         radius="md"
         styles={{ label: { fontSize: "14px" }, input: { fontSize: "16px" } }}
       />
+
       <Button w="20%" fz="xs" size="md">
         Save Changes
       </Button>

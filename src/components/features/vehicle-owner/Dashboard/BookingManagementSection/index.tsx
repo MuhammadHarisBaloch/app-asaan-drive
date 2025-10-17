@@ -10,7 +10,6 @@ import {
   Text,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import BookingRequestCard from "./BookingRequestCard";
 import { data } from "@/constants/Data";
 import { fetchOwnerVehicleBookings } from "@/features/booking";
 import { BookingModel } from "@/features/booking/models/booking.model";
@@ -18,8 +17,6 @@ import { getUserDocument } from "@/features/user";
 import { getAuth } from "firebase/auth";
 import React from "react";
 import BookingList from "./BookingList";
-import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
-import { listOwnerVehicleDocs } from "@/features/vehicle";
 import { firebaseConstants } from "@/constants/Firestore";
 import { db } from "@/networking/firebase";
 import { doc, updateDoc } from "firebase/firestore";

@@ -68,13 +68,11 @@ export default function BookingSummaryCard({
           <Image
             src={vehicle.vehiclePhotos[0]}
             alt={vehicle.vehicleModel}
-            height={100}
+            height={80}
             width={100}
-            sizes="100vw"
             style={{
-              width: "6rem",
-              height: "5rem",
-              borderRadius: "10px",
+              objectFit: "cover",
+              borderRadius: "5px",
             }}
           />
           <Stack gap="xs">

@@ -60,14 +60,12 @@ export default function RecentBookingCard() {
             <Flex justify="space-between" align="center">
               <Flex gap="md" align="center">
                 <Image
-                  height={100}
-                  width={100}
                   src={booking.vehiclePhotos[0]}
                   alt={booking.vehicleName ?? "-"}
-                  sizes="100vw"
+                  height={60}
+                  width={100}
                   style={{
-                    height: "3rem",
-                    width: "5rem",
+                    objectFit: "cover",
                     borderRadius: "5px",
                   }}
                 />

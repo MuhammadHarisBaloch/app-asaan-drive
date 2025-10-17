@@ -9,7 +9,16 @@ export interface UserModel {
   walletBalance?: number;
   status?: "Active" | "Blocked";
   createdAt?: any;
-  joined?: string; // <--- add this
+  joined?: string;
   activity?: string;
+
+  // 🔽 New fields
+  documents?: {
+    cnicFront?: string;
+    cnicBack?: string;
+    licenseFront?: string;
+    licenseBack?: string;
+  };
+  documentStatus?: "Not Uploaded" | "Pending" | "Verified" | "Rejected";
+  documentRemarks?: string; // optional reason if rejected
 }
-  

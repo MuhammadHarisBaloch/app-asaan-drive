@@ -24,28 +24,40 @@ export default function NotificationsList({ userId }: NotificationsListProps) {
   >([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!userId) return;
+ useEffect(() => {
+   if (!userId) return;
 
-    setLoading(true);
-    const notificationsRef = collection(
-      db,
-      firebaseConstants.collections.notifications
-    );
-    const q = query(notificationsRef, where("userId", "==", userId));
+   setLoading(true);
+   const notificationsRef = collection(
+     db,
+     firebaseConstants.collections.notifications
+   );
+   const q = query(notificationsRef, where("userId", "==", userId));
 
-    // Real-time listener
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as NotificationModel),
-      }));
-      setNotifications(data);
-      setLoading(false);
-    });
+   // Real-time listener
+   const unsubscribe = onSnapshot(q, (snapshot) => {
+     const data = snapshot.docs.map((doc) => ({
+       id: doc.id,
+       ...(doc.data() as NotificationModel),
+     }));
 
-    return () => unsubscribe();
-  }, [userId]);
+     // ✅ Fix: convert Date to timestamp (milliseconds)
+     const sortedData = data.sort((a, b) => {
+       if (a.isRead === b.isRead) {
+         const dateA = a.createdAt?.toDate?.()?.getTime?.() || 0;
+         const dateB = b.createdAt?.toDate?.()?.getTime?.() || 0;
+         return dateB - dateA; // latest first
+       }
+       return a.isRead ? 1 : -1; // unread first
+     });
+
+     setNotifications(sortedData);
+     setLoading(false);
+   });
+
+   return () => unsubscribe();
+ }, [userId]);
+
 
   // Mark single notification as read
   const handleMarkAsRead = async (id: string) => {

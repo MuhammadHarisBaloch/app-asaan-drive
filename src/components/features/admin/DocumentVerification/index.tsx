@@ -28,23 +28,14 @@ export default function AdminDocumentVerification() {
               Owner Documents
             </Flex>
           </Tabs.Tab>
-          <Tabs.Tab value="Vehicle Documents" className="tab">
-            <Flex align="center" justify="center" gap="sm">
-              <IconFileAnalytics size={20} />
-              Vehicle Documents
-            </Flex>
-          </Tabs.Tab>
         </Tabs.List>
 
         <Divider w="100%" />
         <Tabs.Panel value="Renter Documents">
-          <OwnerDocCard />
+          <OwnerDocCard role="renter" />
         </Tabs.Panel>
         <Tabs.Panel value="Owner Documents">
-          <p>Owner Documents</p>
-        </Tabs.Panel>
-        <Tabs.Panel value="Vehicle Documents">
-          <p>Vehicle Documents</p>
+          <OwnerDocCard role="vehicles-owner" />
         </Tabs.Panel>
       </Tabs>
     </Stack>

@@ -96,12 +96,14 @@ export default function BookingConfirmation({
         <Stack>
           <Flex gap="lg" p="lg">
             <Image
-              height={100}
-              width={100}
               src={vehicle.vehiclePhotos[0]}
               alt={vehicle.vehicleModel}
-              sizes="100vw"
-              style={{ width: "9rem", height: "8rem", borderRadius: "10px" }}
+              height={80}
+              width={100}
+              style={{
+                objectFit: "cover",
+                borderRadius: "5px",
+              }}
             />
             <Stack gap="md">
               <Text fz="xl" c="black " fw={600} lh={0.8}>

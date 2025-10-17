@@ -39,12 +39,11 @@ export default function OrderSummarySection({
           <Image
             src={vehicle.vehiclePhotos[0]}
             alt={vehicle.vehicleModel}
-            height={100}
+            height={60}
             width={100}
-            sizes="100vw"
             style={{
-              width: "6rem",
-              height: "5rem",
+              objectFit: "cover",
+              borderRadius: "5px",
             }}
           />
           <Stack gap="xs">

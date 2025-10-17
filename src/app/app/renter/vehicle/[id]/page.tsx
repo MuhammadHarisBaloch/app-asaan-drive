@@ -3,7 +3,6 @@
 
 import BookingConfirmation from "@/components/features/renters/vehicle/BookingConfirmation";
 import BookingDetails from "@/components/features/renters/vehicle/BookingDetails";
-import DocumentVerification from "@/components/features/renters/vehicle/DocumentVerification";
 import PaymentBilling from "@/components/features/renters/vehicle/PaymentBilling";
 import VehicleDetails from "@/components/features/renters/vehicle/VehicleDetails";
 import { Stepper } from "@mantine/core";
@@ -14,7 +13,6 @@ import {
   IconCarFilled,
   IconClipboardCheck,
   IconCreditCard,
-  IconRosetteDiscountCheck,
 } from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useMemo, useState } from "react";
 import { db } from "@/networking/firebase";
@@ -35,10 +33,6 @@ export interface RenterBookingForm {
   pickUpDate: string | null;
   returnDate: string | null;
   pickUpTime: number | null;
-  cnicFrontSide: FileWithPath[];
-  cnicBackSide: FileWithPath[];
-  driversLicenseFrontSide: FileWithPath[];
-  driversLicenseBackSide: FileWithPath[];
 }
 
 export default function Vehicle() {
@@ -93,15 +87,6 @@ export default function Vehicle() {
     (values: Partial<RenterBookingForm>) => {
       updateBookingDetails(values);
       setActive(2);
-    },
-    [updateBookingDetails]
-  );
-
-  // document verification form submit hone kai baad sirf data update krna
-  const handleDocumentVerificationSubmit = useCallback(
-    (values: Partial<RenterBookingForm>) => {
-      updateBookingDetails(values); // pehlay booking details update karo
-      setActive(3); // next step par chalo (payment billing)
     },
     [updateBookingDetails]
   );
@@ -221,11 +206,6 @@ export default function Vehicle() {
           pickUpDate: bookingDetails?.pickUpDate!,
           returnDate: finalReturnDate!,
           pickUpTime: bookingDetails?.pickUpTime!,
-          cnicFrontSide: bookingDetails?.cnicFrontSide ?? [],
-          cnicBackSide: bookingDetails?.cnicBackSide ?? [],
-          driversLicenseFrontSide:
-            bookingDetails?.driversLicenseFrontSide ?? [],
-          driversLicenseBackSide: bookingDetails?.driversLicenseBackSide ?? [],
         });
 
         // agar booking successful ban gai toh success notification show karo or next step par jao
@@ -246,7 +226,7 @@ export default function Vehicle() {
             type: "booking",
           });
 
-          setActive(4); // aglay step par jao (confirmation)
+          setActive(3); // aglay step par jao (confirmation)
         }
       } catch (error) {
         // agar koi error aaya toh failure notification show karo or step wahi rakho
@@ -273,15 +253,22 @@ export default function Vehicle() {
         color="red.4"
         size="xs"
         active={active}
-        onStepClick={setActive}
+        onStepClick={(stepIndex) => {
+          // Prevent clicking on future steps
+          if (stepIndex > active) return;
+
+          // Prevent going back once reached payment (step 2)
+          if (active >= 3 && stepIndex < active) return;
+
+          setActive(stepIndex);
+        }}
+        styles={{
+          stepLabel: { cursor: "pointer" },
+          stepIcon: { cursor: "pointer" },
+        }}
       >
         <Stepper.Step label="Select Ride" icon={<IconCarFilled color="red" />}>
-          <VehicleDetails
-            bookNow={() => {
-              setActive(1);
-            }}
-            vehicle={vehicle}
-          />
+          <VehicleDetails bookNow={() => setActive(1)} vehicle={vehicle} />
         </Stepper.Step>
 
         <Stepper.Step
@@ -294,24 +281,11 @@ export default function Vehicle() {
           />
         </Stepper.Step>
 
-        <Stepper.Step
-          label="Verification"
-          icon={<IconRosetteDiscountCheck color="red" />}
-        >
-          <DocumentVerification
-            vehicle={vehicle}
-            onFormSubmit={handleDocumentVerificationSubmit}
-            formValues={bookingDetails}
-          />
-        </Stepper.Step>
-
         <Stepper.Step label="Payment" icon={<IconCreditCard color="red" />}>
           <PaymentBilling
-            // bookNow will create booking. It accepts optional returnDate param; we can call without args.
             bookNow={handlePaymentBillingSubmit}
             vehicle={vehicle}
             formValues={bookingDetails}
-            // pass computed summary so child is pure presentational
             paymentSummary={{
               returnDate: computedReturnDate,
               rentalCost,

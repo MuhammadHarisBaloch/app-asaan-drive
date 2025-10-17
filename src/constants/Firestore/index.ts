@@ -4,5 +4,6 @@ export const firebaseConstants = {
     vehicles: "vehicles",
     bookings: "bookings",
     notifications: "notifications",
+    documents: "documents",
   },
 };
