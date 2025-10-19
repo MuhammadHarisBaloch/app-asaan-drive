@@ -22,8 +22,8 @@ export default function BookingTable({ loading, bookings }: BookingTableProps) {
   ];
 
   // ✅ grid layout same as before
-  const gridHeaderTemplate = "160px 220px 230px 110px 120px 90px";
-  const gridRowTemplate = "200px 210px 230px 100px 90px 80px";
+  const gridHeaderTemplate = "160px 220px 230px 110px 100px 100px";
+  const gridRowTemplate = "200px 210px 210px 100px 100px 100px";
 
   return (
     <Card

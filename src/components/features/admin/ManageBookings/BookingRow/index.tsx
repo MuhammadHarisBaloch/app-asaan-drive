@@ -130,7 +130,7 @@ export default function BookingRow({ booking, gridTemplate }: BookingRowProps) {
       </Flex>
 
       {/* Payment */}
-      <Stack gap="sm" align="flex-end">
+      <Stack gap="sm" align="center" justify="center">
         <Badge
           c="green"
           fw={500}
