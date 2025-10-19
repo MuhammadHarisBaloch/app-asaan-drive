@@ -1,6 +1,7 @@
 "use client";
 import AdminDashboard from "@/components/features/admin/Dashboard";
 import AdminDocumentVerification from "@/components/features/admin/DocumentVerification";
+import ManageBookings from "@/components/features/admin/ManageBookings";
 import ManageUsersSection from "@/components/features/admin/ManageUsers";
 import ManageVehiclesSection from "@/components/features/admin/ManageVehicles";
 import SideBar from "@/components/features/SideBar/inde";
@@ -47,7 +48,7 @@ export default function Admin() {
         {active === "Dashboard" && <AdminDashboard />}
         {active === "Manage Users" && <ManageUsersSection />}
         {active === "Manage Vehicles" && <ManageVehiclesSection />}
-        {active === "Manage Bookings" && <p>Manage Bookings</p>}
+        {active === "Manage Bookings" && <ManageBookings />}
         {active === "Documents Verification" && <AdminDocumentVerification />}
         {active === "Payment & Earnings" && <p>Payment & Earnings</p>}
         {active === "City Management" && <p>City Management</p>}

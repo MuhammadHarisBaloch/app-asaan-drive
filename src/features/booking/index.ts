@@ -43,3 +43,24 @@ export async function fetchOwnerVehicleBookings(ownerID: string) {
   console.log("Owner Vehicles Bookings: ", bookings);
   return bookings;
 }
+
+
+// ✅ Fetch All Bookings (for Admin)
+export async function fetchAllBookings() {
+  try {
+    const querySnapshot = await getDocs(
+      collection(db, firebaseConstants.collections.bookings)
+    );
+
+    const bookings = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as BookingModel),
+    }));
+
+    console.log("All Bookings:", bookings);
+    return bookings;
+  } catch (error) {
+    console.error("Error fetching all bookings:", error);
+    return [];
+  }
+}
