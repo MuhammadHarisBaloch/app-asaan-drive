@@ -32,7 +32,7 @@ export default function BookingCard({
       case "confirmed":
         return { color: "green", bgColor: "green.1" };
       case "pending":
-        return { color: "red", bgColor: "pink.1" };
+        return { color: "orange.4", bgColor: "orange.0" };
       case "completed":
         return { color: "black", bgColor: "gray.1" };
       case "cancelled":

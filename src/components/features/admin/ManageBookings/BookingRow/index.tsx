@@ -114,6 +114,7 @@ export default function BookingRow({ booking, gridTemplate }: BookingRowProps) {
       {/* Status */}
       <Flex justify="center">
         <Badge
+          w="100%"
           c={color}
           fw={500}
           bg={bgColor}
