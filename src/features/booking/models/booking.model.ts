@@ -16,5 +16,13 @@ export interface BookingModel {
   pickUpDate: string | null;
   returnDate: string | null;
   pickUpTime: number | null;
-  renter?: UserModel | null;
+
+  // NEW optional payment info:
+  payment?: {
+    method?: "card";
+    stripePaymentIntentId?: string;
+    amount?: number; // main currency units
+    currency?: string;
+    status?: string; // e.g., "succeeded", "requires_action", "pending"
+  };
 }

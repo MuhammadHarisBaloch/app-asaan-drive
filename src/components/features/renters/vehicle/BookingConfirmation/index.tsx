@@ -120,7 +120,7 @@ export default function BookingConfirmation({
               </Flex>
               <Flex gap="md">
                 <Badge
-                  c="orange"
+                  c="orange.4"
                   bg="orange.0"
                   size="lg"
                   fw={500}
