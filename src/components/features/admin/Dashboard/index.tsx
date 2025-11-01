@@ -37,12 +37,14 @@ export default function AdminDashboard() {
     vehicles: 0,
     bookings: 0,
     earnings: 0,
+    held: 0,
+    refunded: 0,
   });
   const [weeklyBookingsData, setWeeklyBookingsData] = useState<any[]>([]);
   const [monthlyEarningData, setMonthlyEarningData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Real-time listeners
+  // 🔹 Real-time listeners (REVISED according to new flow)
   useEffect(() => {
     const usersRef = collection(db, firebaseConstants.collections.users);
     const vehiclesRef = collection(db, firebaseConstants.collections.vehicles);
@@ -50,26 +52,60 @@ export default function AdminDashboard() {
 
     const unsubscribers: (() => void)[] = [];
 
+    // 👤 Users
     const unsubUsers = onSnapshot(usersRef, (snapshot) => {
       setStats((prev) => ({ ...prev, users: snapshot.size }));
     });
+
+    // 🚗 Vehicles
     const unsubVehicles = onSnapshot(vehiclesRef, (snapshot) => {
       setStats((prev) => ({ ...prev, vehicles: snapshot.size }));
     });
+
+    // 📦 Bookings (REVISED payment flow logic)
     const unsubBookings = onSnapshot(bookingsRef, (snapshot) => {
       const bookings = snapshot.docs.map((d) => d.data());
-      const totalEarnings = bookings.reduce(
-        (sum, b) => sum + (b.totalPrice || 0),
+
+      const totalBookings = bookings.length;
+
+      // 🔸 Filter by payment status according to new flow
+      const released = bookings.filter(
+        (b: any) => b.payment?.status === "released"
+      );
+      const held = bookings.filter((b: any) => b.payment?.status === "hold");
+      const refunded = bookings.filter(
+        (b: any) => b.payment?.status === "refunded"
+      );
+
+      // 🔹 Compute totals according to new flow
+      const totalEarnings = released.reduce(
+        (sum: number, b: any) => sum + (b.payment?.amount || 0),
         0
       );
 
+      const totalHeld = held.reduce(
+        (sum: number, b: any) => sum + (b.payment?.amount || 0),
+        0
+      );
+
+      const totalRefunded = refunded.reduce(
+        (sum: number, b: any) => sum + (b.payment?.amount || 0),
+        0
+      );
+
+      // ✅ Update state (earnings = released payments only)
       setStats((prev) => ({
         ...prev,
-        bookings: snapshot.size,
+        bookings: totalBookings,
         earnings: totalEarnings,
+        held: totalHeld,
+        refunded: totalRefunded,
       }));
 
-      generateChartData(bookings);
+      // ✅ Generate chart data
+      const chartSource = [...released, ...refunded];
+      generateChartData(chartSource);
+
       setLoading(false);
     });
 
@@ -83,6 +119,7 @@ export default function AdminDashboard() {
     const last7Days = [...Array(7)].map((_, i) =>
       dayjs().subtract(6 - i, "day")
     );
+
     const weeklyData = last7Days.map((date) => {
       const dayName = date.format("ddd");
       const count = bookings.filter((b) => {
@@ -96,13 +133,15 @@ export default function AdminDashboard() {
     const last6Months = [...Array(6)].map((_, i) =>
       dayjs().subtract(5 - i, "month")
     );
+
     const monthlyData = last6Months.map((m) => {
       const monthName = m.format("MMM");
       const total = bookings
         .filter((b) => b.pickUpDate && dayjs(b.pickUpDate).isSame(m, "month"))
-        .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+        .reduce((sum, b) => sum + (b.payment?.amount || 0), 0);
       return { month: monthName, earning: total };
     });
+
     setMonthlyEarningData(monthlyData);
   };
 
@@ -127,10 +166,22 @@ export default function AdminDashboard() {
       iconBg: "green.1",
     },
     {
-      title: "Total Earnings",
+      title: "Earnings (Released)",
       subTitle: `Rs. ${stats.earnings.toLocaleString()}`,
       icon: <IconMoneybag size={20} color="red" />,
       iconBg: "pink.1",
+    },
+    {
+      title: "Payments on Hold",
+      subTitle: `Rs. ${stats.held.toLocaleString()}`,
+      icon: <IconMoneybag size={20} color="orange" />,
+      iconBg: "orange.1",
+    },
+    {
+      title: "Refunded Payments",
+      subTitle: `Rs. ${stats.refunded.toLocaleString()}`,
+      icon: <IconMoneybag size={20} color="gray" />,
+      iconBg: "gray.1",
     },
   ];
 
@@ -144,27 +195,17 @@ export default function AdminDashboard() {
       </Stack>
 
       {/* 🔹 Stats Cards */}
-      <SimpleGrid cols={4} spacing="xl">
+      <SimpleGrid cols={3} spacing="xl">
         {loading
-          ? Array(4)
+          ? Array(3)
               .fill(0)
               .map((_, i) => (
-                <Card
-                  key={i}
-                  radius="md"
-                  p="lg"
-                  style={{ filter: "drop-shadow(1px 1px 2px #48484848)" }}
-                >
+                <Card key={i} radius="md" p="lg">
                   <Skeleton height={60} />
                 </Card>
               ))
           : adminDashStats.map((d, i) => (
-              <Card
-                key={i}
-                radius="md"
-                p="lg"
-                style={{ filter: "drop-shadow(1px 1px 2px #48484848)" }}
-              >
+              <Card key={i} radius="md" p="lg">
                 <Flex align="center" justify="space-between">
                   <Stack gap={0}>
                     <Text fz="xs">{d.title}</Text>
@@ -189,10 +230,7 @@ export default function AdminDashboard() {
       <Grid gutter="xl">
         {[...Array(2)].map((_, idx) => (
           <GridCol key={idx} span={6}>
-            <Card
-              radius="md"
-              style={{ filter: "drop-shadow(1px 1px 2px #48484848)" }}
-            >
+            <Card radius="md">
               {loading ? (
                 <Stack p="md">
                   <Skeleton height={30} width="50%" />

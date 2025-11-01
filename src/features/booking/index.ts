@@ -1,18 +1,33 @@
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { BookingModel } from "./models/booking.model";
 import { firebaseConstants } from "@/constants/Firestore";
 import { db } from "@/networking/firebase";
 
 export async function createBookingDocument(data: BookingModel) {
   try {
-    const docRef = await addDoc(
-      collection(db, firebaseConstants.collections.bookings),
-      data
+    if (!data.bookingId) {
+      throw new Error("bookingId is missing in data");
+    }
+
+    const docRef = doc(
+      db,
+      firebaseConstants.collections.bookings,
+      data.bookingId
     );
-    console.log("Booking Document Created ", docRef);
+
+    await setDoc(docRef, data);
+
+    console.log("Booking Document Created:", data.bookingId);
     return docRef;
   } catch (error) {
-    console.log("Error creating Booking document"), error;
+    console.error("Error creating Booking document:", error);
   }
 }
 
@@ -43,7 +58,6 @@ export async function fetchOwnerVehicleBookings(ownerID: string) {
   console.log("Owner Vehicles Bookings: ", bookings);
   return bookings;
 }
-
 
 // ✅ Fetch All Bookings (for Admin)
 export async function fetchAllBookings() {

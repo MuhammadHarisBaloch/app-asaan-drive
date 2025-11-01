@@ -56,6 +56,7 @@ export default function PaymentBilling({
               <Elements stripe={stripePromise}>
                 <CreditCardSection
                   amount={paymentSummary.total}
+                  platformFees={paymentSummary.tax}
                   vehicle={vehicle}
                   formValues={formValues}
                   onSuccess={(id: string) => onBookingSuccess?.(id)}

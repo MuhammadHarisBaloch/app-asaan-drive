@@ -17,6 +17,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { db } from "@/networking/firebase";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import dayjs from "dayjs";
+import PaymentAutoHandler from "@/utils/PaymentWatcher";
 
 export interface RenterBookingForm {
   rentalType: string;
@@ -113,64 +114,67 @@ export default function Vehicle() {
   if (!vehicle) return <p>Loading...</p>;
 
   return (
-    <Stepper
-      px="xl"
-      pt="3xl"
-      color="red.4"
-      size="xs"
-      active={active}
-      onStepClick={(stepIndex) => {
-        if (stepIndex > active) return;
-        if (active >= 3 && stepIndex < active) return;
-        setActive(stepIndex);
-      }}
-    >
-      <Stepper.Step label="Select Ride" icon={<IconCarFilled color="red" />}>
-        <VehicleDetails bookNow={() => setActive(1)} vehicle={vehicle} />
-      </Stepper.Step>
-
-      <Stepper.Step
-        label="Book Details"
-        icon={<IconCalendarPlus color="red" />}
+    <>
+      <Stepper
+        px="xl"
+        pt="3xl"
+        color="red.4"
+        size="xs"
+        active={active}
+        onStepClick={(stepIndex) => {
+          if (stepIndex > active) return;
+          if (active >= 3 && stepIndex < active) return;
+          setActive(stepIndex);
+        }}
       >
-        <BookingDetails
-          vehicle={vehicle}
-          onFormSubmit={handleBookingDetailsSubmit}
-        />
-      </Stepper.Step>
+        <Stepper.Step label="Select Ride" icon={<IconCarFilled color="red" />}>
+          <VehicleDetails bookNow={() => setActive(1)} vehicle={vehicle} />
+        </Stepper.Step>
 
-      <Stepper.Step label="Payment" icon={<IconCreditCard color="red" />}>
-        <PaymentBilling
-          vehicle={vehicle}
-          formValues={{ ...bookingDetails, returnDate: computedReturnDate }}
-          paymentSummary={{
-            returnDate: computedReturnDate,
-            rentalCost,
-            tax,
-            total,
-            baseRate: `${rentalCost}`,
-            vehicleDurationLabel:
-              bookingDetails?.duration === 1
-                ? "1 Day"
-                : `${bookingDetails?.duration} Days`,
-          }}
-          onBookingSuccess={(id) => {
-            setCreatedBookingId(id);
-            setActive(3);
-          }}
-        />
-      </Stepper.Step>
+        <Stepper.Step
+          label="Book Details"
+          icon={<IconCalendarPlus color="red" />}
+        >
+          <BookingDetails
+            vehicle={vehicle}
+            onFormSubmit={handleBookingDetailsSubmit}
+          />
+        </Stepper.Step>
 
-      <Stepper.Step
-        label="Confirmation"
-        icon={<IconClipboardCheck color="red" />}
-      >
-        <BookingConfirmation
-          vehicle={vehicle}
-          bookingValues={bookingDetails}
-          bookingId={createdBookingId}
-        />
-      </Stepper.Step>
-    </Stepper>
+        <Stepper.Step label="Payment" icon={<IconCreditCard color="red" />}>
+          <PaymentBilling
+            vehicle={vehicle}
+            formValues={{ ...bookingDetails, returnDate: computedReturnDate }}
+            paymentSummary={{
+              returnDate: computedReturnDate,
+              rentalCost,
+              tax,
+              total,
+              baseRate: `${rentalCost}`,
+              vehicleDurationLabel:
+                bookingDetails?.duration === 1
+                  ? "1 Day"
+                  : `${bookingDetails?.duration} Days`,
+            }}
+            onBookingSuccess={(id) => {
+              setCreatedBookingId(id);
+              setActive(3);
+            }}
+          />
+        </Stepper.Step>
+
+        <Stepper.Step
+          label="Confirmation"
+          icon={<IconClipboardCheck color="red" />}
+        >
+          <BookingConfirmation
+            vehicle={vehicle}
+            bookingValues={bookingDetails}
+            bookingId={createdBookingId}
+          />
+        </Stepper.Step>
+      </Stepper>
+      <PaymentAutoHandler bookingId={id} />
+    </>
   );
 }

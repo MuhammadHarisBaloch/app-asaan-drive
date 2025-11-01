@@ -149,7 +149,7 @@ export default function DashboardSection() {
               <IconCurrencyDollar size={15} color="purple" />
             </Center>
             <Stack gap="xs">
-              <Text fz="12px">Total Spent This Month</Text>
+              <Text fz="12px">Total Spent </Text>
               <Text fz="xs" c="black" fw={600}>
                 Pkr {stats.totalSpent.toLocaleString()}
               </Text>

@@ -10,8 +10,9 @@ export interface BookingModel {
   vehiclePhotos: string[];
   vehicleType?: string;
   rentalType: string;
+  platformFee: number;
   totalPrice: number;
-  status: string;
+  status: "pending" | "confirmed" | "active" | "completed" | "cancelled";
   duration: number;
   pickUpDate: string | null;
   returnDate: string | null;
@@ -23,6 +24,9 @@ export interface BookingModel {
     stripePaymentIntentId?: string;
     amount?: number; // main currency units
     currency?: string;
-    status?: string; // e.g., "succeeded", "requires_action", "pending"
+    status?: "hold" | "released" | "refunded";
+    refundId?: string;
+    releasedAt?: any;
   };
+  ownerStripeAccountId?: string | null;
 }

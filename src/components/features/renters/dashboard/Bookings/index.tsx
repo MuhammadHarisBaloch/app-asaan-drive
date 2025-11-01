@@ -1,6 +1,5 @@
 import {
   Card,
-  Center,
   Divider,
   Flex,
   Group,
@@ -13,9 +12,13 @@ import { IconFilter, IconSearch } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import { data } from "@/constants/Data";
 import BookingCard from "./BookingCard";
-import { fetchBookingDocs } from "@/features/booking";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { getAuth } from "firebase/auth";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "@/networking/firebase";
+import PaymentAutoHandler from "@/utils/PaymentWatcher";
+import { firebaseConstants } from "@/constants/Firestore";
+
 export interface BookingStats {
   activeRentals: number;
   upcomingBookings: number;
@@ -27,6 +30,7 @@ export interface BookingStats {
 interface BookingsSectionProps {
   onStatsUpdate?: (stats: BookingStats) => void;
 }
+
 export default function BookingsSection({
   onStatsUpdate,
 }: BookingsSectionProps) {
@@ -35,42 +39,72 @@ export default function BookingsSection({
   );
   const [bookings, setBookings] = useState<BookingModel[]>([]);
 
+  // 🔹 Real-time Firestore listener (renter's own bookings)
   useEffect(() => {
-    const fetchBookings = async () => {
-      const user = getAuth().currentUser;
-      if (!user) return;
-      const bookings = await fetchBookingDocs(user.uid);
-      return bookings;
-    };
+    const user = getAuth().currentUser;
+    if (!user) return;
 
-    fetchBookings().then((bookings) => {
-      console.log("Recently Bookings", bookings);
-      setBookings(bookings ?? []);
+    const q = query(
+      collection(db, firebaseConstants.collections.bookings),
+      where("renterId", "==", user.uid)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map((d) => ({
+        bookingId: d.id,
+        ...d.data(),
+      })) as BookingModel[];
+
+      console.log("🔄 Live bookings update:", list);
+      setBookings(list);
     });
+
+    return () => unsubscribe();
   }, []);
 
-  // 🔹 Calculate dynamic counts
+  // 🔹 Dynamic stats (CORRECT LOGIC - Aapke flow ke hisaab se)
   useEffect(() => {
-    if (onStatsUpdate) {
-      const totalSpent = bookings
-        .filter((b) => b.status !== "cancelled")
-        .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+    if (!onStatsUpdate) return;
 
-      const totalRefund = bookings
-        .filter((b) => b.status === "cancelled")
-        .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+    // ✅ TOTAL SPENT: All bookings jo pay ki gayi hain (hold + released)
+    const totalAllPayments = bookings
+      .filter(
+        (b) =>
+          b.payment?.status === "hold" ||
+          b.payment?.status === "released" ||
+          b.payment?.status === "refunded" // ✅ Refunded bhi initially pay kiye the
+      )
+      .reduce((sum, b) => sum + (b.payment?.amount || 0), 0);
 
-      const stats: BookingStats = {
-        activeRentals: bookings.filter((b) => b.status === "active").length,
-        upcomingBookings: bookings.filter((b) => b.status === "confirmed")
-          .length,
-        pendingRequests: bookings.filter((b) => b.status === "pending").length,
-        totalSpent,
-        totalRefund, // 👈 add here
-      };
+    // ✅ REFUND: Sirf refunded payments
+    const totalRefund = bookings
+      .filter((b) => b.payment?.status === "refunded")
+      .reduce((sum, b) => sum + (b.payment?.amount || 0), 0);
 
-      onStatsUpdate(stats);
-    }
+    // ✅ NET SPENT: Total sab payments minus refunds
+    const netSpent = totalAllPayments - totalRefund;
+
+    const stats: BookingStats = {
+      activeRentals: bookings.filter((b) => b.status === "active").length,
+      upcomingBookings: bookings.filter((b) => b.status === "confirmed").length,
+      pendingRequests: bookings.filter((b) => b.status === "pending").length,
+      totalSpent: netSpent > 0 ? netSpent : 0,
+      totalRefund,
+    };
+
+    console.log("💰 CORRECT Stats Calculation:", {
+      totalAllPayments,
+      totalRefund,
+      netSpent,
+      bookings: bookings.map((b) => ({
+        id: b.bookingId,
+        status: b.status,
+        paymentStatus: b.payment?.status,
+        amount: b.payment?.amount,
+      })),
+    });
+
+    onStatsUpdate(stats);
   }, [bookings, onStatsUpdate]);
 
   return (
@@ -81,6 +115,7 @@ export default function BookingsSection({
         </Text>
         <Text fz="12px">Manage your vehicle reservations</Text>
       </Stack>
+
       <Card
         w="100%"
         p="xl"
@@ -88,6 +123,7 @@ export default function BookingsSection({
         style={{ filter: "drop-shadow(1px 1px 2px #00000068)" }}
       >
         <Stack gap="xxl">
+          {/* 🔍 Filters */}
           <Group justify="space-between">
             <Input
               radius="md"
@@ -112,8 +148,9 @@ export default function BookingsSection({
               />
             </Flex>
           </Group>
+
+          {/* 🔹 Table Header */}
           <Stack gap="lg">
-            {/* Header */}
             <Group px="lg" align="center">
               {data.renter.dashboard.myBookings.headerColumns.map((col, i) => (
                 <Text
@@ -129,13 +166,21 @@ export default function BookingsSection({
               ))}
             </Group>
             <Divider w="100%" />
+
+            {/* 🔹 Booking List */}
             {bookings.map((booking, i) => {
+              const isVisible =
+                bookingsFilter === "all status" ||
+                bookingsFilter === booking.status;
+
               return (
-                <React.Fragment key={i}>
-                  {bookingsFilter === booking.status ? (
+                isVisible && (
+                  <React.Fragment key={i}>
+                    {/* 👇 Auto release/refund logic */}
+                    <PaymentAutoHandler bookingId={booking.bookingId ?? ""} />
+
                     <BookingCard
-                      key={i}
-                      vehiclePhotos={booking.vehiclePhotos[0]}
+                      vehiclePhotos={booking.vehiclePhotos?.[0]}
                       vehicleName={booking.vehicleName ?? ""}
                       vehicleType={booking.vehicleType ?? ""}
                       pickUpDate={booking.pickUpDate ?? ""}
@@ -143,19 +188,8 @@ export default function BookingsSection({
                       status={booking.status}
                       totalPrice={booking.totalPrice}
                     />
-                  ) : bookingsFilter === "all status" ? (
-                    <BookingCard
-                      key={i}
-                      vehiclePhotos={booking.vehiclePhotos[0]}
-                      vehicleName={booking.vehicleName ?? ""}
-                      vehicleType={booking.vehicleType ?? ""}
-                      pickUpDate={booking.pickUpDate ?? ""}
-                      returnDate={booking.returnDate ?? ""}
-                      status={booking.status}
-                      totalPrice={booking.totalPrice}
-                    />
-                  ) : null}
-                </React.Fragment>
+                  </React.Fragment>
+                )
               );
             })}
           </Stack>

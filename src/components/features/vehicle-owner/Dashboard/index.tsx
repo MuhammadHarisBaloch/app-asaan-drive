@@ -36,6 +36,7 @@ import { listOwnerVehicleDocs } from "@/features/vehicle";
 import { fetchOwnerVehicleBookings } from "@/features/booking";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
+
 function StatCard({
   icon,
   title,
@@ -101,19 +102,17 @@ export default function VehicleOwnerDashboardSection() {
     });
   }, []);
 
-  // 🔹 Calculate stats
+  // 🔹 Calculate stats (REVISED according to new flow)
   useEffect(() => {
-    // Active bookings = confirmed + active + upcoming
+    // Active bookings = confirmed + active
     const activeBookings = bookings.filter((b) =>
-      ["active", "confirmed", "upcoming"].includes(b.status)
+      ["active", "confirmed"].includes(b.status)
     ).length;
 
-    // ✅ Total earnings include all non-cancelled bookings
+    // ✅ Only count bookings with released payment status (completed rides)
     const totalEarnings = bookings
-      .filter((b) =>
-        ["pending", "confirmed", "upcoming", "completed"].includes(b.status)
-      )
-      .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+      .filter((b) => b.payment?.status === "released")
+      .reduce((sum, b) => sum + (b.payment?.amount || 0), 0);
 
     const pendingRequests = bookings.filter(
       (b) => b.status === "pending"
