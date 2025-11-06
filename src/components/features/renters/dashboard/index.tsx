@@ -151,7 +151,7 @@ export default function DashboardSection() {
             <Stack gap="xs">
               <Text fz="12px">Total Spent </Text>
               <Text fz="xs" c="black" fw={600}>
-                Pkr {stats.totalSpent.toLocaleString()}
+                Rs. {stats.totalSpent.toLocaleString()}
               </Text>
             </Stack>
           </Flex>

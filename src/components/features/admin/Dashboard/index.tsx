@@ -18,6 +18,7 @@ import {
   IconClock,
   IconMoneybag,
   IconUsers,
+  IconBuildingSkyscraper,
 } from "@tabler/icons-react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -39,12 +40,13 @@ export default function AdminDashboard() {
     earnings: 0,
     held: 0,
     refunded: 0,
+    platformEarnings: 0, // ✅ New: Platform ki fees
   });
   const [weeklyBookingsData, setWeeklyBookingsData] = useState<any[]>([]);
   const [monthlyEarningData, setMonthlyEarningData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Real-time listeners (REVISED according to new flow)
+  // 🔹 Real-time listeners
   useEffect(() => {
     const usersRef = collection(db, firebaseConstants.collections.users);
     const vehiclesRef = collection(db, firebaseConstants.collections.vehicles);
@@ -62,13 +64,13 @@ export default function AdminDashboard() {
       setStats((prev) => ({ ...prev, vehicles: snapshot.size }));
     });
 
-    // 📦 Bookings (REVISED payment flow logic)
+    // 📦 Bookings (Updated - use platformFees from booking)
     const unsubBookings = onSnapshot(bookingsRef, (snapshot) => {
       const bookings = snapshot.docs.map((d) => d.data());
 
       const totalBookings = bookings.length;
 
-      // 🔸 Filter by payment status according to new flow
+      // 🔸 Filter by payment status
       const released = bookings.filter(
         (b: any) => b.payment?.status === "released"
       );
@@ -77,7 +79,7 @@ export default function AdminDashboard() {
         (b: any) => b.payment?.status === "refunded"
       );
 
-      // 🔹 Compute totals according to new flow
+      // 🔹 Compute totals
       const totalEarnings = released.reduce(
         (sum: number, b: any) => sum + (b.payment?.amount || 0),
         0
@@ -93,13 +95,20 @@ export default function AdminDashboard() {
         0
       );
 
-      // ✅ Update state (earnings = released payments only)
+      // ✅ Platform Earnings: Sum of platformFees from all released bookings
+      const platformEarnings = released.reduce(
+        (sum: number, b: any) => sum + (b.platformFee || 0),
+        0
+      );
+
+      // ✅ Update state
       setStats((prev) => ({
         ...prev,
         bookings: totalBookings,
         earnings: totalEarnings,
         held: totalHeld,
         refunded: totalRefunded,
+        platformEarnings, // ✅ Add platform earnings from booking data
       }));
 
       // ✅ Generate chart data
@@ -145,7 +154,7 @@ export default function AdminDashboard() {
     setMonthlyEarningData(monthlyData);
   };
 
-  // 🔹 Dashboard Cards
+  // 🔹 Dashboard Cards (Updated with Platform Earnings)
   const adminDashStats = [
     {
       title: "Total Users",
@@ -166,10 +175,16 @@ export default function AdminDashboard() {
       iconBg: "green.1",
     },
     {
-      title: "Earnings (Released)",
+      title: "Total Revenue",
       subTitle: `Rs. ${stats.earnings.toLocaleString()}`,
       icon: <IconMoneybag size={20} color="red" />,
       iconBg: "pink.1",
+    },
+    {
+      title: "Platform Earnings",
+      subTitle: `Rs. ${stats.platformEarnings.toLocaleString()}`,
+      icon: <IconBuildingSkyscraper size={20} color="purple" />,
+      iconBg: "purple.1",
     },
     {
       title: "Payments on Hold",
@@ -205,7 +220,12 @@ export default function AdminDashboard() {
                 </Card>
               ))
           : adminDashStats.map((d, i) => (
-              <Card key={i} radius="md" p="lg">
+              <Card
+                key={i}
+                radius="md"
+                p="lg"
+                style={{ filter: "drop-shadow(1px 1px 2px #6d6d6d38)" }}
+              >
                 <Flex align="center" justify="space-between">
                   <Stack gap={0}>
                     <Text fz="xs">{d.title}</Text>

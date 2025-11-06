@@ -1,7 +1,9 @@
 "use client";
 import ListedVehicleCard from "@/components/features/renters/ListedVehicleCard";
-import { listAllVehicleDocs, listAvailableVehicles } from "@/features/vehicle";
+import { firebaseConstants } from "@/constants/Firestore";
+import { listAvailableVehicles } from "@/features/vehicle";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
+import { db } from "@/networking/firebase";
 import {
   Button,
   Card,
@@ -13,25 +15,35 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { getAuth } from "firebase/auth";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { useState } from "react";
 
 const VehicleType = ["All", "Bike", "Cycle", "Rakshaw"];
-let status = "available";
-let color: string;
-let bgColor: string;
 
 export default function BrowseVehicle() {
   const [selectedVehicle, setSelectedVehicle] = useState<string>("All");
   const [Vehicles, setVehicles] = useState<VehicleModel[]>([]);
 
   useEffect(() => {
-    const fetchAvailableVehicles = async () => {
-      const vehicles = await listAvailableVehicles(); // 👈 only available ones
-      setVehicles(vehicles ?? []);
-    };
-    fetchAvailableVehicles();
+    // 👇 Live Firestore listener for "available" vehicles
+    const vehiclesRef = collection(db, firebaseConstants.collections.vehicles);
+    const availableQuery = query(
+      vehiclesRef,
+      where("status", "==", "available")
+    );
+
+    const unsubscribe = onSnapshot(availableQuery, (snapshot) => {
+      const liveVehicles = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as unknown as VehicleModel[];
+
+      setVehicles(liveVehicles);
+    });
+
+    // Cleanup on unmount
+    return () => unsubscribe();
   }, []);
 
   return (

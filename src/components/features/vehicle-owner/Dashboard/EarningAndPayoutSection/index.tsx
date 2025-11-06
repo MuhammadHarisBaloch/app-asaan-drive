@@ -10,7 +10,11 @@ import {
   Badge,
 } from "@mantine/core";
 import { BarChart } from "@mantine/charts";
-import { IconCurrencyDollar, IconDownload } from "@tabler/icons-react";
+import {
+  IconCurrencyDollar,
+  IconDownload,
+  IconTrendingUp,
+} from "@tabler/icons-react";
 import TransactionHistoryCard from "./TransactionHistoryCards";
 import WithdrawPaymentModal from "./WithdrawPaymentModal";
 import { useState } from "react";
@@ -64,42 +68,35 @@ export default function EarningAndPayoutSection() {
               </Button>
             </Stack>
           </Card>
-          {data.vehicleOwner.dashboard.EarningAndPayout.paymentCard.map(
-            (data, i) => {
-              return (
-                <Card
-                  key={i}
-                  radius="md"
-                  p="xl"
-                  style={{ filter: "drop-shadow(1px 1px 2px #8e8e8e77)" }}
+          <Card
+            radius="md"
+            p="xl"
+            style={{ filter: "drop-shadow(1px 1px 2px #8e8e8e77)" }}
+          >
+            <Stack gap="lg">
+              <Flex align="center" gap="md">
+                <Center
+                  h={50}
+                  w={50}
+                  bg="green.1"
+                  style={{ borderRadius: "10px" }}
                 >
-                  <Stack gap="lg">
-                    <Flex align="center" gap="md">
-                      <Center
-                        h={50}
-                        w={50}
-                        bg={data.iconBg}
-                        style={{ borderRadius: "10px" }}
-                      >
-                        {data.icon}
-                      </Center>
-                      <Stack gap={0}>
-                        <Text fz="xs" fw={500}>
-                          {data.title}
-                        </Text>
-                        <Text fz="xl" c="black" fw={600}>
-                          Pkr {data.subTitle}
-                        </Text>
-                      </Stack>
-                    </Flex>
-                    <Text fz="xs" c={data.descriptionColor} fw={500}>
-                      {data.description}
-                    </Text>
-                  </Stack>
-                </Card>
-              );
-            }
-          )}
+                  <IconTrendingUp size={25} color="green" />
+                </Center>
+                <Stack gap={0}>
+                  <Text fz="xs" fw={500}>
+                    This Month
+                  </Text>
+                  <Text fz="xl" c="black" fw={600}>
+                    Rs 18,750
+                  </Text>
+                </Stack>
+              </Flex>
+              <Text fz="xs" c="green" fw={500}>
+                +23% from last month
+              </Text>
+            </Stack>
+          </Card>
         </SimpleGrid>
         <Card
           radius="md"

@@ -87,7 +87,7 @@ export default function VehicleOwnerDashboardSection() {
 
   const auth = getAuth();
 
-  // 🔹 Fetch user, vehicles, and bookings
+  // Fetch user, vehicles, and bookings
   useEffect(() => {
     onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) return;
@@ -102,17 +102,22 @@ export default function VehicleOwnerDashboardSection() {
     });
   }, []);
 
-  // 🔹 Calculate stats (REVISED according to new flow)
+  // Calculate stats (REVISED according to new flow)
   useEffect(() => {
     // Active bookings = confirmed + active
     const activeBookings = bookings.filter((b) =>
       ["active", "confirmed"].includes(b.status)
     ).length;
 
-    // ✅ Only count bookings with released payment status (completed rides)
+    // Only count bookings with released payment status (completed rides)
+    // ✅ Owner gets: payment.amount - platformFees
     const totalEarnings = bookings
       .filter((b) => b.payment?.status === "released")
-      .reduce((sum, b) => sum + (b.payment?.amount || 0), 0);
+      .reduce((sum, b) => {
+        const paymentAmount = b.payment?.amount || 0;
+        const platformFees = b.platformFee || 0;
+        return sum + (paymentAmount - platformFees); // ✅ Platform fees subtracted
+      }, 0);
 
     const pendingRequests = bookings.filter(
       (b) => b.status === "pending"
