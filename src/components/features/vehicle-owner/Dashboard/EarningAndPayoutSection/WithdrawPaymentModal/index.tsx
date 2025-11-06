@@ -9,10 +9,12 @@ import BankTransferModalContent from "./BankTransferModalContent";
 interface WithdrawPaymentModalProps {
   openModal: boolean;
   onClose: () => void;
+  availableBalance: number; // ✅ New prop for dynamic balance
 }
 export default function WithdrawPaymentModal({
   openModal,
   onClose,
+  availableBalance, // ✅ Receive available balance
 }: WithdrawPaymentModalProps) {
   const [mainModalOpen, setMainModalOpen] = useState(openModal);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
@@ -59,6 +61,7 @@ export default function WithdrawPaymentModal({
         <MainModalContent
           onContinue={handleContinue}
           onCancel={handleCloseAll}
+          availableBalance={availableBalance} // ✅ Pass balance to main content
         />
       </Modal>
       <Modal
@@ -79,18 +82,21 @@ export default function WithdrawPaymentModal({
           <JazzCashModalContent
             onClose={handleCloseAll}
             onBack={handleBackToMain}
+            availableBalance={availableBalance} // ✅ Pass balance to all methods
           />
         )}
         {selectedMethod === "Easypaisa" && (
           <EasyPaisaModalContent
             onClose={handleCloseAll}
             onBack={handleBackToMain}
+            availableBalance={availableBalance} // ✅ Pass balance to all methods
           />
         )}
         {selectedMethod === "Bank Transfer" && (
           <BankTransferModalContent
             onClose={handleCloseAll}
             onBack={handleBackToMain}
+            availableBalance={availableBalance} // ✅ Pass balance to all methods
           />
         )}
       </Modal>
