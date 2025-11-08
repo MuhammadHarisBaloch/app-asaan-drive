@@ -32,11 +32,9 @@ export default function MainModalContent({
   }, [availableBalance]);
 
   const handleAmountChange = (value: string | number) => {
-    if (typeof value === "number") {
-      setWithdrawalAmount(value);
-    } else if (value === "") {
-      setWithdrawalAmount(0);
-    } else {
+    if (typeof value === "number") setWithdrawalAmount(value);
+    else if (value === "") setWithdrawalAmount(0);
+    else {
       const parsed = parseFloat(value);
       setWithdrawalAmount(isNaN(parsed) ? 0 : parsed);
     }

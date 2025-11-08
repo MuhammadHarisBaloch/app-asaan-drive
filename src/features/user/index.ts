@@ -65,3 +65,17 @@ export async function getUserDocument(
     return null;
   }
 }
+
+// Firestore me user document ka ek field update karne ka helper
+export async function updateUserDocumentField(
+  userId: string,
+  data: Partial<UserModel> // partial object with only the fields you want to update
+): Promise<void> {
+  if (!userId) return;
+  try {
+    const docRef = doc(db, firebaseConstants.collections.users, userId);
+    await updateDoc(docRef, data);
+  } catch (error) {
+    console.error("Error updating user document:", error);
+  }
+}

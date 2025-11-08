@@ -11,6 +11,8 @@ export interface UserModel {
   createdAt?: any;
   joined?: string;
   activity?: string;
+  availableBalance: number;
+  totalEarnings: number;
 
   // 🔽 New fields
   documents?: {

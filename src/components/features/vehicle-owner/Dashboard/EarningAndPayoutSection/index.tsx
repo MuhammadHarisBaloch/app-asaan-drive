@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Card,
   Center,
@@ -22,7 +23,7 @@ import { BookingModel } from "@/features/booking/models/booking.model";
 import { fetchOwnerVehicleBookings } from "@/features/booking";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { UserModel } from "@/features/user/models/user.model";
-import { getUserDocument } from "@/features/user";
+import { getUserDocument, updateUserDocumentField } from "@/features/user"; // helper to update firestore
 import dayjs from "dayjs";
 
 export default function EarningAndPayoutSection() {
@@ -31,8 +32,8 @@ export default function EarningAndPayoutSection() {
   const [bookings, setBookings] = useState<BookingModel[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // NEW: track total amount withdrawn client-side (simulation)
-  const [localWithdrawnTotal, setLocalWithdrawnTotal] = useState<number>(0);
+  // Available balance from Firestore
+  const [availableBalance, setAvailableBalance] = useState<number>(0);
 
   useEffect(() => {
     const auth = getAuth();
@@ -43,6 +44,9 @@ export default function EarningAndPayoutSection() {
       const userData = await getUserDocument(firebaseUser.uid);
       setUser(userData);
 
+      // Set balance from Firestore
+      setAvailableBalance(userData?.availableBalance ?? 0);
+
       const ownerBookings = await fetchOwnerVehicleBookings(firebaseUser.uid);
       setBookings(ownerBookings ?? []);
       setLoading(false);
@@ -51,73 +55,28 @@ export default function EarningAndPayoutSection() {
     return () => unsubscribe();
   }, []);
 
-  // Base computed available balance (from bookings / released payments)
-  const computeBaseAvailable = () =>
-    bookings
-      .filter((b) => b.payment?.status === "released")
-      .reduce((sum, b) => {
-        const paymentAmount = b.payment?.amount || 0;
-        const platformFees = b.platformFee || 0;
-        return sum + (paymentAmount - platformFees);
-      }, 0);
-
-  const baseAvailable = computeBaseAvailable();
-
-  // If new bookings come and baseAvailable goes up/down, ensure localWithdrawnTotal
-  // doesn't exceed baseAvailable too much (clamp to reasonable)
-  useEffect(() => {
-    if (localWithdrawnTotal > baseAvailable) {
-      // keep it clamped so displayed balance never negative
-      setLocalWithdrawnTotal((prev) => Math.min(prev, baseAvailable));
-    }
-  }, [baseAvailable]);
-
-  // Displayed balance = baseAvailable - localWithdrawnTotal (clamped >= 0)
-  const displayedAvailable = Math.max(0, baseAvailable - localWithdrawnTotal);
-
-  const calculateThisMonth = () =>
-    bookings
-      .filter((b) => {
-        if (b.payment?.status !== "released") return false;
-        if (!b.pickUpDate) return false;
-        const bookingDate = dayjs(b.pickUpDate);
-        return bookingDate.isSame(dayjs(), "month");
-      })
-      .reduce((sum, b) => {
-        const paymentAmount = b.payment?.amount || 0;
-        const platformFees = b.platformFee || 0;
-        return sum + (paymentAmount - platformFees);
-      }, 0);
-
-  const currentMonthEarnings = calculateThisMonth();
-
-  // chart data generation (kept same)
-  const generateChartData = () => {
-    const last6Months = [...Array(6)].map((_, i) =>
-      dayjs().subtract(5 - i, "month")
+  // Calculate this month earnings from released bookings
+  const currentMonthEarnings = bookings
+    .filter((b) => b.payment?.status === "released" && b.pickUpDate)
+    .filter((b) => dayjs(b.pickUpDate).isSame(dayjs(), "month"))
+    .reduce(
+      (sum, b) => sum + ((b.payment?.amount ?? 0) - (b.platformFee ?? 0)),
+      0
     );
 
-    return last6Months.map((month) => {
-      const monthName = month.format("MMM");
+  // Chart data (last 6 months)
+  const chartData = [...Array(6)].map((_, i) => {
+    const month = dayjs().subtract(5 - i, "month");
+    const monthlyEarnings = bookings
+      .filter((b) => b.payment?.status === "released" && b.pickUpDate)
+      .filter((b) => dayjs(b.pickUpDate).isSame(month, "month"))
+      .reduce(
+        (sum, b) => sum + ((b.payment?.amount ?? 0) - (b.platformFee ?? 0)),
+        0
+      );
 
-      const monthlyEarnings = bookings
-        .filter((b) => {
-          if (b.payment?.status !== "released") return false;
-          if (!b.pickUpDate) return false;
-          const bookingDate = dayjs(b.pickUpDate);
-          return bookingDate.isSame(month, "month");
-        })
-        .reduce((sum, b) => {
-          const paymentAmount = b.payment?.amount || 0;
-          const platformFees = b.platformFee || 0;
-          return sum + (paymentAmount - platformFees);
-        }, 0);
-
-      return { month: monthName, Sales: monthlyEarnings };
-    });
-  };
-
-  const chartData = generateChartData();
+    return { month: month.format("MMM"), Sales: monthlyEarnings };
+  });
 
   if (loading) {
     return (
@@ -131,10 +90,16 @@ export default function EarningAndPayoutSection() {
     );
   }
 
-  // Handler called when WithdrawPaymentModal reports a completed withdrawal (amount)
-  const handleWithdrawComplete = (amount: number) => {
-    // add the withdrawn amount to localWithdrawnTotal so UI immediately reflects deduction
-    setLocalWithdrawnTotal((prev) => prev + amount);
+  // Withdraw complete handler
+  const handleWithdrawComplete = async (amount: number) => {
+    if (!user) return;
+
+    // Deduct from Firestore
+    const newBalance = Math.max(0, (availableBalance ?? 0) - amount);
+    await updateUserDocumentField(user.id, { availableBalance: newBalance });
+
+    // Update local state
+    setAvailableBalance(newBalance);
   };
 
   return (
@@ -161,7 +126,7 @@ export default function EarningAndPayoutSection() {
                     Available Balance
                   </Text>
                   <Text fz="xl" fw={600}>
-                    Pkr {displayedAvailable.toLocaleString()}
+                    Pkr {availableBalance.toLocaleString()}
                   </Text>
                 </Stack>
               </Flex>
@@ -169,9 +134,9 @@ export default function EarningAndPayoutSection() {
                 size="md"
                 fw={500}
                 onClick={() => setOpenMainModal(true)}
-                disabled={displayedAvailable === 0}
+                disabled={availableBalance === 0}
               >
-                {displayedAvailable === 0
+                {availableBalance === 0
                   ? "No Funds Available"
                   : "Withdraw Funds"}
               </Button>
@@ -227,13 +192,14 @@ export default function EarningAndPayoutSection() {
         </Card>
       </Stack>
 
-      <WithdrawPaymentModal
-        openModal={openMainModal}
-        onClose={() => setOpenMainModal(false)}
-        availableBalance={displayedAvailable}
-        // pass the raw withdrawn amount back to parent
-        onWithdrawComplete={(amount) => handleWithdrawComplete(amount)}
-      />
+      {user && (
+        <WithdrawPaymentModal
+          openModal={openMainModal}
+          onClose={() => setOpenMainModal(false)}
+          availableBalance={availableBalance}
+          onWithdrawComplete={handleWithdrawComplete}
+        />
+      )}
     </>
   );
 }

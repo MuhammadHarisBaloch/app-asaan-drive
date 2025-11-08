@@ -6,7 +6,7 @@ import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 export async function autoUpdateBookingStatus() {
   try {
     console.log("Fetching all bookings...");
-    const bookingsRef = collection(db, "bookings");
+    const bookingsRef = collection(db, firebaseConstants.collections.bookings);
     const snapshot = await getDocs(bookingsRef);
     const now = new Date();
 
