@@ -18,65 +18,166 @@ import {
   IconTrendingUp,
 } from "@tabler/icons-react";
 import WithdrawPaymentModal from "./WithdrawPaymentModal";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { fetchOwnerVehicleBookings } from "@/features/booking";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { UserModel } from "@/features/user/models/user.model";
-import { getUserDocument, updateUserDocumentField } from "@/features/user"; // helper to update firestore
+import { getUserDocument, updateUserDocumentField } from "@/features/user";
 import dayjs from "dayjs";
+import { collection, onSnapshot, query, where, doc } from "firebase/firestore";
+import { db } from "@/networking/firebase";
 
 export default function EarningAndPayoutSection() {
   const [openMainModal, setOpenMainModal] = useState(false);
   const [user, setUser] = useState<UserModel | null>(null);
   const [bookings, setBookings] = useState<BookingModel[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Available balance from Firestore
   const [availableBalance, setAvailableBalance] = useState<number>(0);
+
+  // Track processed booking IDs
+  const processedBookingIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const auth = getAuth();
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) return;
 
-      const userData = await getUserDocument(firebaseUser.uid);
-      setUser(userData);
+      try {
+        // Get user data first
+        const userData = await getUserDocument(firebaseUser.uid);
+        setUser(userData);
+        setAvailableBalance(userData?.availableBalance || 0);
 
-      // Set balance from Firestore
-      setAvailableBalance(userData?.availableBalance ?? 0);
+        // Fetch all bookings for display
+        const ownerBookings = await fetchOwnerVehicleBookings(firebaseUser.uid);
+        setBookings(ownerBookings || []);
 
-      const ownerBookings = await fetchOwnerVehicleBookings(firebaseUser.uid);
-      setBookings(ownerBookings ?? []);
-      setLoading(false);
+        // Add existing released bookings to processed set
+        ownerBookings?.forEach((booking) => {
+          if (booking.payment?.status === "released" && booking.bookingId) {
+            processedBookingIds.current.add(booking.bookingId);
+          }
+        });
+
+        setLoading(false);
+
+        // Real-time listener for user document
+        const userDocRef = doc(db, "users", firebaseUser.uid);
+        const unsubscribeUser = onSnapshot(userDocRef, (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            const updatedUser = docSnapshot.data() as UserModel;
+            setAvailableBalance(updatedUser.availableBalance || 0);
+          }
+        });
+
+        // Real-time listener for bookings
+        const bookingsQuery = query(
+          collection(db, "bookings"),
+          where("vehicleOwnerId", "==", firebaseUser.uid)
+        );
+
+        const unsubscribeBookings = onSnapshot(
+          bookingsQuery,
+          async (snapshot) => {
+            const allBookings = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as unknown as BookingModel[];
+
+            setBookings(allBookings);
+
+            // Find NEW released bookings (not processed before)
+            const newReleasedBookings = allBookings.filter((booking) => {
+              const isReleased = booking.payment?.status === "released";
+              const hasBookingId = !!booking.bookingId;
+              const isNew = !processedBookingIds.current.has(
+                booking.bookingId!
+              );
+
+              return isReleased && hasBookingId && isNew;
+            });
+
+            // Process only NEW bookings
+            if (newReleasedBookings.length > 0) {
+              let totalNewEarnings = 0;
+
+              newReleasedBookings.forEach((booking) => {
+                const earning =
+                  (booking.totalPrice || 0) - (booking.platformFee || 0);
+                totalNewEarnings += earning;
+
+                // Mark this booking as processed
+                processedBookingIds.current.add(booking.bookingId!);
+              });
+
+              if (totalNewEarnings > 0) {
+                // Get CURRENT balance from Firestore to ensure we have latest value
+                const currentUserData = await getUserDocument(firebaseUser.uid);
+                const currentBalance = currentUserData?.availableBalance || 0;
+
+                // Add new earnings to CURRENT balance
+                const newBalance = currentBalance + totalNewEarnings;
+
+                // Update Firestore
+                await updateUserDocumentField(firebaseUser.uid, {
+                  availableBalance: newBalance,
+                });
+
+                console.log(
+                  `Added ${totalNewEarnings} to current balance ${currentBalance}. New balance: ${newBalance}`
+                );
+              }
+            }
+          }
+        );
+
+        return () => {
+          unsubscribeUser();
+          unsubscribeBookings();
+        };
+      } catch (error) {
+        console.error("Error in earnings section:", error);
+        setLoading(false);
+      }
     });
 
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
 
-  // Calculate this month earnings from released bookings
+  // Calculate total earnings for display
+  const totalEarnings = bookings
+    .filter((b) => b.payment?.status === "released")
+    .reduce((sum, b) => sum + ((b.totalPrice || 0) - (b.platformFee || 0)), 0);
+
+  // Calculate this month earnings for display
   const currentMonthEarnings = bookings
     .filter((b) => b.payment?.status === "released" && b.pickUpDate)
     .filter((b) => dayjs(b.pickUpDate).isSame(dayjs(), "month"))
-    .reduce(
-      (sum, b) => sum + ((b.payment?.amount ?? 0) - (b.platformFee ?? 0)),
-      0
-    );
+    .reduce((sum, b) => sum + ((b.totalPrice || 0) - (b.platformFee || 0)), 0);
 
-  // Chart data (last 6 months)
+  // Chart data for display
   const chartData = [...Array(6)].map((_, i) => {
     const month = dayjs().subtract(5 - i, "month");
     const monthlyEarnings = bookings
       .filter((b) => b.payment?.status === "released" && b.pickUpDate)
       .filter((b) => dayjs(b.pickUpDate).isSame(month, "month"))
       .reduce(
-        (sum, b) => sum + ((b.payment?.amount ?? 0) - (b.platformFee ?? 0)),
+        (sum, b) => sum + ((b.totalPrice || 0) - (b.platformFee || 0)),
         0
       );
 
     return { month: month.format("MMM"), Sales: monthlyEarnings };
   });
+
+  // Withdraw handler
+  const handleWithdrawComplete = async (amount: number) => {
+    if (!user) return;
+
+    const newBalance = Math.max(0, availableBalance - amount);
+    await updateUserDocumentField(user.id, { availableBalance: newBalance });
+  };
 
   if (loading) {
     return (
@@ -89,18 +190,6 @@ export default function EarningAndPayoutSection() {
       </Stack>
     );
   }
-
-  // Withdraw complete handler
-  const handleWithdrawComplete = async (amount: number) => {
-    if (!user) return;
-
-    // Deduct from Firestore
-    const newBalance = Math.max(0, (availableBalance ?? 0) - amount);
-    await updateUserDocumentField(user.id, { availableBalance: newBalance });
-
-    // Update local state
-    setAvailableBalance(newBalance);
-  };
 
   return (
     <>
@@ -160,6 +249,29 @@ export default function EarningAndPayoutSection() {
                   </Text>
                   <Text fz="xl" fw={600}>
                     Rs {currentMonthEarnings.toLocaleString()}
+                  </Text>
+                </Stack>
+              </Flex>
+            </Stack>
+          </Card>
+
+          <Card radius="md" p="xl">
+            <Stack gap="lg">
+              <Flex align="center" gap="md">
+                <Center
+                  h={50}
+                  w={50}
+                  bg="blue.1"
+                  style={{ borderRadius: "10px" }}
+                >
+                  <IconCurrencyDollar size={25} color="blue" />
+                </Center>
+                <Stack gap={0}>
+                  <Text fz="xs" fw={500}>
+                    Total Earnings
+                  </Text>
+                  <Text fz="xl" fw={600}>
+                    Rs {totalEarnings.toLocaleString()}
                   </Text>
                 </Stack>
               </Flex>
