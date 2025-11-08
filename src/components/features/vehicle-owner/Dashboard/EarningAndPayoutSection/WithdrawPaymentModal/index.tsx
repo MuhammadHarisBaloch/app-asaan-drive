@@ -1,6 +1,5 @@
-"use client";
 import { Modal } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import MainModalContent from "./MainModalContent";
 import JazzCashModalContent from "./JazzCashModalContent";
 import EasyPaisaModalContent from "./EasyPaisaModalContent";
@@ -9,25 +8,31 @@ import BankTransferModalContent from "./BankTransferModalContent";
 interface WithdrawPaymentModalProps {
   openModal: boolean;
   onClose: () => void;
-  availableBalance: number; // ✅ New prop for dynamic balance
+  availableBalance: number;
+  onWithdrawComplete?: (amount: number) => void;
 }
+
 export default function WithdrawPaymentModal({
   openModal,
   onClose,
-  availableBalance, // ✅ Receive available balance
+  availableBalance,
+  onWithdrawComplete,
 }: WithdrawPaymentModalProps) {
   const [mainModalOpen, setMainModalOpen] = useState(openModal);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [methodModalOpen, setMethodModalOpen] = useState(false);
+  const [currentBalance, setCurrentBalance] = useState(availableBalance);
 
   useEffect(() => {
     setMainModalOpen(openModal);
-  }, [openModal]);
+    setCurrentBalance(availableBalance);
+  }, [openModal, availableBalance]);
 
-  const handleContinue = (method: string | null) => {
+  const handleContinue = (method: string | null, amount: number) => {
     setSelectedMethod(method);
     setMethodModalOpen(true);
     setMainModalOpen(false);
+    setCurrentBalance(amount);
   };
 
   const handleBackToMain = () => {
@@ -35,7 +40,10 @@ export default function WithdrawPaymentModal({
     setMainModalOpen(true);
   };
 
-  const handleCloseAll = () => {
+  const handleWithdrawDone = (amount: number) => {
+    const newBalance = currentBalance - amount;
+    onWithdrawComplete?.(amount);
+    setCurrentBalance(newBalance);
     setMethodModalOpen(false);
     setMainModalOpen(false);
     setSelectedMethod(null);
@@ -44,59 +52,41 @@ export default function WithdrawPaymentModal({
 
   return (
     <>
-      <Modal
-        opened={mainModalOpen}
-        onClose={handleCloseAll}
-        title="Withdraw Funds"
-        size="50%"
-        styles={{
-          content: {
-            borderRadius: "10px",
-          },
-          title: {
-            fontWeight: 600,
-          },
-        }}
-      >
+      <Modal opened={mainModalOpen} onClose={onClose} title="Withdraw Funds">
         <MainModalContent
           onContinue={handleContinue}
-          onCancel={handleCloseAll}
-          availableBalance={availableBalance} // ✅ Pass balance to main content
+          onCancel={onClose}
+          availableBalance={currentBalance}
         />
       </Modal>
+
       <Modal
         opened={methodModalOpen}
         onClose={handleBackToMain}
         title={selectedMethod ? `Withdraw via ${selectedMethod}` : "Withdraw"}
-        size="50%"
-        styles={{
-          content: {
-            borderRadius: "10px",
-          },
-          title: {
-            fontWeight: 600,
-          },
-        }}
       >
         {selectedMethod === "JazzCash" && (
           <JazzCashModalContent
-            onClose={handleCloseAll}
+            onClose={() => handleWithdrawDone(0)}
             onBack={handleBackToMain}
-            availableBalance={availableBalance} // ✅ Pass balance to all methods
+            availableBalance={currentBalance}
+            onWithdrawSuccess={(amount) => handleWithdrawDone(amount)}
           />
         )}
         {selectedMethod === "Easypaisa" && (
           <EasyPaisaModalContent
-            onClose={handleCloseAll}
+            onClose={() => handleWithdrawDone(0)}
             onBack={handleBackToMain}
-            availableBalance={availableBalance} // ✅ Pass balance to all methods
+            availableBalance={currentBalance}
+            onWithdrawSuccess={(amount) => handleWithdrawDone(amount)}
           />
         )}
         {selectedMethod === "Bank Transfer" && (
           <BankTransferModalContent
-            onClose={handleCloseAll}
+            onClose={() => handleWithdrawDone(0)}
             onBack={handleBackToMain}
-            availableBalance={availableBalance} // ✅ Pass balance to all methods
+            availableBalance={currentBalance}
+            onWithdrawSuccess={(amount) => handleWithdrawDone(amount)}
           />
         )}
       </Modal>

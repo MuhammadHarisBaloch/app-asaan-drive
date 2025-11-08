@@ -12,26 +12,33 @@ import {
   Group,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IconWallet } from "@tabler/icons-react";
 
-interface EasyPaisaModalContentProps {
+interface easyPaisaModalContentProps {
   onClose: () => void;
   onBack: () => void;
   availableBalance: number;
+  onWithdrawSuccess: (amount: number) => void;
 }
 
-export default function EasyPaisaModalContent({
+export default function easyPaisaModalContent({
   onClose,
   onBack,
   availableBalance,
-}: EasyPaisaModalContentProps) {
-  const [easypaisaNumber, setEasypaisaNumber] = useState<string>("");
+  onWithdrawSuccess,
+}: easyPaisaModalContentProps) {
+  const [easyPaisaNumber, seteasyPaisaNumber] = useState<string>("");
   const [withdrawalAmount, setWithdrawalAmount] = useState<number>(
     availableBalance > 0 ? Math.min(availableBalance, 50000) : 0
   );
 
-  // 🔹 Handle amount change
+  useEffect(() => {
+    setWithdrawalAmount(
+      availableBalance > 0 ? Math.min(availableBalance, 50000) : 0
+    );
+  }, [availableBalance]);
+
   const handleAmountChange = (value: string | number) => {
     const numValue =
       typeof value === "string" ? (value === "" ? 0 : Number(value)) : value;
@@ -41,7 +48,7 @@ export default function EasyPaisaModalContent({
   const withdrawalFee = 10;
   const netAmount = Math.max(0, withdrawalAmount - withdrawalFee);
   const canSubmit =
-    easypaisaNumber.length === 11 &&
+    easyPaisaNumber.length === 11 &&
     withdrawalAmount >= 500 &&
     withdrawalAmount <= availableBalance;
 
@@ -51,10 +58,9 @@ export default function EasyPaisaModalContent({
         <Text fz="md" c="black" fw={500}>
           Enter Account Details
         </Text>
-        <Text fz="xs">Please provide your EasyPaisa details</Text>
+        <Text fz="xs">Please provide your easyPaisa details</Text>
       </Stack>
 
-      {/* 🔹 Available Balance - Your Design Style */}
       <Box bg="#ff00001c" p="lg" style={{ borderRadius: "20px" }}>
         <Flex align="center" gap="md">
           <Center h={40} w={40} bg="red.0" style={{ borderRadius: "10px" }}>
@@ -76,7 +82,6 @@ export default function EasyPaisaModalContent({
         </Flex>
       </Box>
 
-      {/* 🔹 Withdrawal Amount */}
       <Stack gap={0}>
         <NumberInput
           size="md"
@@ -96,14 +101,6 @@ export default function EasyPaisaModalContent({
               ? "Minimum withdrawal is Rs. 500"
               : null
           }
-          styles={{
-            label: {
-              fontSize: "14px",
-            },
-            input: {
-              fontSize: "14px",
-            },
-          }}
         />
         <Text fz="12px" c="dimmed">
           Maximum: PKR {availableBalance.toLocaleString()} • Minimum: PKR 500
@@ -112,29 +109,19 @@ export default function EasyPaisaModalContent({
 
       <TextInput
         required
-        type="number"
         size="md"
         radius="md"
-        label="EasyPaisa Number"
+        label="easyPaisa Number"
         placeholder="03XXXXXXXXX"
-        value={easypaisaNumber}
-        onChange={(event) => setEasypaisaNumber(event.currentTarget.value)}
+        value={easyPaisaNumber}
+        onChange={(e) => seteasyPaisaNumber(e.currentTarget.value)}
         error={
-          easypaisaNumber && easypaisaNumber.length !== 11
-            ? "EasyPaisa number must be 11 digits"
+          easyPaisaNumber && easyPaisaNumber.length !== 11
+            ? "easyPaisa number must be 11 digits"
             : null
         }
-        styles={{
-          label: {
-            fontSize: "14px",
-          },
-          input: {
-            fontSize: "14px",
-          },
-        }}
       />
 
-      {/* 🔹 Transaction Summary - Your Design Style */}
       {withdrawalAmount > 0 && (
         <Box p="lg" bg="#FFFBEB" style={{ borderRadius: "20px" }}>
           <Stack gap="xs">
@@ -176,55 +163,24 @@ export default function EasyPaisaModalContent({
         </Box>
       )}
 
-      {availableBalance === 0 && (
-        <Box p="md" bg="yellow.0" style={{ borderRadius: "10px" }}>
-          <Text fz="xs" c="orange" ta="center">
-            You need available balance to withdraw funds. Complete more rides to
-            earn money.
-          </Text>
-        </Box>
-      )}
-
       <Divider />
 
       <Flex gap="md">
-        <Button
-          fullWidth
-          size="md"
-          fw={500}
-          variant="outline"
-          color="black"
-          onClick={onBack}
-        >
+        <Button fullWidth variant="outline" onClick={onBack}>
           Back
         </Button>
         <Button
           fullWidth
-          size="md"
-          fw={500}
           disabled={!canSubmit || availableBalance === 0}
           onClick={() => {
             if (canSubmit) {
-              console.log("EasyPaisa Withdrawal:", {
-                number: easypaisaNumber,
-                amount: withdrawalAmount,
-                fee: withdrawalFee,
-                netAmount: netAmount,
-              });
-
               notifications.show({
                 title: "Withdrawal Request Submitted",
-                message: `Rs. ${netAmount.toLocaleString()} will be transferred to your EasyPaisa account within 2-5 minutes.`,
+                message: `Rs. ${netAmount.toLocaleString()} will be transferred to your easyPaisa account within 2-5 minutes.`,
                 color: "green",
               });
+              onWithdrawSuccess(withdrawalAmount);
               onClose();
-            } else {
-              notifications.show({
-                title: "Invalid Details",
-                message:
-                  "Please check your EasyPaisa number and withdrawal amount",
-                color: "red",
-              });
             }
           }}
         >

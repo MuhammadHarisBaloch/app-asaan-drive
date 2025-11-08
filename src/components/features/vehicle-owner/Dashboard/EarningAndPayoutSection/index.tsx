@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   Center,
@@ -7,7 +8,6 @@ import {
   Stack,
   Text,
   Button,
-  Badge,
   Skeleton,
 } from "@mantine/core";
 import { BarChart } from "@mantine/charts";
@@ -18,7 +18,6 @@ import {
 } from "@tabler/icons-react";
 import WithdrawPaymentModal from "./WithdrawPaymentModal";
 import { useState, useEffect } from "react";
-import { data } from "@/constants/Data";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { fetchOwnerVehicleBookings } from "@/features/booking";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -32,7 +31,9 @@ export default function EarningAndPayoutSection() {
   const [bookings, setBookings] = useState<BookingModel[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Real-time data fetch
+  // NEW: track total amount withdrawn client-side (simulation)
+  const [localWithdrawnTotal, setLocalWithdrawnTotal] = useState<number>(0);
+
   useEffect(() => {
     const auth = getAuth();
 
@@ -50,10 +51,9 @@ export default function EarningAndPayoutSection() {
     return () => unsubscribe();
   }, []);
 
-  // 🔹 Calculate dynamic earnings
-  const calculateEarnings = () => {
-    // ✅ Available Balance: All released payments minus platform fees
-    const availableBalance = bookings
+  // Base computed available balance (from bookings / released payments)
+  const computeBaseAvailable = () =>
+    bookings
       .filter((b) => b.payment?.status === "released")
       .reduce((sum, b) => {
         const paymentAmount = b.payment?.amount || 0;
@@ -61,15 +61,27 @@ export default function EarningAndPayoutSection() {
         return sum + (paymentAmount - platformFees);
       }, 0);
 
-    // ✅ This Month Earnings: Current month ke released payments
-    const currentMonthEarnings = bookings
+  const baseAvailable = computeBaseAvailable();
+
+  // If new bookings come and baseAvailable goes up/down, ensure localWithdrawnTotal
+  // doesn't exceed baseAvailable too much (clamp to reasonable)
+  useEffect(() => {
+    if (localWithdrawnTotal > baseAvailable) {
+      // keep it clamped so displayed balance never negative
+      setLocalWithdrawnTotal((prev) => Math.min(prev, baseAvailable));
+    }
+  }, [baseAvailable]);
+
+  // Displayed balance = baseAvailable - localWithdrawnTotal (clamped >= 0)
+  const displayedAvailable = Math.max(0, baseAvailable - localWithdrawnTotal);
+
+  const calculateThisMonth = () =>
+    bookings
       .filter((b) => {
         if (b.payment?.status !== "released") return false;
         if (!b.pickUpDate) return false;
-
         const bookingDate = dayjs(b.pickUpDate);
-        const currentMonth = dayjs();
-        return bookingDate.isSame(currentMonth, "month");
+        return bookingDate.isSame(dayjs(), "month");
       })
       .reduce((sum, b) => {
         const paymentAmount = b.payment?.amount || 0;
@@ -77,42 +89,9 @@ export default function EarningAndPayoutSection() {
         return sum + (paymentAmount - platformFees);
       }, 0);
 
-    // ✅ Last Month Earnings: Comparison ke liye
-    const lastMonthEarnings = bookings
-      .filter((b) => {
-        if (b.payment?.status !== "released") return false;
-        if (!b.pickUpDate) return false;
+  const currentMonthEarnings = calculateThisMonth();
 
-        const bookingDate = dayjs(b.pickUpDate);
-        const lastMonth = dayjs().subtract(1, "month");
-        return bookingDate.isSame(lastMonth, "month");
-      })
-      .reduce((sum, b) => {
-        const paymentAmount = b.payment?.amount || 0;
-        const platformFees = b.platformFee || 0;
-        return sum + (paymentAmount - platformFees);
-      }, 0);
-
-    // ✅ Monthly Growth Percentage
-    const growthPercentage =
-      lastMonthEarnings > 0
-        ? Math.round(
-            ((currentMonthEarnings - lastMonthEarnings) / lastMonthEarnings) *
-              100
-          )
-        : currentMonthEarnings > 0
-        ? 100
-        : 0;
-
-    return {
-      availableBalance,
-      currentMonthEarnings,
-      growthPercentage,
-      isPositiveGrowth: growthPercentage >= 0,
-    };
-  };
-
-  // 🔹 Generate dynamic chart data (last 6 months)
+  // chart data generation (kept same)
   const generateChartData = () => {
     const last6Months = [...Array(6)].map((_, i) =>
       dayjs().subtract(5 - i, "month")
@@ -125,7 +104,6 @@ export default function EarningAndPayoutSection() {
         .filter((b) => {
           if (b.payment?.status !== "released") return false;
           if (!b.pickUpDate) return false;
-
           const bookingDate = dayjs(b.pickUpDate);
           return bookingDate.isSame(month, "month");
         })
@@ -135,64 +113,39 @@ export default function EarningAndPayoutSection() {
           return sum + (paymentAmount - platformFees);
         }, 0);
 
-      return {
-        month: monthName,
-        Sales: monthlyEarnings,
-      };
+      return { month: monthName, Sales: monthlyEarnings };
     });
   };
 
-  const {
-    availableBalance,
-    currentMonthEarnings,
-    growthPercentage,
-    isPositiveGrowth,
-  } = calculateEarnings();
   const chartData = generateChartData();
 
   if (loading) {
     return (
       <Stack p="lg" gap="xl">
-        <Stack gap={0}>
-          <Text fz="xl" c="black" fw={600}>
-            Earnings & Payouts
-          </Text>
-          <Text fz="12px">Track your earnings and manage withdrawals</Text>
-        </Stack>
-        <SimpleGrid cols={3} spacing="xxl">
-          {[...Array(3)].map((_, i) => (
-            <Card key={i} radius="md" p="xl">
-              <Skeleton height={100} />
-            </Card>
-          ))}
-        </SimpleGrid>
-        <Card radius="md" p="xl">
-          <Skeleton height={300} />
-        </Card>
-        <Card radius="md" p="xl">
-          <Skeleton height={200} />
-        </Card>
+        {[...Array(3)].map((_, i) => (
+          <Card key={i} radius="md" p="xl">
+            <Skeleton height={100} />
+          </Card>
+        ))}
       </Stack>
     );
   }
 
+  // Handler called when WithdrawPaymentModal reports a completed withdrawal (amount)
+  const handleWithdrawComplete = (amount: number) => {
+    // add the withdrawn amount to localWithdrawnTotal so UI immediately reflects deduction
+    setLocalWithdrawnTotal((prev) => prev + amount);
+  };
+
   return (
     <>
       <Stack p="lg" gap="xl">
-        <Stack gap={0}>
-          <Text fz="xl" c="black" fw={600}>
-            Earnings & Payouts
-          </Text>
-          <Text fz="12px">Track your earnings and manage withdrawals</Text>
-        </Stack>
+        <Text fz="xl" fw={600}>
+          Earnings & Payouts
+        </Text>
 
         <SimpleGrid cols={3} spacing="xxl">
-          {/* 🔹 Available Balance Card */}
-          <Card
-            radius="md"
-            p="xl"
-            style={{ filter: "drop-shadow(1px 1px 2px #8e8e8e77)" }}
-          >
+          <Card radius="md" p="xl">
             <Stack gap="lg">
               <Flex align="center" gap="md">
                 <Center
@@ -207,31 +160,25 @@ export default function EarningAndPayoutSection() {
                   <Text fz="xs" fw={500}>
                     Available Balance
                   </Text>
-                  <Text fz="xl" c="black" fw={600}>
-                    Pkr {availableBalance.toLocaleString()}
+                  <Text fz="xl" fw={600}>
+                    Pkr {displayedAvailable.toLocaleString()}
                   </Text>
                 </Stack>
               </Flex>
               <Button
                 size="md"
                 fw={500}
-                fz="sm"
                 onClick={() => setOpenMainModal(true)}
-                disabled={availableBalance === 0}
+                disabled={displayedAvailable === 0}
               >
-                {availableBalance === 0
+                {displayedAvailable === 0
                   ? "No Funds Available"
                   : "Withdraw Funds"}
               </Button>
             </Stack>
           </Card>
 
-          {/* 🔹 This Month Earnings Card */}
-          <Card
-            radius="md"
-            p="xl"
-            style={{ filter: "drop-shadow(1px 1px 2px #8e8e8e77)" }}
-          >
+          <Card radius="md" p="xl">
             <Stack gap="lg">
               <Flex align="center" gap="md">
                 <Center
@@ -246,30 +193,19 @@ export default function EarningAndPayoutSection() {
                   <Text fz="xs" fw={500}>
                     This Month
                   </Text>
-                  <Text fz="xl" c="black" fw={600}>
+                  <Text fz="xl" fw={600}>
                     Rs {currentMonthEarnings.toLocaleString()}
                   </Text>
                 </Stack>
               </Flex>
-              <Text fz="xs" c={isPositiveGrowth ? "green" : "red"} fw={500}>
-                {isPositiveGrowth ? "+" : ""}
-                {growthPercentage}% from last month
-              </Text>
             </Stack>
           </Card>
         </SimpleGrid>
 
-        {/* 🔹 Monthly Earnings Chart */}
-        <Card
-          radius="md"
-          p="xl"
-          style={{ filter: "drop-shadow(1px 1px 2px #8e8e8e77)" }}
-        >
+        <Card radius="md" p="xl">
           <Stack gap="xl">
             <Group justify="space-between">
-              <Text c="black" fw={500} fz="md">
-                Monthly Earnings
-              </Text>
+              <Text fw={500}>Monthly Earnings</Text>
               <Button
                 variant="transparent"
                 color="blue.5"
@@ -281,7 +217,6 @@ export default function EarningAndPayoutSection() {
               </Button>
             </Group>
             <BarChart
-              className="root"
               h="20rem"
               data={chartData}
               dataKey="month"
@@ -295,7 +230,9 @@ export default function EarningAndPayoutSection() {
       <WithdrawPaymentModal
         openModal={openMainModal}
         onClose={() => setOpenMainModal(false)}
-        availableBalance={availableBalance}
+        availableBalance={displayedAvailable}
+        // pass the raw withdrawn amount back to parent
+        onWithdrawComplete={(amount) => handleWithdrawComplete(amount)}
       />
     </>
   );

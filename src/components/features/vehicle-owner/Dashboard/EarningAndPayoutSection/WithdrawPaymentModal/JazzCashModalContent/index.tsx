@@ -12,26 +12,33 @@ import {
   Group,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IconWallet } from "@tabler/icons-react";
 
 interface JazzCashModalContentProps {
   onClose: () => void;
   onBack: () => void;
   availableBalance: number;
+  onWithdrawSuccess: (amount: number) => void;
 }
 
 export default function JazzCashModalContent({
   onClose,
   onBack,
   availableBalance,
+  onWithdrawSuccess,
 }: JazzCashModalContentProps) {
   const [jazzcashNumber, setJazzcashNumber] = useState<string>("");
   const [withdrawalAmount, setWithdrawalAmount] = useState<number>(
     availableBalance > 0 ? Math.min(availableBalance, 50000) : 0
   );
 
-  // 🔹 Handle amount change
+  useEffect(() => {
+    setWithdrawalAmount(
+      availableBalance > 0 ? Math.min(availableBalance, 50000) : 0
+    );
+  }, [availableBalance]);
+
   const handleAmountChange = (value: string | number) => {
     const numValue =
       typeof value === "string" ? (value === "" ? 0 : Number(value)) : value;
@@ -54,7 +61,6 @@ export default function JazzCashModalContent({
         <Text fz="xs">Please provide your JazzCash details</Text>
       </Stack>
 
-      {/* 🔹 Available Balance - Your Design Style */}
       <Box bg="#ff00001c" p="lg" style={{ borderRadius: "20px" }}>
         <Flex align="center" gap="md">
           <Center h={40} w={40} bg="red.0" style={{ borderRadius: "10px" }}>
@@ -76,7 +82,6 @@ export default function JazzCashModalContent({
         </Flex>
       </Box>
 
-      {/* 🔹 Withdrawal Amount */}
       <Stack gap={0}>
         <NumberInput
           size="md"
@@ -96,14 +101,6 @@ export default function JazzCashModalContent({
               ? "Minimum withdrawal is Rs. 500"
               : null
           }
-          styles={{
-            label: {
-              fontSize: "14px",
-            },
-            input: {
-              fontSize: "14px",
-            },
-          }}
         />
         <Text fz="12px" c="dimmed">
           Maximum: PKR {availableBalance.toLocaleString()} • Minimum: PKR 500
@@ -117,23 +114,14 @@ export default function JazzCashModalContent({
         label="JazzCash Number"
         placeholder="03XXXXXXXXX"
         value={jazzcashNumber}
-        onChange={(event) => setJazzcashNumber(event.currentTarget.value)}
+        onChange={(e) => setJazzcashNumber(e.currentTarget.value)}
         error={
           jazzcashNumber && jazzcashNumber.length !== 11
             ? "JazzCash number must be 11 digits"
             : null
         }
-        styles={{
-          label: {
-            fontSize: "14px",
-          },
-          input: {
-            fontSize: "14px",
-          },
-        }}
       />
 
-      {/* 🔹 Transaction Summary - Your Design Style */}
       {withdrawalAmount > 0 && (
         <Box p="lg" bg="#FFFBEB" style={{ borderRadius: "20px" }}>
           <Stack gap="xs">
@@ -175,55 +163,24 @@ export default function JazzCashModalContent({
         </Box>
       )}
 
-      {availableBalance === 0 && (
-        <Box p="md" bg="yellow.0" style={{ borderRadius: "10px" }}>
-          <Text fz="xs" c="orange" ta="center">
-            You need available balance to withdraw funds. Complete more rides to
-            earn money.
-          </Text>
-        </Box>
-      )}
-
       <Divider />
 
       <Flex gap="md">
-        <Button
-          fullWidth
-          size="md"
-          fw={500}
-          variant="outline"
-          color="black"
-          onClick={onBack}
-        >
+        <Button fullWidth variant="outline" onClick={onBack}>
           Back
         </Button>
         <Button
           fullWidth
-          size="md"
-          fw={500}
           disabled={!canSubmit || availableBalance === 0}
           onClick={() => {
             if (canSubmit) {
-              console.log("JazzCash Withdrawal:", {
-                number: jazzcashNumber,
-                amount: withdrawalAmount,
-                fee: withdrawalFee,
-                netAmount: netAmount,
-              });
-
               notifications.show({
                 title: "Withdrawal Request Submitted",
                 message: `Rs. ${netAmount.toLocaleString()} will be transferred to your JazzCash account within 2-5 minutes.`,
                 color: "green",
               });
+              onWithdrawSuccess(withdrawalAmount);
               onClose();
-            } else {
-              notifications.show({
-                title: "Invalid Details",
-                message:
-                  "Please check your JazzCash number and withdrawal amount",
-                color: "red",
-              });
             }
           }}
         >
