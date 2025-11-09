@@ -42,7 +42,7 @@ export default function BookingManagementSection() {
         })
       );
 
-      setBookings(bookingsWithRenter);
+      setBookings(bookingsWithRenter as BookingModel[]);
       setLoading(false);
     };
 
@@ -69,12 +69,14 @@ export default function BookingManagementSection() {
   };
 
   const handleBookingApprove = async (bookingId: string) => {
-    const booking = bookings.find((b) => b.id === bookingId);
+    const booking = bookings.find((b) => b.bookingId === bookingId);
     if (!booking?.vehicleId || !booking?.renterId) return;
 
     // 🔹 Local UI update
     setBookings((prev) =>
-      prev.map((b) => (b.id === bookingId ? { ...b, status: "confirmed" } : b))
+      prev.map((b) =>
+        b.bookingId === bookingId ? { ...b, status: "confirmed" } : b
+      )
     );
 
     await updateVehicleStatus(booking.vehicleId, "booked");
@@ -109,14 +111,14 @@ export default function BookingManagementSection() {
   const handleBookingDecline = async (bookingId: string) => {
     console.log("Booking ID in Decline Handler:", bookingId);
 
-    const booking = bookings.find((b) => b.id === bookingId);
+    const booking = bookings.find((b) => b.bookingId === bookingId);
     if (!booking?.vehicleId) return;
 
     try {
       // 🔹 Local UI update (status: cancelled)
       setBookings((prev) =>
         prev.map((b) =>
-          b.id === bookingId ? { ...b, status: "cancelled" } : b
+          b.bookingId === bookingId ? { ...b, status: "cancelled" } : b
         )
       );
 

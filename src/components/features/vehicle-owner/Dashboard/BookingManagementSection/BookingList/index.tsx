@@ -1,3 +1,4 @@
+// BookingList component - users prop remove karo
 import { BookingModel } from "@/features/booking/models/booking.model";
 import BookingRequestCard from "../BookingRequestCard";
 
@@ -25,14 +26,14 @@ export default function BookingList({
       {filtered.map((booking, i) => (
         <BookingRequestCard
           key={i}
-          renterName={booking.renter?.fullName ?? ""}
+          renterName={booking.renter?.fullName ?? ""} // ✅ Directly use booking.renter
           vehicleName={booking.vehicleName ?? ""}
           pickUpDate={booking.pickUpDate ?? ""}
           returnDate={booking.returnDate ?? ""}
           city={booking.renter?.city ?? ""}
           phoneNumber={booking.renter?.phoneNumber ?? ""}
           status={booking.status}
-          bookingId={booking.id!}
+          bookingId={booking.bookingId!} // Use bookingId instead of id
           totalPrice={booking.totalPrice}
           duration={booking.duration}
           onApprove={onApprove}
