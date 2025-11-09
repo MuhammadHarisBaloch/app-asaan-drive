@@ -59,8 +59,7 @@ function SignupPage() {
       userType: values.userType,
       city: values.city,
       phoneNumber: values.number,
-      // createdAt removed here because createUserDocument will set serverTimestamp()
-      // you can also pass joined if you want a specific fallback
+      availableBalance: 0,
     });
 
     console.log("created user doc:", createResult?.data);
