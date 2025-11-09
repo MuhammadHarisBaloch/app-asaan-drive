@@ -10,7 +10,7 @@ export interface BookingModel {
   vehiclePhotos: string[];
   vehicleType?: string;
   rentalType: string;
-  renter?: UserModel;
+  renter?: UserModel | null;
   platformFee: number;
   totalPrice: number;
   status: "pending" | "confirmed" | "active" | "completed" | "cancelled";
