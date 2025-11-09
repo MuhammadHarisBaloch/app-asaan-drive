@@ -5,6 +5,7 @@ import ManageBookings from "@/components/features/admin/ManageBookings";
 import ManageUsersSection from "@/components/features/admin/ManageUsers";
 import ManageVehiclesSection from "@/components/features/admin/ManageVehicles";
 import SideBar from "@/components/features/SideBar/inde";
+import { autoUpdateBookingStatus } from "@/utils/updateBookingStatus";
 import { Grid, GridCol } from "@mantine/core";
 import {
   IconLayoutDashboard,
@@ -17,7 +18,7 @@ import {
   IconUsers,
   IconFileCheck,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const data = [
   { label: "Dashboard", icon: IconLayoutDashboard },
@@ -33,6 +34,26 @@ const data = [
 
 export default function Admin() {
   const [active, setActive] = useState("Dashboard");
+
+  useEffect(() => {
+    const updateBookingStatus = async () => {
+      try {
+        console.log("🔄 Auto update function triggered...");
+        await autoUpdateBookingStatus();
+      } catch (error) {
+        console.error("❌ Failed to auto-update booking status:", error);
+      }
+    };
+
+    // Run immediately when component mounts
+    updateBookingStatus();
+
+    // Set up interval to run every 5 minutes
+    const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Grid px="sm">

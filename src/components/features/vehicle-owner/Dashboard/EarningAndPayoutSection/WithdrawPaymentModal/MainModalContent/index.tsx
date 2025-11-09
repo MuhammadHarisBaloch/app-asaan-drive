@@ -47,7 +47,7 @@ export default function MainModalContent({
 
   return (
     <Stack px="md" pt="xl" pb="sm" gap="xl">
-      <Text fz="md" fw={500} ta="center">
+      <Text fz="md" fw={500} ta="center" c="black">
         Select Withdrawal Method
       </Text>
 
@@ -57,7 +57,7 @@ export default function MainModalContent({
             <Button
               key={method}
               variant={selectedMethod === method ? "filled" : "outline"}
-              color={selectedMethod === method ? "red" : "gray"}
+              color={selectedMethod === method ? "red.4" : "gray"}
               fullWidth
               onClick={() => setSelectedMethod(method)}
             >

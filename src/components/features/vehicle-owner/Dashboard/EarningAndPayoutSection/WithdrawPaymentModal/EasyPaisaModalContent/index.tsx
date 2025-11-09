@@ -166,11 +166,12 @@ export default function easyPaisaModalContent({
       <Divider />
 
       <Flex gap="md">
-        <Button fullWidth variant="outline" onClick={onBack}>
+        <Button fullWidth fz="xs" variant="outline" onClick={onBack}>
           Back
         </Button>
         <Button
           fullWidth
+          fz="xs"
           disabled={!canSubmit || availableBalance === 0}
           onClick={() => {
             if (canSubmit) {

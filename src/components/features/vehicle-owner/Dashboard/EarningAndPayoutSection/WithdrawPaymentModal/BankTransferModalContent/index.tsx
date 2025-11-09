@@ -60,7 +60,7 @@ export default function BankTransferModalContent({
           label="Amount"
           value={form.values.amount}
           disabled
-          leftSection={<Text>Pkr</Text>}
+          leftSection={<Text fz="xs">Pkr</Text>}
         />
         <TextInput label="Bank Name" {...form.getInputProps("bankName")} />
         <TextInput
@@ -76,10 +76,10 @@ export default function BankTransferModalContent({
         <Divider />
 
         <Flex gap="md">
-          <Button fullWidth variant="outline" onClick={onBack}>
+          <Button fullWidth fz="xs" variant="outline" onClick={onBack}>
             Back
           </Button>
-          <Button fullWidth type="submit">
+          <Button fullWidth fz="xs" type="submit">
             Confirm Withdrawal
           </Button>
         </Flex>

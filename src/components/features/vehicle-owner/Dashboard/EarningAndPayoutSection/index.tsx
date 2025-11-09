@@ -194,12 +194,16 @@ export default function EarningAndPayoutSection() {
   return (
     <>
       <Stack p="lg" gap="xl">
-        <Text fz="xl" fw={600}>
+        <Text fz="xl" fw={600} c="black">
           Earnings & Payouts
         </Text>
 
         <SimpleGrid cols={3} spacing="xxl">
-          <Card radius="md" p="xl">
+          <Card
+            radius="md"
+            p="xl"
+            style={{ filter: "drop-shadow(1px 1px 2px #38383856)" }}
+          >
             <Stack gap="lg">
               <Flex align="center" gap="md">
                 <Center
@@ -211,10 +215,10 @@ export default function EarningAndPayoutSection() {
                   <IconCurrencyDollar size={25} color="red" />
                 </Center>
                 <Stack gap={0}>
-                  <Text fz="xs" fw={500}>
+                  <Text fz="xs" fw={500} c="black">
                     Available Balance
                   </Text>
-                  <Text fz="xl" fw={600}>
+                  <Text fz="xl" fw={600} c="black">
                     Pkr {availableBalance.toLocaleString()}
                   </Text>
                 </Stack>
@@ -232,7 +236,11 @@ export default function EarningAndPayoutSection() {
             </Stack>
           </Card>
 
-          <Card radius="md" p="xl">
+          <Card
+            radius="md"
+            p="xl"
+            style={{ filter: "drop-shadow(1px 1px 2px #38383856)" }}
+          >
             <Stack gap="lg">
               <Flex align="center" gap="md">
                 <Center
@@ -244,10 +252,10 @@ export default function EarningAndPayoutSection() {
                   <IconTrendingUp size={25} color="green" />
                 </Center>
                 <Stack gap={0}>
-                  <Text fz="xs" fw={500}>
+                  <Text fz="xs" fw={500} c="black">
                     This Month
                   </Text>
-                  <Text fz="xl" fw={600}>
+                  <Text fz="xl" fw={600} c="black">
                     Rs {currentMonthEarnings.toLocaleString()}
                   </Text>
                 </Stack>
@@ -255,7 +263,11 @@ export default function EarningAndPayoutSection() {
             </Stack>
           </Card>
 
-          <Card radius="md" p="xl">
+          <Card
+            radius="md"
+            p="xl"
+            style={{ filter: "drop-shadow(1px 1px 2px #38383856)" }}
+          >
             <Stack gap="lg">
               <Flex align="center" gap="md">
                 <Center
@@ -267,10 +279,10 @@ export default function EarningAndPayoutSection() {
                   <IconCurrencyDollar size={25} color="blue" />
                 </Center>
                 <Stack gap={0}>
-                  <Text fz="xs" fw={500}>
+                  <Text fz="xs" fw={500} c="black">
                     Total Earnings
                   </Text>
-                  <Text fz="xl" fw={600}>
+                  <Text fz="xl" fw={600} c="black">
                     Rs {totalEarnings.toLocaleString()}
                   </Text>
                 </Stack>
@@ -282,7 +294,9 @@ export default function EarningAndPayoutSection() {
         <Card radius="md" p="xl">
           <Stack gap="xl">
             <Group justify="space-between">
-              <Text fw={500}>Monthly Earnings</Text>
+              <Text fw={500} c="black">
+                Monthly Earnings
+              </Text>
               <Button
                 variant="transparent"
                 color="blue.5"

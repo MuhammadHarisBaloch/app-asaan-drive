@@ -29,9 +29,25 @@ const data = [
 export default function VehiclesOwnerPage() {
   const [active, setActive] = useState("Dashboard");
 
-  useEffect(() => {
-    autoUpdateBookingStatus();
-  }, []);
+   useEffect(() => {
+     const updateBookingStatus = async () => {
+       try {
+         console.log("🔄 Auto update function triggered...");
+         await autoUpdateBookingStatus();
+       } catch (error) {
+         console.error("❌ Failed to auto-update booking status:", error);
+       }
+     };
+
+     // Run immediately when component mounts
+     updateBookingStatus();
+
+     // Set up interval to run every 5 minutes
+     const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
+
+     // Cleanup interval on component unmount
+     return () => clearInterval(interval);
+   }, []);
 
   return (
     <Grid px="sm">
