@@ -9,6 +9,8 @@ interface RecentActivityCardProps {
   subTitle: string;
   status: string;
 }
+let color: string;
+let bgColor: string;
 export default function RecentActivityCard({
   icon,
   iconBgColor,
@@ -16,12 +18,9 @@ export default function RecentActivityCard({
   status,
   subTitle,
 }: RecentActivityCardProps) {
-  let color: string;
-  let bgColor: string;
-
   switch (status) {
     case "pending":
-      color = "orange.5";
+      color = "orange.2";
       bgColor = "orange.0";
       break;
     case "success":
