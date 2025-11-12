@@ -34,7 +34,7 @@ export default function BookingList({
           phoneNumber={booking.renter?.phoneNumber ?? ""}
           status={booking.status}
           bookingId={booking.bookingId!} // Use bookingId instead of id
-          totalPrice={booking.totalPrice}
+          totalPrice={booking.totalPrice - booking.platformFee}
           duration={booking.duration}
           onApprove={onApprove}
           onDecline={onDecline}

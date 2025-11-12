@@ -49,8 +49,35 @@ export default function BookingManagementSection() {
     fetchData();
   }, []);
 
-  // helper function to update vehicle status in Firestore
+  // Dynamic notification counts for each tab
+  const getNotificationCounts = () => {
+    const upcomingCount = bookings.filter((booking) =>
+      ["pending", "confirmed"].includes(booking.status)
+    ).length;
 
+    const ongoingCount = bookings.filter(
+      (booking) => booking.status === "active"
+    ).length;
+
+    const completedCount = bookings.filter(
+      (booking) => booking.status === "completed"
+    ).length;
+
+    const cancelledCount = bookings.filter(
+      (booking) => booking.status === "cancelled"
+    ).length;
+
+    return {
+      Upcoming: upcomingCount,
+      Ongoing: ongoingCount,
+      Completed: completedCount,
+      Cancelled: cancelledCount,
+    };
+  };
+
+  const notificationCounts = getNotificationCounts();
+
+  // helper function to update vehicle status in Firestore
   const updateVehicleStatus = async (
     vehicleId: string,
     status: "available" | "booked"
@@ -153,6 +180,7 @@ export default function BookingManagementSection() {
       </Group>
     );
   }
+
   return (
     <Stack p="lg" gap="xl">
       <Stack gap={0}>
@@ -170,14 +198,27 @@ export default function BookingManagementSection() {
           <Tabs.List grow className="list">
             {data.vehicleOwner.dashboard.BookingManagement.tabList.map(
               (data, index) => {
+                const count =
+                  notificationCounts[
+                    data.value as keyof typeof notificationCounts
+                  ] || 0;
+
                 return (
                   <Tabs.Tab key={index} value={data.value} className="tab">
                     <Flex align="center" justify="center" gap="sm">
                       {data.icon}
                       {data.value}
-                      <Badge size="lg" fw={500} color="gray.1" c="gray" circle>
-                        {data.notificationValue}
-                      </Badge>
+                      {count > 0 && (
+                        <Badge
+                          size="lg"
+                          fw={500}
+                          color="gray.1"
+                          c="gray"
+                          circle
+                        >
+                          {count}
+                        </Badge>
+                      )}
                     </Flex>
                   </Tabs.Tab>
                 );
