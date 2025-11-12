@@ -5,6 +5,7 @@ import ManageBookings from "@/components/features/admin/ManageBookings";
 import ManageUsersSection from "@/components/features/admin/ManageUsers";
 import ManageVehiclesSection from "@/components/features/admin/ManageVehicles";
 import PaymentsEarningsSection from "@/components/features/admin/PaymentsEarningsSection";
+import ReportsDashboardSection from "@/components/features/admin/ReportsDashboardSection";
 import SideBar from "@/components/features/SideBar/inde";
 import { autoUpdateBookingStatus } from "@/utils/updateBookingStatus";
 import { Grid, GridCol } from "@mantine/core";
@@ -28,7 +29,6 @@ const data = [
   { label: "Manage Bookings", icon: IconCalendarMonth },
   { label: "Documents Verification", icon: IconFileCheck },
   { label: "Payment & Earnings", icon: IconBrandCashapp },
-  { label: "City Management", icon: IconMapPin },
   { label: "Report & Analysis", icon: IconChartBar },
   { label: "Settings", icon: IconSettings },
 ];
@@ -73,8 +73,7 @@ export default function Admin() {
         {active === "Manage Bookings" && <ManageBookings />}
         {active === "Documents Verification" && <AdminDocumentVerification />}
         {active === "Payment & Earnings" && <PaymentsEarningsSection />}
-        {active === "City Management" && <p>City Management</p>}
-        {active === "Report & Analysis" && <p>Report & Analysis</p>}
+        {active === "Report & Analysis" && <ReportsDashboardSection />}
         {active === "Settings" && <p>Settings</p>}
       </GridCol>
     </Grid>

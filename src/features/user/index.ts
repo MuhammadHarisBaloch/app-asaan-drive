@@ -4,6 +4,7 @@ import {
   DocumentData,
   DocumentReference,
   getDoc,
+  getDocs,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -52,7 +53,6 @@ export async function createUserDocument(user: UserModel): Promise<{
   }
 }
 
-
 export async function getUserDocument(
   userID?: string
 ): Promise<UserModel | null> {
@@ -77,5 +77,28 @@ export async function updateUserDocumentField(
     await updateDoc(docRef, data);
   } catch (error) {
     console.error("Error updating user document:", error);
+  }
+}
+
+// NEW: Get All Users function
+export async function getAllUsers(): Promise<UserModel[]> {
+  try {
+    const querySnapshot = await getDocs(
+      collection(db, firebaseConstants.collections.users)
+    );
+
+    const users = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as UserModel)
+    );
+
+    console.log("All Users:", users.length);
+    return users;
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    return [];
   }
 }
