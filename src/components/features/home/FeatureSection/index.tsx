@@ -7,10 +7,11 @@ export default function HomeFeatureSection() {
     <Stack
       align="center"
       justify="center"
+      py="xl"
       px="xl"
       gap="md"
       w="100%"
-      h="calc(100dvh - 60px)"
+      h="100%"
     >
       <Text fz="xl" c="red.4" fw={500}>
         Features

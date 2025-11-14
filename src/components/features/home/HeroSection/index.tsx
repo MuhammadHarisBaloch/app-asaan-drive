@@ -14,7 +14,7 @@ import Images from "../../../../constants/Images";
 
 function HomeHeroSection() {
   return (
-    <Grid px="lg" h="calc(100dvh - 80px)">
+    <Grid px="lg" h="100%">
       <GridCol span={6}>
         <Stack mt="3xl" w="100%" h="100%" pt="3rem" gap="xxl">
           <Box>
