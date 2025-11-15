@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileAndSettingSection from "@/components/features/ProfileAndSettingSection";
 import DashboardSection from "@/components/features/renters/dashboard";
 import BookingsSection from "@/components/features/renters/dashboard/Bookings";
@@ -16,6 +16,8 @@ import {
   IconUser,
   IconMapPin,
 } from "@tabler/icons-react";
+import { useSearchParams } from "next/navigation";
+import { autoUpdateBookingStatus } from "@/utils/updateBookingStatus";
 
 const data = [
   { label: "Dashboard", icon: IconLayoutDashboard },
@@ -28,6 +30,41 @@ const data = [
 
 export default function RenterPage() {
   const [active, setActive] = useState("Dashboard");
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Check if there's a tab query parameter
+    const tab = searchParams.get("tab");
+    if (tab === "Documents") {
+      setActive("Profile");
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const updateBookingStatus = async () => {
+      try {
+        console.log("Auto update function triggered...");
+        await autoUpdateBookingStatus();
+      } catch (error) {
+        console.error("Failed to auto-update booking status:", error);
+      }
+    };
+
+    // Run immediately when component mounts
+    updateBookingStatus();
+
+    // Set up interval to run every 5 minutes
+    const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  // Determine default tab for Profile & Settings
+  const getDefaultTab = () => {
+    const tab = searchParams.get("tab");
+    return tab === "Documents" ? "Documents" : undefined;
+  };
 
   return (
     <>
@@ -46,7 +83,9 @@ export default function RenterPage() {
           {active === "Track My Ride" && <TrackingSection />}
           {active === "Payments" && <Payments />}
           {active === "Notifications" && <Notifications />}
-          {active === "Profile" && <ProfileAndSettingSection />}
+          {active === "Profile" && (
+            <ProfileAndSettingSection defaultTab={getDefaultTab()} />
+          )}
         </GridCol>
       </Grid>
     </>

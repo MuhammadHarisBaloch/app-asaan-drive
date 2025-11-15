@@ -6,6 +6,7 @@ import ManageUsersSection from "@/components/features/admin/ManageUsers";
 import ManageVehiclesSection from "@/components/features/admin/ManageVehicles";
 import PaymentsEarningsSection from "@/components/features/admin/PaymentsEarningsSection";
 import ReportsDashboardSection from "@/components/features/admin/ReportsDashboardSection";
+import AdminSettingsSection from "@/components/features/admin/SettingSection";
 import SideBar from "@/components/features/SideBar/inde";
 import { autoUpdateBookingStatus } from "@/utils/updateBookingStatus";
 import { Grid, GridCol } from "@mantine/core";
@@ -74,7 +75,7 @@ export default function Admin() {
         {active === "Documents Verification" && <AdminDocumentVerification />}
         {active === "Payment & Earnings" && <PaymentsEarningsSection />}
         {active === "Report & Analysis" && <ReportsDashboardSection />}
-        {active === "Settings" && <p>Settings</p>}
+        {active === "Settings" && <AdminSettingsSection />}
       </GridCol>
     </Grid>
   );

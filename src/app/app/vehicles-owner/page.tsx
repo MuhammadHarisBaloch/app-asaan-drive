@@ -15,6 +15,7 @@ import {
   IconBell,
   IconUser,
 } from "@tabler/icons-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const data = [
@@ -28,26 +29,41 @@ const data = [
 
 export default function VehiclesOwnerPage() {
   const [active, setActive] = useState("Dashboard");
+  const searchParams = useSearchParams();
 
-   useEffect(() => {
-     const updateBookingStatus = async () => {
-       try {
-         console.log("🔄 Auto update function triggered...");
-         await autoUpdateBookingStatus();
-       } catch (error) {
-         console.error("❌ Failed to auto-update booking status:", error);
-       }
-     };
+  useEffect(() => {
+    // Check if there's a tab query parameter
+    const tab = searchParams.get("tab");
+    if (tab === "Documents") {
+      setActive("Profile & Settings");
+    }
+  }, [searchParams]);
 
-     // Run immediately when component mounts
-     updateBookingStatus();
+  useEffect(() => {
+    const updateBookingStatus = async () => {
+      try {
+        console.log("Auto update function triggered...");
+        await autoUpdateBookingStatus();
+      } catch (error) {
+        console.error("Failed to auto-update booking status:", error);
+      }
+    };
 
-     // Set up interval to run every 5 minutes
-     const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
+    // Run immediately when component mounts
+    updateBookingStatus();
 
-     // Cleanup interval on component unmount
-     return () => clearInterval(interval);
-   }, []);
+    // Set up interval to run every 5 minutes
+    const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  // Determine default tab for Profile & Settings
+  const getDefaultTab = () => {
+    const tab = searchParams.get("tab");
+    return tab === "Documents" ? "Documents" : undefined;
+  };
 
   return (
     <Grid px="sm">
@@ -65,7 +81,9 @@ export default function VehiclesOwnerPage() {
         {active === "Booking Management" && <BookingManagementSection />}
         {active === "Earning & Payouts" && <EarningAndPayoutSection />}
         {active === "Notifications" && <NotificationSection />}
-        {active === "Profile & Settings" && <ProfileAndSettingSection />}
+        {active === "Profile & Settings" && (
+          <ProfileAndSettingSection defaultTab={getDefaultTab()} />
+        )}
       </GridCol>
     </Grid>
   );

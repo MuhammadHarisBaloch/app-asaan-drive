@@ -25,7 +25,7 @@ export default function VerificationOverlay({
 
   const handleRedirect = () => {
     // Redirect to profile page for document upload
-    router.push(`/app/${userData.userType}`);
+    router.push(`/app/${userData.userType}?tab=Documents`);
   };
 
   const getStatusDetails = () => {

@@ -1,12 +1,23 @@
 import { Card, Divider, Flex, Stack, Tabs, Text } from "@mantine/core";
 import { IconFile, IconLock, IconUser } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PersonalInfoContent from "./PersonalInfoContent";
 import SettingContent from "./SettingContent";
 import DocumentContent from "./DocumentContent";
 
-export default function ProfileAndSettingSection() {
+interface ProfileAndSettingSectionProps {
+  defaultTab?: string;
+}
+export default function ProfileAndSettingSection({
+  defaultTab,
+}: ProfileAndSettingSectionProps) {
   const [value, setValue] = useState<string | null>("Personal Info");
+
+  useEffect(() => {
+    if (defaultTab) {
+      setValue(defaultTab);
+    }
+  }, [defaultTab]);
 
   return (
     <Stack p="lg" gap="xl">

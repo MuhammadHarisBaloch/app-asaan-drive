@@ -4,7 +4,6 @@ import {
   Flex,
   Grid,
   GridCol,
-  SimpleGrid,
   Stack,
   Text,
   Title,
@@ -16,7 +15,7 @@ function HomeHeroSection() {
   return (
     <Grid px="lg" h="100%">
       <GridCol span={6}>
-        <Stack mt="3xl" w="100%" h="100%" pt="3rem" gap="xxl">
+        <Stack mt="3xl" w="100%" h="100%" pt="xs" gap="xxl">
           <Box>
             <Title order={1} lh={1}>
               Rent a Vehicle with

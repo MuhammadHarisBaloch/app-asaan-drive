@@ -7,7 +7,8 @@ export default function HomeFeatureSection() {
     <Stack
       align="center"
       justify="center"
-      py="xl"
+      pb="xl"
+      pt="3rem"
       px="xl"
       gap="md"
       w="100%"
