@@ -6,15 +6,21 @@ import { modals } from "@mantine/modals";
 import { IconUpload } from "@tabler/icons-react";
 import { useState } from "react";
 import { getAuth } from "firebase/auth";
-import StorageService from "@/features/storage"; // adjust path if different
+import StorageService from "@/features/storage";
 import { handleUserDocumentUpload } from "@/features/document";
 import { notifications } from "@mantine/notifications";
-import { doc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  setDoc,
+  collection,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "@/networking/firebase";
 import { DocumentModel } from "@/features/document/models";
 
 interface ReUploadDocModalProps {
-  documentType: string; // e.g., "CNIC-Front" or "License"
+  documentType: string;
   preselectedFile?: FileWithPath | null;
   existingDoc?: DocumentModel;
 }
@@ -24,7 +30,6 @@ export default function ReUploadDocModal({
   preselectedFile = null,
   existingDoc,
 }: ReUploadDocModalProps) {
-  // open modal
   return modals.open({
     title: (
       <Text fz="md" fw={600} c="black" px="lg">
@@ -35,6 +40,7 @@ export default function ReUploadDocModal({
       <ModalInner
         documentType={documentType}
         initialFile={preselectedFile ?? null}
+        existingDoc={existingDoc}
       />
     ),
   });
@@ -43,12 +49,32 @@ export default function ReUploadDocModal({
 function ModalInner({
   documentType,
   initialFile,
+  existingDoc,
 }: {
   documentType: string;
   initialFile: FileWithPath | null;
+  existingDoc?: DocumentModel;
 }) {
   const [file, setFile] = useState<FileWithPath | null>(initialFile);
   const [loading, setLoading] = useState(false);
+
+  // Map documentType to the correct field name in user.documents object
+  const getDocumentFieldName = (docType: string): string => {
+    switch (docType) {
+      case "CNIC-Front":
+        return "cnicFront";
+      case "CNIC-Back":
+        return "cnicBack";
+      case "License-Front":
+        return "licenseFront";
+      case "License-Back":
+        return "licenseBack";
+      case "License":
+        return "licenseFront";
+      default:
+        return docType.toLowerCase();
+    }
+  };
 
   const handleUpload = async () => {
     try {
@@ -71,13 +97,36 @@ function ModalInner({
       // 2) Convert to view/download URL
       const fileUrl = await StorageService.shared.downloadFile(fileId);
 
-      // 3) Create a documents record in Firestore
-      await handleUserDocumentUpload(fileUrl, userId, documentType as any);
+      const documentField = getDocumentFieldName(documentType);
 
-      // 4) Update users/{userId} documents map + set status Pending
+      // 3) Create or Update document in separate documents collection
+      if (existingDoc?.id) {
+        // Update existing document
+        await updateDoc(doc(db, "documents", existingDoc.id), {
+          fileUrl: fileUrl,
+          status: "pending",
+          updatedAt: serverTimestamp(),
+        });
+      } else {
+        // Create new document in documents collection
+        const newDocRef = doc(collection(db, "documents"));
+        const documentData = {
+          id: newDocRef.id,
+          userId: userId,
+          documentType: documentType,
+          fileUrl: fileUrl,
+          status: "pending",
+          uploadedAt: serverTimestamp(),
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        };
+        await setDoc(newDocRef, documentData);
+      }
+
+      // 4) Update users/{userId} documents map with correct field names
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
-        [`documents.${documentType}`]: fileUrl,
+        [`documents.${documentField}`]: fileUrl,
         documentStatus: "Pending",
       });
 

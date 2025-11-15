@@ -18,7 +18,6 @@ interface DocumentCardProps {
 export default function DocumentCard({
   documentType,
   status,
-  statusIcon,
   uploadedDate,
   expiresDate,
   docRecord,
@@ -55,7 +54,6 @@ export default function DocumentCard({
             {documentType}
           </Text>
           <Flex align="center" gap="xs">
-            {statusIcon}
             <Badge
               size="sm"
               c={color}

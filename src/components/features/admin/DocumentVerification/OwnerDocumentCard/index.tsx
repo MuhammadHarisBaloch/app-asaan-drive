@@ -16,6 +16,9 @@ import { getAllUsers } from "@/features/document";
 import ViewDetailsModal from "./ViewDetailsModal";
 import { UserModel } from "@/features/user/models/user.model";
 import { getAuth } from "firebase/auth";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "@/networking/firebase";
+import { firebaseConstants } from "@/constants/Firestore";
 
 interface OwnerDocCardProps {
   role: "renter" | "vehicles-owner";
@@ -27,47 +30,65 @@ export default function OwnerDocCard({ role }: OwnerDocCardProps) {
   const [filter, setFilter] = useState("All");
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      setLoading(true);
-      const allUsers = await getAllUsers();
-      if (!mounted) return;
+    const currentAdminId = getAuth().currentUser?.uid;
 
-      const currentAdminId = getAuth().currentUser?.uid;
+    const usersRef = collection(db, firebaseConstants.collections.users);
 
-      // ✅ Filter by role and valid docs
-      const filtered = allUsers.filter((u) => {
-        // skip admin
-        if (u.id === currentAdminId) return false;
+    const unsub = onSnapshot(
+      usersRef,
+      (snapshot) => {
+        try {
+          const allUsers = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          })) as (UserModel & { id: string })[];
 
-        // filter by role
-        if (u.userType !== role) return false;
+          // ✅ Filter by role and valid docs
+          const filtered = allUsers.filter((u) => {
+            // skip admin
+            if (u.id === currentAdminId) return false;
 
-        // must have uploaded docs
-        if (!u.documents || Object.keys(u.documents).length === 0) return false;
+            // filter by role
+            if (u.userType !== role) return false;
 
-        return true;
-      });
+            // must have uploaded docs (documents object exists and has keys)
+            if (!u.documents || Object.keys(u.documents).length === 0)
+              return false;
 
-      // ✅ Sort by status
-      const order: Record<string, number> = {
-        Pending: 1,
-        Verified: 2,
-        Rejected: 3,
-      };
-      const sorted = filtered.sort((a, b) => {
-        const aStatus = (a.documentStatus ?? "Pending") as keyof typeof order;
-        const bStatus = (b.documentStatus ?? "Pending") as keyof typeof order;
-        return order[aStatus] - order[bStatus];
-      });
+            // hide "Not Uploaded" status wale documents
+            if (u.documentStatus === "Not Uploaded") return false;
 
-      setUsers(sorted);
-      setLoading(false);
-    })();
+            return true;
+          });
 
-    return () => {
-      mounted = false;
-    };
+          // ✅ Sort by status
+          const order: Record<string, number> = {
+            Pending: 1,
+            Verified: 2,
+            Rejected: 3,
+          };
+          const sorted = filtered.sort((a, b) => {
+            const aStatus = (a.documentStatus ??
+              "Pending") as keyof typeof order;
+            const bStatus = (b.documentStatus ??
+              "Pending") as keyof typeof order;
+            return order[aStatus] - order[bStatus];
+          });
+
+          setUsers(sorted);
+        } catch (error) {
+          console.error("Error processing users snapshot:", error);
+        } finally {
+          setLoading(false);
+        }
+      },
+      (error) => {
+        console.error("Users snapshot error:", error);
+        setLoading(false);
+      }
+    );
+
+    return () => unsub();
   }, [role]);
 
   if (loading) return <div>Loading...</div>;
