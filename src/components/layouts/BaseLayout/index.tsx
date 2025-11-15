@@ -84,9 +84,7 @@ export default function BaseLayout({ children }: PropsWithChildren) {
         <AppShellHeader withBorder={false}>
           <Paper shadow="md" bg="white.0">
             <Group p="lg" justify="space-between">
-              <Link href="/">
-                <Image src={Images.logos.simple} h={20} w="auto" />
-              </Link>
+              <Image src={Images.logos.simple} h={20} w="auto" />
               <Flex gap="xl">
                 {getHeaderMenu(pathname).map((data, index) => (
                   <UnstyledButton
@@ -107,7 +105,11 @@ export default function BaseLayout({ children }: PropsWithChildren) {
         </AppShellHeader>
         <AppShellMain>{children}</AppShellMain>
       </AppShell>
-      <Footer />
+      {pathname.startsWith("/app/renter") ? null : pathname.startsWith(
+          "/app/vehicles-owner"
+        ) ? null : pathname.startsWith("/app/admin") ? null : (
+        <Footer />
+      )}
     </>
   );
 }
