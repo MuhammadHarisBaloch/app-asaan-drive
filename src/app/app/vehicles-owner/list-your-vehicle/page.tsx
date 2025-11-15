@@ -44,6 +44,25 @@ interface VehicleRegistrationForm {
   monthlyRate: number;
 }
 
+// EXACT vehicle types with correct spelling "Rakshaw"
+const PRICE_RANGES = {
+  Cycle: {
+    daily: { min: 200, max: 400 },
+    weekly: { min: 1400, max: 1600 },
+    monthly: { min: 5000, max: 6000 },
+  },
+  Bike: {
+    daily: { min: 400, max: 600 },
+    weekly: { min: 3000, max: 3500 },
+    monthly: { min: 10000, max: 15000 },
+  },
+  Rakshaw: {
+    daily: { min: 700, max: 900 },
+    weekly: { min: 5000, max: 6500 },
+    monthly: { min: 18000, max: 22000 },
+  },
+};
+
 export default function ListYourVehicle() {
   const [vehiclePhotos, setVehiclePhotos] = useState<FileWithPath[]>([]);
   const [vehicleDocs, setVehicleDocs] = useState<FileWithPath[]>([]);
@@ -53,6 +72,12 @@ export default function ListYourVehicle() {
   const [userLoading, setUserLoading] = useState(true);
   const [showVerificationOverlay, setShowVerificationOverlay] = useState(false);
   const router = useRouter();
+
+  // Helper function to get price range
+  const getPriceRange = (vehicleType: string) => {
+    if (!vehicleType) return null;
+    return PRICE_RANGES[vehicleType as keyof typeof PRICE_RANGES] || null;
+  };
 
   // Fetch user data and check verification status
   useEffect(() => {
@@ -86,6 +111,54 @@ export default function ListYourVehicle() {
 
     fetchUserData();
   }, []);
+
+  const form = useForm<VehicleRegistrationForm>({
+    mode: "controlled",
+    initialValues: {
+      vehicleType: "",
+      vehicleModel: "",
+      vehicleYear: "",
+      licensePlate: "",
+      pickupLocation: "",
+      dailyRate: 0,
+      weeklyRate: 0,
+      monthlyRate: 0,
+    },
+    validate: {
+      vehicleType: isNotEmpty("please select vehicle type"),
+      vehicleModel: isNotEmpty("please enter vehicle model"),
+      vehicleYear: isNotEmpty("please enter vehicle year"),
+      licensePlate: isNotEmpty("please enter license plate"),
+      pickupLocation: isNotEmpty("please enter pickup location"),
+      dailyRate: (value, values) => {
+        if (value <= 0) return "please enter the daily rate";
+
+        const range = getPriceRange(values.vehicleType);
+        if (range && (value < range.daily.min || value > range.daily.max)) {
+          return `Daily rate for ${values.vehicleType} must be between Rs. ${range.daily.min} and Rs. ${range.daily.max}`;
+        }
+        return null;
+      },
+      weeklyRate: (value, values) => {
+        if (value <= 0) return "please enter the weekly rate";
+
+        const range = getPriceRange(values.vehicleType);
+        if (range && (value < range.weekly.min || value > range.weekly.max)) {
+          return `Weekly rate for ${values.vehicleType} must be between Rs. ${range.weekly.min} and Rs. ${range.weekly.max}`;
+        }
+        return null;
+      },
+      monthlyRate: (value, values) => {
+        if (value <= 0) return "please enter the monthly rate";
+
+        const range = getPriceRange(values.vehicleType);
+        if (range && (value < range.monthly.min || value > range.monthly.max)) {
+          return `Monthly rate for ${values.vehicleType} must be between Rs. ${range.monthly.min} and Rs. ${range.monthly.max}`;
+        }
+        return null;
+      },
+    },
+  });
 
   const formSubmitHandler = async (values: VehicleRegistrationForm) => {
     const ownerID = getAuth().currentUser?.uid;
@@ -168,32 +241,6 @@ export default function ListYourVehicle() {
 
     stopLoading();
   };
-
-  const form = useForm<VehicleRegistrationForm>({
-    mode: "uncontrolled",
-    initialValues: {
-      vehicleType: "",
-      vehicleModel: "",
-      vehicleYear: "",
-      licensePlate: "",
-      pickupLocation: "",
-      dailyRate: 0,
-      weeklyRate: 0,
-      monthlyRate: 0,
-    },
-    validate: {
-      vehicleType: isNotEmpty("please select vehicle type"),
-      vehicleModel: isNotEmpty("please enter vehicle model"),
-      vehicleYear: isNotEmpty("please enter vehicle year"),
-      licensePlate: isNotEmpty("please enter license plate"),
-      pickupLocation: isNotEmpty("please enter pickup location"),
-      dailyRate: (value) => (value <= 0 ? "please enter the daily rate" : null),
-      weeklyRate: (value) =>
-        value <= 0 ? "please enter the weekly rate" : null,
-      monthlyRate: (value) =>
-        value <= 0 ? "please enter the monthly rate" : null,
-    },
-  });
 
   // Show loading while checking authentication and user status
   if (userLoading) {
@@ -291,6 +338,12 @@ export default function ListYourVehicle() {
                     min={0}
                     key={form.key("dailyRate")}
                     {...form.getInputProps("dailyRate")}
+                    description={(() => {
+                      const range = getPriceRange(form.values.vehicleType);
+                      return range
+                        ? `Range: Rs. ${range.daily.min} - ${range.daily.max}`
+                        : "Select vehicle type to see range";
+                    })()}
                   />
                   <NumberInput
                     w="100%"
@@ -300,6 +353,12 @@ export default function ListYourVehicle() {
                     min={0}
                     key={form.key("weeklyRate")}
                     {...form.getInputProps("weeklyRate")}
+                    description={(() => {
+                      const range = getPriceRange(form.values.vehicleType);
+                      return range
+                        ? `Range: Rs. ${range.weekly.min} - ${range.weekly.max}`
+                        : "Select vehicle type to see range";
+                    })()}
                   />
                   <NumberInput
                     w="100%"
@@ -309,6 +368,12 @@ export default function ListYourVehicle() {
                     radius="md"
                     key={form.key("monthlyRate")}
                     {...form.getInputProps("monthlyRate")}
+                    description={(() => {
+                      const range = getPriceRange(form.values.vehicleType);
+                      return range
+                        ? `Range: Rs. ${range.monthly.min} - ${range.monthly.max}`
+                        : "Select vehicle type to see range";
+                    })()}
                   />
                 </Flex>
               </Stack>
