@@ -5,7 +5,6 @@ import { IconSearch } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import {
-  listAllVehicleDocs,
   approveVehicle,
   rejectVehicle,
   activateVehicle,
@@ -15,6 +14,9 @@ import {
 import VehicleCard from "./VehicleCard";
 import VehicleDetailsModal from "./VehicleDetailsModal";
 import RejectVehicleModal from "./RejectVehicleModal";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "@/networking/firebase";
+import { firebaseConstants } from "@/constants/Firestore";
 
 export default function ManageVehiclesSection() {
   const [vehicles, setVehicles] = useState<VehicleModel[]>([]);
@@ -34,20 +36,28 @@ export default function ManageVehiclesSection() {
   const [rejectOpen, { open: openReject, close: closeReject }] =
     useDisclosure(false);
 
-  // 🔹 Fetch Vehicles
+  // 🔹 Firestore Snapshot Listener (Simple - jaisa users section mein hai)
   useEffect(() => {
-    async function fetchVehicles() {
-      try {
-        setLoading(true);
-        const data = await listAllVehicleDocs();
-        setVehicles(data);
-      } catch (err) {
-        console.error("Error fetching vehicles:", err);
-      } finally {
+    const vehiclesRef = collection(db, firebaseConstants.collections.vehicles);
+
+    const unsub = onSnapshot(
+      vehiclesRef,
+      (snapshot) => {
+        const vehiclesData = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        })) as VehicleModel[];
+
+        setVehicles(vehiclesData);
+        setLoading(false);
+      },
+      (err) => {
+        console.error("Vehicles snapshot error:", err);
         setLoading(false);
       }
-    }
-    fetchVehicles();
+    );
+
+    return () => unsub();
   }, []);
 
   // 🔹 Filtered Vehicles
@@ -56,15 +66,10 @@ export default function ManageVehiclesSection() {
     const term = search.toLowerCase();
     return vehicles.filter(
       (v) =>
-        v.vehicleModel.toLowerCase().includes(term) ||
+        v.vehicleModel?.toLowerCase().includes(term) ||
         v.ownerName?.toLowerCase().includes(term)
     );
   }, [vehicles, search]);
-
-  // 🔹 Refresh function
-  const refreshList = async () => {
-    setVehicles(await listAllVehicleDocs());
-  };
 
   return (
     <Stack p="lg" gap="xl">
@@ -112,7 +117,7 @@ export default function ManageVehiclesSection() {
         ) : (
           filteredVehicles.map((vehicle, i) => (
             <VehicleCard
-              key={i}
+              key={vehicle.id || i}
               vehicle={vehicle}
               onView={() => {
                 setSelectedVehicle(vehicle);
@@ -120,7 +125,7 @@ export default function ManageVehiclesSection() {
               }}
               onApprove={async () => {
                 await approveVehicle(vehicle.id!);
-                await refreshList();
+                // Auto update ho jayega snapshot listener se
               }}
               onReject={() => {
                 setSelectedVehicleId(vehicle.id!);
@@ -129,11 +134,11 @@ export default function ManageVehiclesSection() {
               }}
               onActivate={async () => {
                 await activateVehicle(vehicle.id!);
-                await refreshList();
+                // Auto update ho jayega snapshot listener se
               }}
               onDeactivate={async () => {
                 await deactivateVehicle(vehicle.id!);
-                await refreshList();
+                // Auto update ho jayega snapshot listener se
               }}
               onDelete={() => {
                 setSelectedVehicleId(vehicle.id!);
@@ -153,7 +158,6 @@ export default function ManageVehiclesSection() {
         onApprove={async () => {
           if (!selectedVehicle?.id) return;
           await approveVehicle(selectedVehicle.id);
-          await refreshList();
           closeView();
         }}
         onReject={() => {
@@ -166,13 +170,11 @@ export default function ManageVehiclesSection() {
         onActivate={async () => {
           if (!selectedVehicle?.id) return;
           await activateVehicle(selectedVehicle.id);
-          await refreshList();
           closeView();
         }}
         onDeactivate={async () => {
           if (!selectedVehicle?.id) return;
           await deactivateVehicle(selectedVehicle.id);
-          await refreshList();
           closeView();
         }}
       />
@@ -190,7 +192,7 @@ export default function ManageVehiclesSection() {
             } else if (actionType === "delete") {
               await deleteVehicle(selectedVehicleId, reason);
             }
-            await refreshList();
+            // Auto update ho jayega snapshot listener se
           } catch (err) {
             console.error("Error performing action:", err);
           } finally {
