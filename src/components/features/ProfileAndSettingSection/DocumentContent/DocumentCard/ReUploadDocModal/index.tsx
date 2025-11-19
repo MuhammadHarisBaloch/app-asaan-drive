@@ -75,6 +75,7 @@ function ModalInner({
     }
   };
 
+  // ReUploadDocModal.tsx - COMPLETE WORKING VERSION
   const handleUpload = async () => {
     const auth = getAuth();
     const userId = auth.currentUser?.uid;
@@ -96,43 +97,65 @@ function ModalInner({
       return;
     }
 
-    // ✅ EXACTLY SAME AS LIST YOUR VEHICLE PAGE
-    // Dynamic imports for server-side code
-    const { getUserDocument } = await import("@/features/user");
-    const StorageService = (await import("@/features/storage")).default;
-
-    const userData = await getUserDocument(userId);
-
-    if (!userData) {
-      notifications.show({
-        title: "User data not found",
-        message: "Please re-login and try again.",
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
       console.log("🚀 Starting document upload process...");
 
-      // ✅ EXACTLY SAME LOGIC AS VEHICLE PAGE - Single file upload
-      const uploadedFileId = await StorageService.shared.uploadFile(
-        file as File
-      );
-      console.log("✅ File uploaded with ID:", uploadedFileId);
+      // ✅ DIRECT API CALL (Working perfectly)
+      const formData = new FormData();
+      formData.append("file", file as File);
 
-      const uploadedFileUrl = await StorageService.shared.downloadFile(
-        uploadedFileId
-      );
-      console.log("✅ Download URL generated:", uploadedFileUrl);
+      console.log("📤 Calling /api/upload directly...");
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      console.log("📥 Response status:", response.status, response.statusText);
+
+      if (!response.ok) {
+        let errorMessage = `Upload failed: ${response.status}`;
+
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            const errorData = JSON.parse(errorText);
+            errorMessage = errorData.error || errorMessage;
+          }
+        } catch (e) {
+          // Ignore parse errors
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      // ✅ SAFE RESPONSE PARSING
+      const responseText = await response.text();
+      console.log("📄 Raw response:", responseText);
+
+      if (!responseText) {
+        throw new Error("Empty response from server");
+      }
+
+      const result = JSON.parse(responseText);
+
+      if (!result.success || !result.fileId) {
+        throw new Error(result.error || "Invalid response");
+      }
+
+      console.log("✅ Upload successful, fileId:", result.fileId);
+
+      // ✅ DIRECT DOWNLOAD URL GENERATION (StorageService ke bina)
+      const fileUrl = `https://nyc.cloud.appwrite.io/v1/storage/buckets/68bb42e2001557c9125f/files/${result.fileId}/view?project=68bb42450007bbaf128a`;
+      console.log("🔗 Generated file URL:", fileUrl);
 
       const documentField = getDocumentFieldName(documentType);
 
       // Firestore updates
       if (existingDoc?.id) {
         await updateDoc(doc(db, "documents", existingDoc.id), {
-          fileUrl: uploadedFileUrl,
+          fileUrl: fileUrl,
           status: "pending",
           updatedAt: serverTimestamp(),
         });
@@ -142,7 +165,7 @@ function ModalInner({
           id: newDocRef.id,
           userId: userId,
           documentType: documentType,
-          fileUrl: uploadedFileUrl,
+          fileUrl: fileUrl,
           status: "pending",
           uploadedAt: serverTimestamp(),
           createdAt: serverTimestamp(),
@@ -154,7 +177,7 @@ function ModalInner({
       // Update user document
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
-        [`documents.${documentField}`]: uploadedFileUrl,
+        [`documents.${documentField}`]: fileUrl,
         documentStatus: "pending",
         updatedAt: serverTimestamp(),
       });
@@ -166,17 +189,28 @@ function ModalInner({
       });
 
       modals.closeAll();
-    } catch (error) {
-      console.error("Error uploading document:", error);
+    } catch (err: any) {
+      console.error("💥 Upload process failed:", err);
+
+      let errorMessage = "Upload failed. Please try again.";
+
+      if (err.message.includes("CORS")) {
+        errorMessage = "Browser security error. Please try different browser.";
+      } else if (err.message.includes("Network")) {
+        errorMessage = "Network error. Please check your connection.";
+      } else {
+        errorMessage = err.message || errorMessage;
+      }
+
       notifications.show({
-        title: "Upload Failed",
-        message: "Something went wrong. Please try again.",
+        title: "Upload Failed ❌",
+        message: errorMessage,
+        color: "red",
       });
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <Stack p="lg" gap="lg">
       <Stack gap={0}>
