@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import ProfileAndSettingSection from "@/components/features/ProfileAndSettingSection";
 import DashboardSection from "@/components/features/renters/dashboard";
 import BookingsSection from "@/components/features/renters/dashboard/Bookings";
@@ -28,7 +28,8 @@ const data = [
   { label: "Profile", icon: IconUser },
 ];
 
-export default function RenterPage() {
+// Create a wrapper component that uses useSearchParams
+function RenterPageContent() {
   const [active, setActive] = useState("Dashboard");
   const searchParams = useSearchParams();
 
@@ -67,27 +68,45 @@ export default function RenterPage() {
   };
 
   return (
-    <>
-      <Grid px="sm">
-        <GridCol span={2.5}>
-          <SideBar
-            title="Renter Portal"
-            data={data}
-            active={active}
-            setActive={setActive}
-          />
-        </GridCol>
-        <GridCol span={9.5}>
-          {active === "Dashboard" && <DashboardSection />}
-          {active === "My Bookings" && <BookingsSection />}
-          {active === "Track My Ride" && <TrackingSection />}
-          {active === "Payments" && <Payments />}
-          {active === "Notifications" && <Notifications />}
-          {active === "Profile" && (
-            <ProfileAndSettingSection defaultTab={getDefaultTab()} />
-          )}
-        </GridCol>
-      </Grid>
-    </>
+    <Grid px="sm">
+      <GridCol span={2.5}>
+        <SideBar
+          title="Renter Portal"
+          data={data}
+          active={active}
+          setActive={setActive}
+        />
+      </GridCol>
+      <GridCol span={9.5}>
+        {active === "Dashboard" && <DashboardSection />}
+        {active === "My Bookings" && <BookingsSection />}
+        {active === "Track My Ride" && <TrackingSection />}
+        {active === "Payments" && <Payments />}
+        {active === "Notifications" && <Notifications />}
+        {active === "Profile" && (
+          <ProfileAndSettingSection defaultTab={getDefaultTab()} />
+        )}
+      </GridCol>
+    </Grid>
+  );
+}
+
+// Main component with Suspense boundary
+export default function RenterPage() {
+  return (
+    <Suspense
+      fallback={
+        <Grid px="sm">
+          <GridCol span={2.5}>
+            <div>Loading sidebar...</div>
+          </GridCol>
+          <GridCol span={9.5}>
+            <div>Loading content...</div>
+          </GridCol>
+        </Grid>
+      }
+    >
+      <RenterPageContent />
+    </Suspense>
   );
 }
