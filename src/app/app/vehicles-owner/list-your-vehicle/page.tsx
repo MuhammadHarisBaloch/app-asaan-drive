@@ -26,234 +26,257 @@ import { IconPhoto } from "@tabler/icons-react";
 import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
 import DropzoneImagePreview from "../../../../components/features/core/dropzone-image-preview";
-import StorageService from "../../../../features/storage";
-import { createVehicleDocument } from "../../../../features/vehicle";
 import { useRouter } from "next/navigation";
-import { getUserDocument } from "@/features/user";
-import { UserModel } from "@/features/user/models/user.model";
 import VerificationOverlay from "@/components/features/VerificationOverlay";
 
-// interface VehicleRegistrationForm {
-//   vehicleType: string;
-//   vehicleModel: string;
-//   vehicleYear: string;
-//   licensePlate: string;
-//   pickupLocation: string;
-//   dailyRate: number;
-//   weeklyRate: number;
-//   monthlyRate: number;
-// }
+interface VehicleRegistrationForm {
+  vehicleType: string;
+  vehicleModel: string;
+  vehicleYear: string;
+  licensePlate: string;
+  pickupLocation: string;
+  dailyRate: number;
+  weeklyRate: number;
+  monthlyRate: number;
+}
 
-// // EXACT vehicle types with correct spelling "Rakshaw"
-// const PRICE_RANGES = {
-//   Cycle: {
-//     daily: { min: 200, max: 400 },
-//     weekly: { min: 1400, max: 1600 },
-//     monthly: { min: 5000, max: 6000 },
-//   },
-//   Bike: {
-//     daily: { min: 400, max: 600 },
-//     weekly: { min: 3000, max: 3500 },
-//     monthly: { min: 10000, max: 15000 },
-//   },
-//   Rakshaw: {
-//     daily: { min: 700, max: 900 },
-//     weekly: { min: 5000, max: 6500 },
-//     monthly: { min: 18000, max: 22000 },
-//   },
-// };
+// EXACT vehicle types with correct spelling "Rakshaw"
+const PRICE_RANGES = {
+  Cycle: {
+    daily: { min: 200, max: 400 },
+    weekly: { min: 1400, max: 1600 },
+    monthly: { min: 5000, max: 6000 },
+  },
+  Bike: {
+    daily: { min: 400, max: 600 },
+    weekly: { min: 3000, max: 3500 },
+    monthly: { min: 10000, max: 15000 },
+  },
+  Rakshaw: {
+    daily: { min: 700, max: 900 },
+    weekly: { min: 5000, max: 6500 },
+    monthly: { min: 18000, max: 22000 },
+  },
+};
 
 export default function ListYourVehicle() {
-  // const [vehiclePhotos, setVehiclePhotos] = useState<FileWithPath[]>([]);
-  // const [vehicleDocs, setVehicleDocs] = useState<FileWithPath[]>([]);
-  // const [user, setUser] = useState<UserModel | null>(null);
-  // const [loader, { open: startLoading, close: stopLoading }] =
-  //   useDisclosure(false);
-  // const [userLoading, setUserLoading] = useState(true);
-  // const [showVerificationOverlay, setShowVerificationOverlay] = useState(false);
-  // const router = useRouter();
+  const [vehiclePhotos, setVehiclePhotos] = useState<FileWithPath[]>([]);
+  const [vehicleDocs, setVehicleDocs] = useState<FileWithPath[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [loader, { open: startLoading, close: stopLoading }] =
+    useDisclosure(false);
+  const [userLoading, setUserLoading] = useState(true);
+  const [showVerificationOverlay, setShowVerificationOverlay] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
-  // // Helper function to get price range
-  // const getPriceRange = (vehicleType: string) => {
-  //   if (!vehicleType) return null;
-  //   return PRICE_RANGES[vehicleType as keyof typeof PRICE_RANGES] || null;
-  // };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  // // Fetch user data and check verification status
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     const ownerID = getAuth().currentUser?.uid;
-  //     if (!ownerID) {
-  //       setUserLoading(false);
-  //       return;
-  //     }
+  // Helper function to get price range
+  const getPriceRange = (vehicleType: string) => {
+    if (!vehicleType) return null;
+    return PRICE_RANGES[vehicleType as keyof typeof PRICE_RANGES] || null;
+  };
 
-  //     try {
-  //       const userData = await getUserDocument(ownerID);
-  //       setUser(userData);
+  // Fetch user data and check verification status - ONLY ON CLIENT SIDE
+  useEffect(() => {
+    if (!mounted) return;
 
-  //       // Check user verification status
-  //       if (userData) {
-  //         const shouldShowOverlay =
-  //           userData.documentStatus !== "Verified" ||
-  //           userData.status === "Blocked";
+    const fetchUserData = async () => {
+      const ownerID = getAuth().currentUser?.uid;
+      if (!ownerID) {
+        setUserLoading(false);
+        return;
+      }
 
-  //         if (shouldShowOverlay) {
-  //           setShowVerificationOverlay(true);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching user data:", error);
-  //     } finally {
-  //       setUserLoading(false);
-  //     }
-  //   };
+      try {
+        // Dynamic import for server-side code
+        const { getUserDocument } = await import("@/features/user");
+        const userData = await getUserDocument(ownerID);
+        setUser(userData);
 
-  //   fetchUserData();
-  // }, []);
+        // Check user verification status
+        if (userData) {
+          const shouldShowOverlay =
+            userData.documentStatus !== "Verified" ||
+            userData.status === "Blocked";
 
-  // const form = useForm<VehicleRegistrationForm>({
-  //   mode: "controlled",
-  //   initialValues: {
-  //     vehicleType: "",
-  //     vehicleModel: "",
-  //     vehicleYear: "",
-  //     licensePlate: "",
-  //     pickupLocation: "",
-  //     dailyRate: 0,
-  //     weeklyRate: 0,
-  //     monthlyRate: 0,
-  //   },
-  //   validate: {
-  //     vehicleType: isNotEmpty("please select vehicle type"),
-  //     vehicleModel: isNotEmpty("please enter vehicle model"),
-  //     vehicleYear: isNotEmpty("please enter vehicle year"),
-  //     licensePlate: isNotEmpty("please enter license plate"),
-  //     pickupLocation: isNotEmpty("please enter pickup location"),
-  //     dailyRate: (value, values) => {
-  //       if (value <= 0) return "please enter the daily rate";
+          if (shouldShowOverlay) {
+            setShowVerificationOverlay(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setUserLoading(false);
+      }
+    };
 
-  //       const range = getPriceRange(values.vehicleType);
-  //       if (range && (value < range.daily.min || value > range.daily.max)) {
-  //         return `Daily rate for ${values.vehicleType} must be between Rs. ${range.daily.min} and Rs. ${range.daily.max}`;
-  //       }
-  //       return null;
-  //     },
-  //     weeklyRate: (value, values) => {
-  //       if (value <= 0) return "please enter the weekly rate";
+    fetchUserData();
+  }, [mounted]);
 
-  //       const range = getPriceRange(values.vehicleType);
-  //       if (range && (value < range.weekly.min || value > range.weekly.max)) {
-  //         return `Weekly rate for ${values.vehicleType} must be between Rs. ${range.weekly.min} and Rs. ${range.weekly.max}`;
-  //       }
-  //       return null;
-  //     },
-  //     monthlyRate: (value, values) => {
-  //       if (value <= 0) return "please enter the monthly rate";
+  const form = useForm<VehicleRegistrationForm>({
+    mode: "controlled",
+    initialValues: {
+      vehicleType: "",
+      vehicleModel: "",
+      vehicleYear: "",
+      licensePlate: "",
+      pickupLocation: "",
+      dailyRate: 0,
+      weeklyRate: 0,
+      monthlyRate: 0,
+    },
+    validate: {
+      vehicleType: isNotEmpty("please select vehicle type"),
+      vehicleModel: isNotEmpty("please enter vehicle model"),
+      vehicleYear: isNotEmpty("please enter vehicle year"),
+      licensePlate: isNotEmpty("please enter license plate"),
+      pickupLocation: isNotEmpty("please enter pickup location"),
+      dailyRate: (value, values) => {
+        if (value <= 0) return "please enter the daily rate";
 
-  //       const range = getPriceRange(values.vehicleType);
-  //       if (range && (value < range.monthly.min || value > range.monthly.max)) {
-  //         return `Monthly rate for ${values.vehicleType} must be between Rs. ${range.monthly.min} and Rs. ${range.monthly.max}`;
-  //       }
-  //       return null;
-  //     },
-  //   },
-  // });
+        const range = getPriceRange(values.vehicleType);
+        if (range && (value < range.daily.min || value > range.daily.max)) {
+          return `Daily rate for ${values.vehicleType} must be between Rs. ${range.daily.min} and Rs. ${range.daily.max}`;
+        }
+        return null;
+      },
+      weeklyRate: (value, values) => {
+        if (value <= 0) return "please enter the weekly rate";
 
-  // const formSubmitHandler = async (values: VehicleRegistrationForm) => {
-  //   const ownerID = getAuth().currentUser?.uid;
-  //   if (!ownerID) {
-  //     notifications.show({
-  //       title: "User not authenticated",
-  //       message: "Please log in to list your vehicle.",
-  //     });
-  //     return;
-  //   }
+        const range = getPriceRange(values.vehicleType);
+        if (range && (value < range.weekly.min || value > range.weekly.max)) {
+          return `Weekly rate for ${values.vehicleType} must be between Rs. ${range.weekly.min} and Rs. ${range.weekly.max}`;
+        }
+        return null;
+      },
+      monthlyRate: (value, values) => {
+        if (value <= 0) return "please enter the monthly rate";
 
-  //   const userData = await getUserDocument(ownerID);
+        const range = getPriceRange(values.vehicleType);
+        if (range && (value < range.monthly.min || value > range.monthly.max)) {
+          return `Monthly rate for ${values.vehicleType} must be between Rs. ${range.monthly.min} and Rs. ${range.monthly.max}`;
+        }
+        return null;
+      },
+    },
+  });
 
-  //   if (!userData) {
-  //     notifications.show({
-  //       title: "User data not found",
-  //       message: "Please re-login and try again.",
-  //     });
-  //     return;
-  //   }
+  const formSubmitHandler = async (values: VehicleRegistrationForm) => {
+    const ownerID = getAuth().currentUser?.uid;
+    if (!ownerID) {
+      notifications.show({
+        title: "User not authenticated",
+        message: "Please log in to list your vehicle.",
+      });
+      return;
+    }
 
-  //   // Check verification status before submitting
-  //   if (
-  //     userData.documentStatus !== "Verified" ||
-  //     userData.status === "Blocked"
-  //   ) {
-  //     notifications.show({
-  //       title: "Account Not Verified",
-  //       message: "Please complete your document verification to list vehicles.",
-  //       color: "red",
-  //     });
-  //     return;
-  //   }
+    // Dynamic imports for server-side code
+    const { getUserDocument } = await import("@/features/user");
+    const { createVehicleDocument } = await import("@/features/vehicle");
+    const StorageService = (await import("@/features/storage")).default;
 
-  //   setUser(userData);
-  //   console.log("Owner Data is here : ", userData);
+    const userData = await getUserDocument(ownerID);
 
-  //   startLoading();
+    if (!userData) {
+      notifications.show({
+        title: "User data not found",
+        message: "Please re-login and try again.",
+      });
+      return;
+    }
 
-  //   const uploadedPhotoIds = await Promise.all(
-  //     vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
-  //   );
-  //   const uploadedPhotoUrls = await Promise.all(
-  //     uploadedPhotoIds.map((id) => StorageService.shared.downloadFile(id))
-  //   );
-  //   console.log("Uploaded Photo IDs: ", uploadedPhotoIds);
+    // Check verification status before submitting
+    if (
+      userData.documentStatus !== "Verified" ||
+      userData.status === "Blocked"
+    ) {
+      notifications.show({
+        title: "Account Not Verified",
+        message: "Please complete your document verification to list vehicles.",
+        color: "red",
+      });
+      return;
+    }
 
-  //   const uploadedDocIds = await Promise.all(
-  //     vehicleDocs.map((file) => StorageService.shared.uploadFile(file))
-  //   );
-  //   const uploadedDocUrls = await Promise.all(
-  //     uploadedDocIds.map((id) => StorageService.shared.downloadFile(id))
-  //   );
-  //   console.log("Uploaded Doc IDs: ", uploadedDocIds);
+    setUser(userData);
+    console.log("Owner Data is here : ", userData);
 
-  //   const vehicle = await createVehicleDocument({
-  //     ...values,
-  //     ownerID,
-  //     ownerName: userData.fullName || "",
-  //     ownerNumber: userData.phoneNumber || "",
-  //     ownerEmail: userData.email || "",
-  //     ownerType: userData.userType || "",
-  //     vehiclePhotos: uploadedPhotoUrls,
-  //     vehicleDocs: uploadedDocUrls,
-  //   });
+    startLoading();
 
-  //   if (vehicle) {
-  //     notifications.show({
-  //       title: "Vehicle listed successfully",
-  //       message: "",
-  //     });
-  //     router.push(`/app/vehicles-owner`);
-  //     stopLoading();
-  //     return;
-  //   }
-  //   notifications.show({
-  //     title: "Listing Failed",
-  //     message: "",
-  //   });
+    try {
+      const uploadedPhotoIds = await Promise.all(
+        vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
+      );
+      const uploadedPhotoUrls = await Promise.all(
+        uploadedPhotoIds.map((id) => StorageService.shared.downloadFile(id))
+      );
+      console.log("Uploaded Photo IDs: ", uploadedPhotoIds);
 
-  //   stopLoading();
-  // };
+      const uploadedDocIds = await Promise.all(
+        vehicleDocs.map((file) => StorageService.shared.uploadFile(file))
+      );
+      const uploadedDocUrls = await Promise.all(
+        uploadedDocIds.map((id) => StorageService.shared.downloadFile(id))
+      );
+      console.log("Uploaded Doc IDs: ", uploadedDocIds);
 
-  // // Show loading while checking authentication and user status
-  // if (userLoading) {
-  //   return (
-  //     <Center h="100vh">
-  //       <Loader size="lg" color="red.4" />
-  //     </Center>
-  //   );
-  // }
+      const vehicle = await createVehicleDocument({
+        ...values,
+        ownerID,
+        ownerName: userData.fullName || "",
+        ownerNumber: userData.phoneNumber || "",
+        ownerEmail: userData.email || "",
+        ownerType: userData.userType || "",
+        vehiclePhotos: uploadedPhotoUrls,
+        vehicleDocs: uploadedDocUrls,
+      });
+
+      if (vehicle) {
+        notifications.show({
+          title: "Vehicle listed successfully",
+          message: "",
+        });
+        router.push(`/app/vehicles-owner`);
+        stopLoading();
+        return;
+      }
+    } catch (error) {
+      console.error("Error listing vehicle:", error);
+      notifications.show({
+        title: "Listing Failed",
+        message: "Something went wrong. Please try again.",
+      });
+    }
+
+    stopLoading();
+  };
+
+  // Don't render during build/SSR
+  if (!mounted) {
+    return (
+      <Center h="100vh">
+        <Loader size="lg" color="red.4" />
+      </Center>
+    );
+  }
+
+  // Show loading while checking authentication and user status
+  if (userLoading) {
+    return (
+      <Center h="100vh">
+        <Loader size="lg" color="red.4" />
+      </Center>
+    );
+  }
 
   return (
     <>
-      {/* <Stack align="center" py="xxl" px="6rem" gap="3xl">
+      <Stack align="center" py="xxl" px="6rem" gap="3xl">
         <Stack align="center" gap="sm">
           <Text fz="lg" c="red.4" fw={500}>
             Vehicle Registration
@@ -481,15 +504,11 @@ export default function ListYourVehicle() {
         </Card>
       </Stack>
 
-     
       {showVerificationOverlay && user && (
         <VerificationOverlay isOpen={showVerificationOverlay} userData={user} />
-      )} */}
-
-      <div style={{ padding: "20px" }}>
-        <h1>Admin Portal - Minimal Test</h1>
-        <p>If this builds, then the issue is in imported components.</p>
-      </div>
+      )}
     </>
   );
 }
+
+export const dynamic = "force-dynamic";
