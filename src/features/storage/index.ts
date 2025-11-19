@@ -16,24 +16,13 @@ class StorageService {
       }
 
       const result = await response.json();
-      return result.fileId; // Return file ID for storage
+      return result.fileId;
     } catch (error) {
       console.error("Upload error:", error);
       throw error;
     }
   }
 
-  async downloadFile(fileId: string): Promise<string> {
-    try {
-      // Direct Appwrite URL generate karein (CORS issue nahi hoga download mein)
-      return `https://cloud.appwrite.io/v1/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID}/files/${fileId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
-    } catch (error) {
-      console.error("Download error:", error);
-      throw error;
-    }
-  }
-
-  // Multiple files upload ke liye
   async uploadMultipleFiles(files: File[]): Promise<string[]> {
     try {
       const formData = new FormData();
@@ -55,6 +44,16 @@ class StorageService {
       return result.files.map((file: any) => file.fileId);
     } catch (error) {
       console.error("Multiple upload error:", error);
+      throw error;
+    }
+  }
+
+  async downloadFile(fileId: string): Promise<string> {
+    try {
+      // ✅ Correct IDs use karein
+      return `https://nyc.cloud.appwrite.io/v1/storage/buckets/68bb42e2001557c9125f/files/${fileId}/view?project=68bb42450007bbaf128a`;
+    } catch (error) {
+      console.error("Download error:", error);
       throw error;
     }
   }

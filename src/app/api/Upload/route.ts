@@ -11,27 +11,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Appwrite client setup
+    // ✅ Correct Project ID use karein
     const client = new Client()
-      .setEndpoint("https://cloud.appwrite.io/v1")
-      .setProject(process.env.APPWRITE_PROJECT_ID!);
+      .setEndpoint("https://nyc.cloud.appwrite.io/v1")
+      .setProject("68bb42450007bbaf128a"); // Your actual PROJECT ID
 
     const storage = new Storage(client);
 
-    // File object recreate karein with all required properties
     const arrayBuffer = await file.arrayBuffer();
-
-    // New File object banayein with original properties
     const newFile = new File([arrayBuffer], file.name, {
       type: file.type,
       lastModified: file.lastModified,
     });
 
-    // Direct file object pass karein
+    // ✅ Correct Bucket ID use karein
     const result = await storage.createFile(
-      process.env.APPWRITE_BUCKET_ID!,
+      "68bb42e2001557c9125f", // Your actual BUCKET ID
       ID.unique(),
-      newFile // File object pass karein
+      newFile
     );
 
     return NextResponse.json({

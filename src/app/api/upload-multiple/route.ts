@@ -11,25 +11,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No files provided" }, { status: 400 });
     }
 
+    // ✅ Correct Project ID use karein
     const client = new Client()
-      .setEndpoint("https://cloud.appwrite.io/v1")
-      .setProject(process.env.APPWRITE_PROJECT_ID!);
+      .setEndpoint("https://nyc.cloud.appwrite.io/v1")
+      .setProject("68bb42450007bbaf128a"); // Your actual PROJECT ID
 
     const storage = new Storage(client);
 
-    // Sabhi files upload karein
     const uploadPromises = files.map(async (file) => {
-      // File object recreate karein
       const arrayBuffer = await file.arrayBuffer();
       const newFile = new File([arrayBuffer], file.name, {
         type: file.type,
         lastModified: file.lastModified,
       });
 
+      // ✅ Correct Bucket ID use karein
       const result = await storage.createFile(
-        process.env.APPWRITE_BUCKET_ID!,
+        "68bb42e2001557c9125f", // Your actual BUCKET ID
         ID.unique(),
-        newFile // File object pass karein
+        newFile
       );
 
       return {
