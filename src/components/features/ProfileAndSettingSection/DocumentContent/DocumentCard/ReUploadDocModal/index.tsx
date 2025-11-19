@@ -1,4 +1,4 @@
-// src/components/ReUploadDocModal.tsx - Complete updated file
+// src/components/ReUploadDocModal.tsx - COMPLETE UPDATED FILE
 "use client";
 import { Button, Card, Divider, Flex, Stack, Text } from "@mantine/core";
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
@@ -76,47 +76,63 @@ function ModalInner({
   };
 
   const handleUpload = async () => {
+    const auth = getAuth();
+    const userId = auth.currentUser?.uid;
+
+    if (!userId) {
+      notifications.show({
+        title: "User not authenticated",
+        message: "Please log in to upload documents.",
+      });
+      return;
+    }
+
+    if (!file) {
+      notifications.show({
+        title: "No file selected",
+        message: "Please select a file to upload.",
+        color: "yellow",
+      });
+      return;
+    }
+
+    // ✅ EXACTLY SAME AS LIST YOUR VEHICLE PAGE
+    // Dynamic imports for server-side code
+    const { getUserDocument } = await import("@/features/user");
+    const StorageService = (await import("@/features/storage")).default;
+
+    const userData = await getUserDocument(userId);
+
+    if (!userData) {
+      notifications.show({
+        title: "User data not found",
+        message: "Please re-login and try again.",
+      });
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      if (!file) {
-        notifications.show({
-          title: "No file selected",
-          message: "Please select a file to upload.",
-          color: "yellow",
-        });
-        return;
-      }
+      console.log("🚀 Starting document upload process...");
 
-      setLoading(true);
-
-      const auth = getAuth();
-      const userId = auth.currentUser?.uid;
-
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
-
-      console.log("🚀 Starting upload process...");
-
-      // ✅ EXACTLY SAME LOGIC AS LIST YOUR VEHICLE PAGE
-      // Dynamic imports for server-side code (same as vehicle page)
-      const StorageService = (await import("@/features/storage")).default;
-
-      // Upload using StorageService (same as vehicle page)
+      // ✅ EXACTLY SAME LOGIC AS VEHICLE PAGE - Single file upload
       const uploadedFileId = await StorageService.shared.uploadFile(
         file as File
       );
       console.log("✅ File uploaded with ID:", uploadedFileId);
 
-      // Generate download URL using StorageService (same as vehicle page)
-      const fileUrl = await StorageService.shared.downloadFile(uploadedFileId);
-      console.log("✅ Download URL generated:", fileUrl);
+      const uploadedFileUrl = await StorageService.shared.downloadFile(
+        uploadedFileId
+      );
+      console.log("✅ Download URL generated:", uploadedFileUrl);
 
       const documentField = getDocumentFieldName(documentType);
 
       // Firestore updates
       if (existingDoc?.id) {
         await updateDoc(doc(db, "documents", existingDoc.id), {
-          fileUrl: fileUrl,
+          fileUrl: uploadedFileUrl,
           status: "pending",
           updatedAt: serverTimestamp(),
         });
@@ -126,7 +142,7 @@ function ModalInner({
           id: newDocRef.id,
           userId: userId,
           documentType: documentType,
-          fileUrl: fileUrl,
+          fileUrl: uploadedFileUrl,
           status: "pending",
           uploadedAt: serverTimestamp(),
           createdAt: serverTimestamp(),
@@ -138,7 +154,7 @@ function ModalInner({
       // Update user document
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
-        [`documents.${documentField}`]: fileUrl,
+        [`documents.${documentField}`]: uploadedFileUrl,
         documentStatus: "pending",
         updatedAt: serverTimestamp(),
       });
@@ -150,33 +166,11 @@ function ModalInner({
       });
 
       modals.closeAll();
-    } catch (err: any) {
-      console.error("💥 Upload process failed:", err);
-
-      let errorMessage = "Upload failed. Please try again.";
-
-      if (err.message.includes("Invalid Appwrite credentials")) {
-        errorMessage = "Server configuration error. Please contact support.";
-      } else if (err.message.includes("Storage bucket not found")) {
-        errorMessage = "Storage service error. Please contact support.";
-      } else if (
-        err.message.includes("Empty response") ||
-        err.message.includes("Invalid response")
-      ) {
-        errorMessage = "Server error. Please try again later.";
-      } else if (
-        err.message.includes("Network") ||
-        err.message.includes("fetch")
-      ) {
-        errorMessage = "Network error. Please check your connection.";
-      } else {
-        errorMessage = err.message || errorMessage;
-      }
-
+    } catch (error) {
+      console.error("Error uploading document:", error);
       notifications.show({
-        title: "Upload Failed ❌",
-        message: errorMessage,
-        color: "red",
+        title: "Upload Failed",
+        message: "Something went wrong. Please try again.",
       });
     } finally {
       setLoading(false);
