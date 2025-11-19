@@ -9,8 +9,8 @@ class StorageService {
 
   constructor() {
     const endpoint = this.getEndpoint();
-    const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
-    const bucketId = process.env.NEXT_PUBLIC_VEHICLE_BUCKET_ID;
+    const projectId = process.env._PROJECT_ID;
+    const bucketId = process.env.BUCKET_ID;
 
     if (!endpoint || !projectId || !bucketId) {
       console.error("Appwrite configuration missing:", {
@@ -31,7 +31,7 @@ class StorageService {
 
   private getEndpoint(): string {
     // Use custom domain if available, fallback to default
-    const customEndpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
+    const customEndpoint = process.env.APPWRITE_ENDPOINT;
 
     if (customEndpoint && customEndpoint.includes("yourdomain.com")) {
       return customEndpoint;
