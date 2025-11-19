@@ -38,6 +38,9 @@ export default function Admin() {
   const [active, setActive] = useState("Dashboard");
 
   useEffect(() => {
+    // Only run on client side, not during build
+    if (typeof window === "undefined") return;
+
     const updateBookingStatus = async () => {
       try {
         console.log("🔄 Auto update function triggered...");
@@ -80,3 +83,4 @@ export default function Admin() {
     </Grid>
   );
 }
+
