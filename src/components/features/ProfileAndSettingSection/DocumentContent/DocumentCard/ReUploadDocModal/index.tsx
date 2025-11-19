@@ -87,36 +87,16 @@ function ModalInner({
         return;
       }
 
-      // File size validation
-      if (file.size > 5 * 1024 * 1024) {
-        notifications.show({
-          title: "File too large",
-          message: "File size must be less than 5MB.",
-          color: "red",
-        });
-        return;
-      }
-
       setLoading(true);
+
       const auth = getAuth();
       const userId = auth.currentUser?.uid;
 
       if (!userId) {
-        notifications.show({
-          title: "Authentication error",
-          message: "Please sign in again.",
-          color: "red",
-        });
-        setLoading(false);
-        return;
+        throw new Error("User not authenticated");
       }
 
-      console.log("🚀 Starting upload process...", {
-        documentType,
-        fileName: file.name,
-        fileSize: file.size,
-        userId,
-      });
+      console.log("🚀 Starting upload process...");
 
       // 1) Upload via API route
       const formData = new FormData();
@@ -128,34 +108,50 @@ function ModalInner({
         body: formData,
       });
 
-      console.log("📥 API response status:", response.status);
+      console.log(
+        "📥 API response received:",
+        response.status,
+        response.statusText
+      );
+
+      let result;
+      try {
+        const responseText = await response.text();
+        console.log("📄 Raw response:", responseText);
+
+        if (!responseText) {
+          throw new Error("Empty response from server");
+        }
+
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("❌ JSON parse error:", parseError);
+        throw new Error("Invalid response from server");
+      }
 
       if (!response.ok) {
-        const errorData = await response.json();
         throw new Error(
-          errorData.error || `Upload failed with status: ${response.status}`
+          result.error || `Upload failed with status: ${response.status}`
         );
       }
 
-      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Upload failed");
+      }
+
       console.log("✅ API upload successful:", result);
 
       const fileUrl = result.fileUrl;
       const documentField = getDocumentFieldName(documentType);
 
-      // 2) Firestore updates
-      console.log("📝 Updating Firestore...");
-
+      // 2) Firestore updates (same as before)
       if (existingDoc?.id) {
-        // Update existing document
         await updateDoc(doc(db, "documents", existingDoc.id), {
           fileUrl: fileUrl,
           status: "pending",
           updatedAt: serverTimestamp(),
         });
-        console.log("✅ Existing document updated");
       } else {
-        // Create new document
         const newDocRef = doc(collection(db, "documents"));
         const documentData = {
           id: newDocRef.id,
@@ -168,7 +164,6 @@ function ModalInner({
           updatedAt: serverTimestamp(),
         };
         await setDoc(newDocRef, documentData);
-        console.log("✅ New document created");
       }
 
       // 3) Update user document
@@ -178,7 +173,6 @@ function ModalInner({
         documentStatus: "pending",
         updatedAt: serverTimestamp(),
       });
-      console.log("✅ User document reference updated");
 
       notifications.show({
         title: "Upload Successful! 🎉",
@@ -196,6 +190,11 @@ function ModalInner({
         errorMessage = "Server configuration error. Please contact support.";
       } else if (err.message.includes("Storage bucket not found")) {
         errorMessage = "Storage service error. Please contact support.";
+      } else if (
+        err.message.includes("Empty response") ||
+        err.message.includes("Invalid response")
+      ) {
+        errorMessage = "Server error. Please try again later.";
       } else if (
         err.message.includes("Network") ||
         err.message.includes("fetch")
