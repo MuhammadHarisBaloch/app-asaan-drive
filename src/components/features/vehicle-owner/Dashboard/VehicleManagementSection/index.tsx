@@ -132,6 +132,7 @@ export default function VehicleManagementSection() {
                       height: "12rem",
                       objectFit: "cover",
                     }}
+                    unoptimized
                   />
                 )}
               </CardSection>

@@ -9,9 +9,9 @@ class StorageService {
 
   constructor() {
     // ✅ CORRECTED: Use proper environment variable names
-    const endpoint = process.env.APPWRITE_ENDPOINT;
-    const projectId = process.env.APPWRITE_PROJECT_ID; // ✅ Fixed: removed underscore
-    const bucketId = process.env.VEHICLE_BUCKET_ID;
+    const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
+    const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID; // ✅ Fixed: removed underscore
+    const bucketId = process.env.NEXT_PUBLIC_VEHICLE_BUCKET_ID;
 
     console.log("Appwrite Config Check:", {
       endpoint: endpoint ? "Set" : "Missing",
