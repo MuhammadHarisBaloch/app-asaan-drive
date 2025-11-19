@@ -1,4 +1,4 @@
-// src/features/storage/index.ts
+// src/features/storage/index.ts - CORRECTED VERSION
 import { Client, ID, Storage, AppwriteException } from "appwrite";
 
 class StorageService {
@@ -8,20 +8,29 @@ class StorageService {
   private BUCKET_ID: string;
 
   constructor() {
-    const endpoint = this.getEndpoint();
-    const projectId = process.env._PROJECT_ID;
-    const bucketId = process.env.BUCKET_ID;
+    // ✅ CORRECTED: Use proper environment variable names
+    const endpoint = process.env.APPWRITE_ENDPOINT;
+    const projectId = process.env.APPWRITE_PROJECT_ID; // ✅ Fixed: removed underscore
+    const bucketId = process.env.VEHICLE_BUCKET_ID;
+
+    console.log("Appwrite Config Check:", {
+      endpoint: endpoint ? "Set" : "Missing",
+      projectId: projectId ? "Set" : "Missing",
+      bucketId: bucketId ? "Set" : "Missing",
+    });
 
     if (!endpoint || !projectId || !bucketId) {
-      console.error("Appwrite configuration missing:", {
-        endpoint: !!endpoint,
-        projectId: !!projectId,
-        bucketId: !!bucketId,
+      console.error("❌ Appwrite configuration missing:", {
+        endpoint,
+        projectId,
+        bucketId,
       });
-      throw new Error("Storage service configuration error");
+      throw new Error(
+        "Storage service configuration error - Check environment variables"
+      );
     }
 
-    console.log("Initializing Appwrite client with endpoint:", endpoint);
+    console.log("✅ Initializing Appwrite client");
 
     this.client = new Client().setEndpoint(endpoint).setProject(projectId);
 
@@ -29,40 +38,27 @@ class StorageService {
     this.BUCKET_ID = bucketId;
   }
 
-  private getEndpoint(): string {
-    // Use custom domain if available, fallback to default
-    const customEndpoint = process.env.APPWRITE_ENDPOINT;
-
-    if (customEndpoint && customEndpoint.includes("yourdomain.com")) {
-      return customEndpoint;
-    }
-
-    // Fallback for development
-    return process.env.NODE_ENV === "development"
-      ? "http://localhost/v1" // For self-hosted Appwrite
-      : "https://cloud.appwrite.io/v1"; // Default Appwrite cloud
-  }
-
   async uploadFile(file: File): Promise<string> {
     try {
-      console.log(
-        "Uploading to Appwrite endpoint:",
-        this.client.config.endpoint
-      );
+      console.log("📤 Uploading file to Appwrite...", {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+      });
 
-      const res = await this.storage.createFile(
+      const result = await this.storage.createFile(
         this.BUCKET_ID,
         ID.unique(),
         file
       );
 
-      return res.$id;
+      console.log("✅ File uploaded successfully:", result.$id);
+      return result.$id;
     } catch (error: any) {
-      console.error("Appwrite upload failed:", {
-        endpoint: this.client.config.endpoint,
-        error: error.message,
-        type: error.type,
+      console.error("❌ Appwrite upload failed:", {
+        message: error.message,
         code: error.code,
+        type: error.type,
       });
 
       throw new Error(`Upload failed: ${error.message}`);
@@ -74,7 +70,7 @@ class StorageService {
       const result = await this.storage.getFileView(this.BUCKET_ID, id);
       return result.toString();
     } catch (error: any) {
-      console.error("Appwrite download failed:", error);
+      console.error("❌ Appwrite download failed:", error);
       throw new Error(`Failed to get file URL: ${error.message}`);
     }
   }
