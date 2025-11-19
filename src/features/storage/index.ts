@@ -1,79 +1,65 @@
-// src/features/storage/index.ts - CORRECTED VERSION
-import { Client, ID, Storage, AppwriteException } from "appwrite";
-
+// features/storage/StorageService.ts
 class StorageService {
-  static shared = new StorageService();
-  private client: Client;
-  private storage: Storage;
-  private BUCKET_ID: string;
-
-  constructor() {
-    // ✅ CORRECTED: Use proper environment variable names
-    const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
-    const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID; // ✅ Fixed: removed underscore
-    const bucketId = process.env.NEXT_PUBLIC_VEHICLE_BUCKET_ID;
-
-    console.log("Appwrite Config Check:", {
-      endpoint: endpoint ? "Set" : "Missing",
-      projectId: projectId ? "Set" : "Missing",
-      bucketId: bucketId ? "Set" : "Missing",
-    });
-
-    if (!endpoint || !projectId || !bucketId) {
-      console.error("❌ Appwrite configuration missing:", {
-        endpoint,
-        projectId,
-        bucketId,
-      });
-      throw new Error(
-        "Storage service configuration error - Check environment variables"
-      );
-    }
-
-    console.log("✅ Initializing Appwrite client");
-
-    this.client = new Client().setEndpoint(endpoint).setProject(projectId);
-
-    this.storage = new Storage(this.client);
-    this.BUCKET_ID = bucketId;
-  }
-
   async uploadFile(file: File): Promise<string> {
     try {
-      console.log("📤 Uploading file to Appwrite...", {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type,
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
       });
 
-      const result = await this.storage.createFile(
-        this.BUCKET_ID,
-        ID.unique(),
-        file
-      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Upload failed");
+      }
 
-      console.log("✅ File uploaded successfully:", result.$id);
-      return result.$id;
-    } catch (error: any) {
-      console.error("❌ Appwrite upload failed:", {
-        message: error.message,
-        code: error.code,
-        type: error.type,
-      });
-
-      throw new Error(`Upload failed: ${error.message}`);
+      const result = await response.json();
+      return result.fileId; // Return file ID for storage
+    } catch (error) {
+      console.error("Upload error:", error);
+      throw error;
     }
   }
 
-  async downloadFile(id: string): Promise<string> {
+  async downloadFile(fileId: string): Promise<string> {
     try {
-      const result = await this.storage.getFileView(this.BUCKET_ID, id);
-      return result.toString();
-    } catch (error: any) {
-      console.error("❌ Appwrite download failed:", error);
-      throw new Error(`Failed to get file URL: ${error.message}`);
+      // Direct Appwrite URL generate karein (CORS issue nahi hoga download mein)
+      return `https://cloud.appwrite.io/v1/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID}/files/${fileId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
+    } catch (error) {
+      console.error("Download error:", error);
+      throw error;
     }
   }
+
+  // Multiple files upload ke liye
+  async uploadMultipleFiles(files: File[]): Promise<string[]> {
+    try {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
+
+      const response = await fetch("/api/upload-multiple", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Upload failed");
+      }
+
+      const result = await response.json();
+      return result.files.map((file: any) => file.fileId);
+    } catch (error) {
+      console.error("Multiple upload error:", error);
+      throw error;
+    }
+  }
+
+  static shared = new StorageService();
 }
 
 export default StorageService;

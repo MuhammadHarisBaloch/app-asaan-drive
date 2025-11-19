@@ -209,21 +209,23 @@ export default function ListYourVehicle() {
     startLoading();
 
     try {
-      const uploadedPhotoIds = await Promise.all(
-        vehiclePhotos.map((file) => StorageService.shared.uploadFile(file))
+      // Photos upload using new API route
+      const uploadedPhotoIds = await StorageService.shared.uploadMultipleFiles(
+        vehiclePhotos
       );
       const uploadedPhotoUrls = await Promise.all(
         uploadedPhotoIds.map((id) => StorageService.shared.downloadFile(id))
       );
-      console.log("Uploaded Photo IDs: ", uploadedPhotoIds);
+      console.log("Uploaded Photo URLs: ", uploadedPhotoUrls);
 
-      const uploadedDocIds = await Promise.all(
-        vehicleDocs.map((file) => StorageService.shared.uploadFile(file))
+      // Documents upload using new API route
+      const uploadedDocIds = await StorageService.shared.uploadMultipleFiles(
+        vehicleDocs
       );
       const uploadedDocUrls = await Promise.all(
         uploadedDocIds.map((id) => StorageService.shared.downloadFile(id))
       );
-      console.log("Uploaded Doc IDs: ", uploadedDocIds);
+      console.log("Uploaded Doc URLs: ", uploadedDocUrls);
 
       const vehicle = await createVehicleDocument({
         ...values,
@@ -255,7 +257,7 @@ export default function ListYourVehicle() {
 
     stopLoading();
   };
-
+  
   // Don't render during build/SSR
   if (!mounted) {
     return (
