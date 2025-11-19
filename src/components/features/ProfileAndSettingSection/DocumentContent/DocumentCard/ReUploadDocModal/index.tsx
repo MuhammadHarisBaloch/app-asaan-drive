@@ -6,7 +6,6 @@ import { modals } from "@mantine/modals";
 import { IconUpload } from "@tabler/icons-react";
 import { useState } from "react";
 import { getAuth } from "firebase/auth";
-import StorageService from "@/features/storage";
 import { notifications } from "@mantine/notifications";
 import {
   doc,
@@ -98,53 +97,23 @@ function ModalInner({
 
       console.log("🚀 Starting upload process...");
 
-      // 1) Upload via API route
-      const formData = new FormData();
-      formData.append("file", file as File);
+      // ✅ EXACTLY SAME LOGIC AS LIST YOUR VEHICLE PAGE
+      // Dynamic imports for server-side code (same as vehicle page)
+      const StorageService = (await import("@/features/storage")).default;
 
-      console.log("📤 Calling upload API...");
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      console.log(
-        "📥 API response received:",
-        response.status,
-        response.statusText
+      // Upload using StorageService (same as vehicle page)
+      const uploadedFileId = await StorageService.shared.uploadFile(
+        file as File
       );
+      console.log("✅ File uploaded with ID:", uploadedFileId);
 
-      let result;
-      try {
-        const responseText = await response.text();
-        console.log("📄 Raw response:", responseText);
+      // Generate download URL using StorageService (same as vehicle page)
+      const fileUrl = await StorageService.shared.downloadFile(uploadedFileId);
+      console.log("✅ Download URL generated:", fileUrl);
 
-        if (!responseText) {
-          throw new Error("Empty response from server");
-        }
-
-        result = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("❌ JSON parse error:", parseError);
-        throw new Error("Invalid response from server");
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          result.error || `Upload failed with status: ${response.status}`
-        );
-      }
-
-      if (!result.success) {
-        throw new Error(result.error || "Upload failed");
-      }
-
-      console.log("✅ API upload successful:", result);
-
-      const fileUrl = result.fileUrl;
       const documentField = getDocumentFieldName(documentType);
 
-      // 2) Firestore updates (same as before)
+      // Firestore updates
       if (existingDoc?.id) {
         await updateDoc(doc(db, "documents", existingDoc.id), {
           fileUrl: fileUrl,
@@ -166,7 +135,7 @@ function ModalInner({
         await setDoc(newDocRef, documentData);
       }
 
-      // 3) Update user document
+      // Update user document
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         [`documents.${documentField}`]: fileUrl,
