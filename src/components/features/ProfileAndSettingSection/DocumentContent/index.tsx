@@ -17,7 +17,9 @@ import {
 import { auth, db } from "@/networking/firebase";
 import { firebaseConstants } from "@/constants/Firestore";
 import { DocumentModel } from "@/features/document/models";
-import ReUploadDocModal from "./DocumentCard/ReUploadDocModal";
+import ReUploadDocModal, {
+  openReUploadDocModal,
+} from "./DocumentCard/ReUploadDocModal";
 import { modals } from "@mantine/modals";
 
 export default function DocumentContent() {
@@ -72,25 +74,20 @@ export default function DocumentContent() {
   const handleDrop = (files: FileWithPath[]) => {
     if (!files || files.length === 0) return;
     const file = files[0];
-    modals.open({
-      title: "Upload CNIC Front",
-      children: (
-        <ReUploadDocModal documentType="CNIC-Front" preselectedFile={file} />
-      ),
+    openReUploadDocModal({
+      documentType: "CNIC-Front",
+      initialFile: file,
     });
   };
 
   const handleProceed = () => {
     if (!pickedFile || !selectedDocType) return;
-    modals.open({
-      title: `Upload ${selectedDocType}`,
-      children: (
-        <ReUploadDocModal
-          documentType={selectedDocType!}
-          preselectedFile={pickedFile}
-        />
-      ),
+
+    openReUploadDocModal({
+      documentType: selectedDocType,
+      initialFile: pickedFile,
     });
+
     setPickedFile(null);
     setSelectedDocType(null);
     setOpenChooseType(false);

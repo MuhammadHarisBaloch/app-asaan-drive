@@ -1,4 +1,4 @@
-// src/components/ReUploadDocModal.tsx
+// src/components/ReUploadDocModal.tsx - Complete updated file
 "use client";
 import { Button, Card, Divider, Flex, Stack, Text } from "@mantine/core";
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
@@ -7,7 +7,6 @@ import { IconUpload } from "@tabler/icons-react";
 import { useState } from "react";
 import { getAuth } from "firebase/auth";
 import StorageService from "@/features/storage";
-import { handleUserDocumentUpload } from "@/features/document";
 import { notifications } from "@mantine/notifications";
 import {
   doc,
@@ -21,25 +20,26 @@ import { DocumentModel } from "@/features/document/models";
 
 interface ReUploadDocModalProps {
   documentType: string;
-  preselectedFile?: FileWithPath | null;
+  initialFile?: FileWithPath | null;
   existingDoc?: DocumentModel;
 }
 
-export default function ReUploadDocModal({
+// Export the modal opener function
+export function openReUploadDocModal({
   documentType,
-  preselectedFile = null,
+  initialFile = null,
   existingDoc,
 }: ReUploadDocModalProps) {
-  return modals.open({
+  modals.open({
     title: (
       <Text fz="md" fw={600} c="black" px="lg">
-        Upload {documentType}
+        {existingDoc ? "Re-upload" : "Upload"} {documentType}
       </Text>
     ),
     children: (
       <ModalInner
         documentType={documentType}
-        initialFile={preselectedFile ?? null}
+        initialFile={initialFile}
         existingDoc={existingDoc}
       />
     ),
@@ -80,8 +80,19 @@ function ModalInner({
     try {
       if (!file) {
         notifications.show({
-          title: "No file",
+          title: "No file selected",
           message: "Please select a file to upload.",
+          color: "yellow",
+        });
+        return;
+      }
+
+      // File size validation
+      if (file.size > 5 * 1024 * 1024) {
+        notifications.show({
+          title: "File too large",
+          message: "File size must be less than 5MB.",
+          color: "red",
         });
         return;
       }
@@ -89,17 +100,52 @@ function ModalInner({
       setLoading(true);
       const auth = getAuth();
       const userId = auth.currentUser?.uid;
-      if (!userId) throw new Error("User not authenticated");
 
-      // 1) Upload to Appwrite (returns fileId)
-      const fileId = await StorageService.shared.uploadFile(file as File);
+      if (!userId) {
+        notifications.show({
+          title: "Authentication error",
+          message: "Please sign in again.",
+          color: "red",
+        });
+        setLoading(false);
+        return;
+      }
 
-      // 2) Convert to view/download URL
-      const fileUrl = await StorageService.shared.downloadFile(fileId);
+      console.log("🚀 Starting upload process...", {
+        documentType,
+        fileName: file.name,
+        fileSize: file.size,
+        userId,
+      });
 
+      // 1) Upload via API route
+      const formData = new FormData();
+      formData.append("file", file as File);
+
+      console.log("📤 Calling upload API...");
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      console.log("📥 API response status:", response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || `Upload failed with status: ${response.status}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("✅ API upload successful:", result);
+
+      const fileUrl = result.fileUrl;
       const documentField = getDocumentFieldName(documentType);
 
-      // 3) Create or Update document in separate documents collection
+      // 2) Firestore updates
+      console.log("📝 Updating Firestore...");
+
       if (existingDoc?.id) {
         // Update existing document
         await updateDoc(doc(db, "documents", existingDoc.id), {
@@ -107,8 +153,9 @@ function ModalInner({
           status: "pending",
           updatedAt: serverTimestamp(),
         });
+        console.log("✅ Existing document updated");
       } else {
-        // Create new document in documents collection
+        // Create new document
         const newDocRef = doc(collection(db, "documents"));
         const documentData = {
           id: newDocRef.id,
@@ -121,27 +168,47 @@ function ModalInner({
           updatedAt: serverTimestamp(),
         };
         await setDoc(newDocRef, documentData);
+        console.log("✅ New document created");
       }
 
-      // 4) Update users/{userId} documents map with correct field names
+      // 3) Update user document
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         [`documents.${documentField}`]: fileUrl,
-        documentStatus: "Pending",
+        documentStatus: "pending",
+        updatedAt: serverTimestamp(),
       });
+      console.log("✅ User document reference updated");
 
       notifications.show({
-        title: "Uploaded",
+        title: "Upload Successful! 🎉",
         message: `${documentType} uploaded and sent for review.`,
+        color: "green",
       });
 
       modals.closeAll();
     } catch (err: any) {
-      console.error("Document upload failed:", err);
+      console.error("💥 Upload process failed:", err);
+
+      let errorMessage = "Upload failed. Please try again.";
+
+      if (err.message.includes("Invalid Appwrite credentials")) {
+        errorMessage = "Server configuration error. Please contact support.";
+      } else if (err.message.includes("Storage bucket not found")) {
+        errorMessage = "Storage service error. Please contact support.";
+      } else if (
+        err.message.includes("Network") ||
+        err.message.includes("fetch")
+      ) {
+        errorMessage = "Network error. Please check your connection.";
+      } else {
+        errorMessage = err.message || errorMessage;
+      }
+
       notifications.show({
-        title: "Upload failed",
-        message:
-          err?.message ?? "An error occurred while uploading the document.",
+        title: "Upload Failed ❌",
+        message: errorMessage,
+        color: "red",
       });
     } finally {
       setLoading(false);
@@ -229,9 +296,12 @@ function ModalInner({
           loading={loading}
           onClick={handleUpload}
         >
-          Upload Document
+          {loading ? "Uploading..." : "Upload Document"}
         </Button>
       </Flex>
     </Stack>
   );
 }
+
+// Default export for backward compatibility
+export default openReUploadDocModal;

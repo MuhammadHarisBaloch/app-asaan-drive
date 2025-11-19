@@ -1,7 +1,7 @@
 // src/components/DocumentCard.tsx
 import { Card, Stack, Group, Flex, Badge, Button, Text } from "@mantine/core";
 import { IconUpload } from "@tabler/icons-react";
-import ReUploadDocModal from "./ReUploadDocModal";
+import ReUploadDocModal, { openReUploadDocModal } from "./ReUploadDocModal";
 import { DocumentModel } from "@/features/document/models";
 import { JSX } from "react";
 import { modals } from "@mantine/modals";
@@ -80,15 +80,10 @@ export default function DocumentCard({
           fw={500}
           leftSection={<IconUpload size={20} />}
           onClick={() => {
-            modals.open({
-              title: `${docRecord ? "Re-upload" : "Upload"} ${documentType}`,
-              children: (
-                <ReUploadDocModal
-                  documentType={documentType}
-                  preselectedFile={null}
-                  existingDoc={docRecord ?? undefined}
-                />
-              ),
+            openReUploadDocModal({
+              documentType: documentType,
+              initialFile: null,
+              existingDoc: docRecord ?? undefined,
             });
           }}
         >
