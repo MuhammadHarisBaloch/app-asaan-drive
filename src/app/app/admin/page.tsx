@@ -23,64 +23,68 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-const data = [
-  { label: "Dashboard", icon: IconLayoutDashboard },
-  { label: "Manage Users", icon: IconUsers },
-  { label: "Manage Vehicles", icon: IconCar },
-  { label: "Manage Bookings", icon: IconCalendarMonth },
-  { label: "Documents Verification", icon: IconFileCheck },
-  { label: "Payment & Earnings", icon: IconBrandCashapp },
-  { label: "Report & Analysis", icon: IconChartBar },
-  { label: "Settings", icon: IconSettings },
-];
+// const data = [
+//   { label: "Dashboard", icon: IconLayoutDashboard },
+//   { label: "Manage Users", icon: IconUsers },
+//   { label: "Manage Vehicles", icon: IconCar },
+//   { label: "Manage Bookings", icon: IconCalendarMonth },
+//   { label: "Documents Verification", icon: IconFileCheck },
+//   { label: "Payment & Earnings", icon: IconBrandCashapp },
+//   { label: "Report & Analysis", icon: IconChartBar },
+//   { label: "Settings", icon: IconSettings },
+// ];
 
 export default function Admin() {
-  const [active, setActive] = useState("Dashboard");
+  // const [active, setActive] = useState("Dashboard");
 
-  useEffect(() => {
-    // Only run on client side, not during build
-    if (typeof window === "undefined") return;
+  // useEffect(() => {
+  //   // Only run on client side, not during build
+  //   if (typeof window === "undefined") return;
 
-    const updateBookingStatus = async () => {
-      try {
-        console.log("🔄 Auto update function triggered...");
-        await autoUpdateBookingStatus();
-      } catch (error) {
-        console.error("❌ Failed to auto-update booking status:", error);
-      }
-    };
+  //   const updateBookingStatus = async () => {
+  //     try {
+  //       console.log("🔄 Auto update function triggered...");
+  //       await autoUpdateBookingStatus();
+  //     } catch (error) {
+  //       console.error("❌ Failed to auto-update booking status:", error);
+  //     }
+  //   };
 
-    // Run immediately when component mounts
-    updateBookingStatus();
+  //   // Run immediately when component mounts
+  //   updateBookingStatus();
 
-    // Set up interval to run every 5 minutes
-    const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
+  //   // Set up interval to run every 5 minutes
+  //   const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
 
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
-  }, []);
+  //   // Cleanup interval on component unmount
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
-    <Grid px="sm">
-      <GridCol span={2.5}>
-        <SideBar
-          title="Admin Portal"
-          data={data}
-          active={active}
-          setActive={setActive}
-        />
-      </GridCol>
-      <GridCol span={9.5}>
-        {active === "Dashboard" && <AdminDashboard />}
-        {active === "Manage Users" && <ManageUsersSection />}
-        {active === "Manage Vehicles" && <ManageVehiclesSection />}
-        {active === "Manage Bookings" && <ManageBookings />}
-        {active === "Documents Verification" && <AdminDocumentVerification />}
-        {active === "Payment & Earnings" && <PaymentsEarningsSection />}
-        {active === "Report & Analysis" && <ReportsDashboardSection />}
-        {active === "Settings" && <AdminSettingsSection />}
-      </GridCol>
-    </Grid>
+    // <Grid px="sm">
+    //   <GridCol span={2.5}>
+    //     <SideBar
+    //       title="Admin Portal"
+    //       data={data}
+    //       active={active}
+    //       setActive={setActive}
+    //     />
+    //   </GridCol>
+    //   <GridCol span={9.5}>
+    //     {active === "Dashboard" && <AdminDashboard />}
+    //     {active === "Manage Users" && <ManageUsersSection />}
+    //     {active === "Manage Vehicles" && <ManageVehiclesSection />}
+    //     {active === "Manage Bookings" && <ManageBookings />}
+    //     {active === "Documents Verification" && <AdminDocumentVerification />}
+    //     {active === "Payment & Earnings" && <PaymentsEarningsSection />}
+    //     {active === "Report & Analysis" && <ReportsDashboardSection />}
+    //     {active === "Settings" && <AdminSettingsSection />}
+    //   </GridCol>
+    // </Grid>
+    <div style={{ padding: "20px" }}>
+      <h1>Admin Portal - Minimal Test</h1>
+      <p>If this builds, then the issue is in imported components.</p>
+    </div>
   );
 }
 
