@@ -1,3 +1,4 @@
+"use client";
 import {
   Badge,
   Card,
@@ -14,7 +15,6 @@ import {
 import { useEffect, useState } from "react";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { IconSearch } from "@tabler/icons-react";
-import { getUserDocument } from "@/features/user";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/networking/firebase";
 import { firebaseConstants } from "@/constants/Firestore";
@@ -23,8 +23,14 @@ export default function PaymentsEarningsSection() {
   const [bookings, setBookings] = useState<BookingModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
+    // Don't run Firestore operations during build
+    if (typeof window === "undefined") return;
+
     const fetchData = async () => {
       setLoading(true);
 
@@ -36,6 +42,9 @@ export default function PaymentsEarningsSection() {
 
       // Set up real-time listener
       const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+        // Dynamically import to avoid server-side dependencies
+        const { getUserDocument } = await import("@/features/user");
+
         const bookingsData: BookingModel[] = [];
 
         // First get all bookings
@@ -139,6 +148,70 @@ export default function PaymentsEarningsSection() {
       </Table.Tr>
     ));
 
+  // Don't render during build/SSR
+  if (!mounted) {
+    return (
+      <Stack p="lg" gap="xl">
+        <Stack gap={0}>
+          <Text fz="xl" c="black" fw={600}>
+            Payments & Earnings
+          </Text>
+          <Text fz="12px">Loading payments data...</Text>
+        </Stack>
+        <Card
+          p="xl"
+          radius="md"
+          style={{ filter: "drop-shadow(1px 1px 2px #9f9f9fcf)" }}
+        >
+          <Stack gap="lg">
+            <Text fz="lg" fw={600} c="black">
+              Payments
+            </Text>
+            <TextInput
+              radius="md"
+              placeholder="Search by transaction ID, user, or vehicle..."
+              leftSection={
+                <IconSearch style={{ width: rem(16), height: rem(16) }} />
+              }
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.currentTarget.value)}
+            />
+            <Table.ScrollContainer minWidth={800}>
+              <Table verticalSpacing="lg" highlightOnHover>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th fz="12px" c="gray" fw={600}>
+                      TRANSACTION
+                    </Table.Th>
+                    <Table.Th fz="12px" c="gray" fw={600}>
+                      USER
+                    </Table.Th>
+                    <Table.Th fz="12px" c="gray" fw={600}>
+                      VEHICLE
+                    </Table.Th>
+                    <Table.Th fz="12px" c="gray" fw={600}>
+                      AMOUNT
+                    </Table.Th>
+                    <Table.Th fz="12px" c="gray" fw={600}>
+                      METHOD
+                    </Table.Th>
+                    <Table.Th fz="12px" c="gray" fw={600}>
+                      STATUS
+                    </Table.Th>
+                    <Table.Th fz="12px" c="gray" fw={600}>
+                      DATE
+                    </Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>{skeletonRows}</Table.Tbody>
+              </Table>
+            </Table.ScrollContainer>
+          </Stack>
+        </Card>
+      </Stack>
+    );
+  }
+
   return (
     <Stack p="lg" gap="xl">
       {/* Header Section */}
@@ -158,7 +231,6 @@ export default function PaymentsEarningsSection() {
       >
         <Stack gap="lg">
           {/* Payments Section Header */}
-
           <Text fz="lg" fw={600} c="black">
             Payments
           </Text>

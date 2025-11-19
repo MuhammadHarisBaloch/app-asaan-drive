@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   Grid,
@@ -15,13 +16,10 @@ import {
   Button,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { fetchAllBookings } from "@/features/booking";
-import { listAllVehicleDocs } from "@/features/vehicle";
-import { getAllUsers, getUserDocument } from "@/features/user";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { VehicleModel } from "@/features/vehicle/models/vehicle.model";
 import { UserModel } from "@/features/user/models/user.model";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "@/networking/firebase";
 import { firebaseConstants } from "@/constants/Firestore";
 import {
@@ -50,8 +48,14 @@ export default function ReportsDashboardSection() {
   const [vehicles, setVehicles] = useState<VehicleModel[]>([]);
   const [users, setUsers] = useState<UserModel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
+    // Don't run Firestore operations during build
+    if (typeof window === "undefined") return;
+
     const fetchData = async () => {
       setLoading(true);
 
@@ -69,6 +73,9 @@ export default function ReportsDashboardSection() {
       const unsubscribeBookings = onSnapshot(
         bookingsQuery,
         async (snapshot) => {
+          // Dynamically import to avoid server-side dependencies
+          const { getUserDocument } = await import("@/features/user");
+
           const bookingsData: BookingModel[] = [];
           snapshot.forEach((doc) => {
             bookingsData.push({
@@ -316,6 +323,138 @@ export default function ReportsDashboardSection() {
     link.click();
     document.body.removeChild(link);
   };
+
+  // Don't render during build/SSR
+  if (!mounted) {
+    return (
+      <Stack p="lg" gap="xl">
+        {/* Header Skeleton */}
+        <Stack gap={0}>
+          <Skeleton height={28} width={280} radius="sm" />
+          <Skeleton height={14} width={380} mt={8} radius="sm" />
+        </Stack>
+
+        {/* 4 Cards Grid Skeleton */}
+        <Grid>
+          {[1, 2, 3, 4].map((item) => (
+            <Grid.Col span={3} key={item}>
+              <Card
+                p="xl"
+                radius="md"
+                style={{ filter: "drop-shadow(1px 1px 2px #9f9f9fcf)" }}
+              >
+                <Stack gap="md">
+                  <Skeleton height={20} width={120} radius="sm" />
+                  <Group justify="space-between" align="flex-end">
+                    <Skeleton height={32} width={80} radius="sm" />
+                    <Skeleton height={22} width={60} radius="xl" />
+                  </Group>
+                </Stack>
+              </Card>
+            </Grid.Col>
+          ))}
+        </Grid>
+
+        {/* Monthly Performance & Bar Chart Grid */}
+        <Grid>
+          <Grid.Col span={6}>
+            <Card
+              p="xl"
+              radius="md"
+              style={{ filter: "drop-shadow(1px 1px 2px #9f9f9fcf)" }}
+            >
+              <Skeleton height={24} width={180} radius="sm" mb="md" />
+              <Stack gap="lg">
+                {[1, 2].map((row) => (
+                  <Group key={row} justify="space-between">
+                    <Skeleton height={18} width={100} radius="sm" />
+                    <Skeleton height={18} width={60} radius="sm" />
+                  </Group>
+                ))}
+              </Stack>
+            </Card>
+          </Grid.Col>
+
+          <Grid.Col span={6}>
+            <Card
+              p="xl"
+              radius="md"
+              style={{ filter: "drop-shadow(1px 1px 2px #9f9f9fcf)" }}
+            >
+              <Skeleton height={24} width={180} radius="sm" mb="md" />
+              <Stack gap="md">
+                <Skeleton height={20} width={120} radius="sm" />
+                <Skeleton height={120} radius="sm" />
+                <Group justify="space-between">
+                  {[1, 2, 3, 4, 5, 6].map((bar) => (
+                    <Skeleton key={bar} height={20} width={30} radius="sm" />
+                  ))}
+                </Group>
+              </Stack>
+            </Card>
+          </Grid.Col>
+        </Grid>
+
+        {/* Vehicle Distribution & Top Cities Grid */}
+        <Grid>
+          <Grid.Col span={6}>
+            <Card
+              p="xl"
+              radius="md"
+              style={{ filter: "drop-shadow(1px 1px 2px #9f9f9fcf)" }}
+            >
+              <Skeleton height={24} width={200} radius="sm" mb="md" />
+              <Stack gap="md">
+                {[1, 2, 3].map((item) => (
+                  <div key={item}>
+                    <Group justify="space-between" mb="xs">
+                      <Skeleton height={16} width={80} radius="sm" />
+                      <Skeleton height={16} width={60} radius="sm" />
+                    </Group>
+                    <Skeleton height={8} radius="sm" />
+                  </div>
+                ))}
+              </Stack>
+            </Card>
+          </Grid.Col>
+
+          <Grid.Col span={6}>
+            <Card
+              p="xl"
+              radius="md"
+              style={{ filter: "drop-shadow(1px 1px 2px #9f9f9fcf)" }}
+            >
+              <Skeleton height={24} width={180} radius="sm" mb="md" />
+              <Table>
+                <Table.Thead>
+                  <Table.Tr>
+                    {["Rank", "City", "Bookings", "Revenue", "Growth"].map(
+                      (header) => (
+                        <Table.Th key={header}>
+                          <Skeleton height={14} width={60} radius="sm" />
+                        </Table.Th>
+                      )
+                    )}
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {[1, 2, 3].map((row) => (
+                    <Table.Tr key={row}>
+                      {[1, 2, 3, 4, 5].map((cell) => (
+                        <Table.Td key={cell}>
+                          <Skeleton height={16} width={50} radius="sm" />
+                        </Table.Td>
+                      ))}
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            </Card>
+          </Grid.Col>
+        </Grid>
+      </Stack>
+    );
+  }
 
   // Enhanced Skeleton Loader
   if (loading) {

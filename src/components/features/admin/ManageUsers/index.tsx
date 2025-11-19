@@ -1,3 +1,4 @@
+"use client";
 import { Stack, Card, Center, Text } from "@mantine/core";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -17,11 +18,6 @@ import UserTableRow from "./UserTableRow";
 import UserProfileModal from "./UserProfileModal";
 import { UserModel } from "@/features/user/models/user.model";
 import dayjs from "dayjs";
-import {
-  fetchBookingDocs,
-  fetchOwnerVehicleBookings,
-} from "@/features/booking";
-import { listOwnerVehicleDocs } from "@/features/vehicle";
 
 export default function ManageUsersSection() {
   const [queryText, setQueryText] = useState("");
@@ -31,10 +27,20 @@ export default function ManageUsersSection() {
     (UserModel & { docId: string; joined: string; activity: string })[] | null
   >(null);
   const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  // 🧠 Compute activity based on user type
+  // 🧠 Compute activity based on user type - ONLY ON CLIENT SIDE
   async function computeUserActivity(user: UserModel) {
+    // Don't run during build/SSR
+    if (typeof window === "undefined") return "—";
+
     try {
+      // Dynamically import to avoid server-side dependencies
+      const { fetchBookingDocs, fetchOwnerVehicleBookings } = await import(
+        "@/features/booking"
+      );
+      const { listOwnerVehicleDocs } = await import("@/features/vehicle");
+
       // renter → count completed bookings
       if (user.userType === "renter") {
         const bookings = await fetchBookingDocs(user.id);
@@ -60,6 +66,11 @@ export default function ManageUsersSection() {
 
   // 🟢 Firestore snapshot listener (async)
   useEffect(() => {
+    setMounted(true);
+
+    // Don't run Firestore operations during build
+    if (typeof window === "undefined") return;
+
     const usersRef = collection(db, firebaseConstants.collections.users);
 
     const unsub = onSnapshot(
@@ -156,6 +167,40 @@ export default function ManageUsersSection() {
       setProcessingId(null);
     }
   };
+
+  // Don't render during build/SSR
+  if (!mounted) {
+    return (
+      <Stack p="lg" gap="xxl">
+        <Stack gap={0}>
+          <Text fz="xl" fw={600} c="black">
+            Manage Users
+          </Text>
+          <Text fz="md">Loading users...</Text>
+        </Stack>
+        <Card
+          py="lg"
+          px="xl"
+          radius="md"
+          style={{ filter: "drop-shadow(1px 1px 2px #48484848)" }}
+        >
+          <UserSearchInput value={queryText} onChange={setQueryText} />
+        </Card>
+        <Card
+          p={0}
+          radius="md"
+          style={{ filter: "drop-shadow(1px 1px 2px #48484848)" }}
+        >
+          <UserTableHeader />
+          {Array(4)
+            .fill(0)
+            .map((_, i) => (
+              <UserRowSkeleton key={i} />
+            ))}
+        </Card>
+      </Stack>
+    );
+  }
 
   return (
     <Stack p="lg" gap="xxl">

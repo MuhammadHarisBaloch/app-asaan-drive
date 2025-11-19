@@ -1,3 +1,4 @@
+"use client"; // Add this at top
 import { firebaseConstants } from "@/constants/Firestore";
 import { db } from "@/networking/firebase";
 import {
@@ -40,14 +41,20 @@ export default function AdminDashboard() {
     earnings: 0,
     held: 0,
     refunded: 0,
-    platformEarnings: 0, // ✅ New: Platform ki fees
+    platformEarnings: 0,
   });
   const [weeklyBookingsData, setWeeklyBookingsData] = useState<any[]>([]);
   const [monthlyEarningData, setMonthlyEarningData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
-  // 🔹 Real-time listeners
+  // 🔹 Only run on client side
   useEffect(() => {
+    setMounted(true);
+
+    // Don't run Firestore operations during build
+    if (typeof window === "undefined") return;
+
     const usersRef = collection(db, firebaseConstants.collections.users);
     const vehiclesRef = collection(db, firebaseConstants.collections.vehicles);
     const bookingsRef = collection(db, firebaseConstants.collections.bookings);
@@ -64,13 +71,12 @@ export default function AdminDashboard() {
       setStats((prev) => ({ ...prev, vehicles: snapshot.size }));
     });
 
-    // 📦 Bookings (Updated - use platformFees from booking)
+    // 📦 Bookings
     const unsubBookings = onSnapshot(bookingsRef, (snapshot) => {
       const bookings = snapshot.docs.map((d) => d.data());
 
       const totalBookings = bookings.length;
 
-      // 🔸 Filter by payment status
       const released = bookings.filter(
         (b: any) => b.payment?.status === "released"
       );
@@ -79,7 +85,6 @@ export default function AdminDashboard() {
         (b: any) => b.payment?.status === "refunded"
       );
 
-      // 🔹 Compute totals
       const totalEarnings = released.reduce(
         (sum: number, b: any) => sum + (b.payment?.amount || 0),
         0
@@ -95,23 +100,20 @@ export default function AdminDashboard() {
         0
       );
 
-      // ✅ Platform Earnings: Sum of platformFees from all released bookings
       const platformEarnings = released.reduce(
         (sum: number, b: any) => sum + (b.platformFee || 0),
         0
       );
 
-      // ✅ Update state
       setStats((prev) => ({
         ...prev,
         bookings: totalBookings,
         earnings: totalEarnings,
         held: totalHeld,
         refunded: totalRefunded,
-        platformEarnings, // ✅ Add platform earnings from booking data
+        platformEarnings,
       }));
 
-      // ✅ Generate chart data
       const chartSource = [...released, ...refunded];
       generateChartData(chartSource);
 
@@ -154,7 +156,7 @@ export default function AdminDashboard() {
     setMonthlyEarningData(monthlyData);
   };
 
-  // 🔹 Dashboard Cards (Updated with Platform Earnings)
+  // 🔹 Dashboard Cards
   const adminDashStats = [
     {
       title: "Total Users",
@@ -200,6 +202,29 @@ export default function AdminDashboard() {
     },
   ];
 
+  // 🔹 Don't render charts during build/SSR
+  if (!mounted) {
+    return (
+      <Stack p="lg" gap="xxl">
+        <Stack gap={0}>
+          <Text fz="xl" c="black" fw={600}>
+            Admin Dashboard
+          </Text>
+          <Text fz="md">Loading dashboard...</Text>
+        </Stack>
+        <SimpleGrid cols={3} spacing="xl">
+          {Array(7)
+            .fill(0)
+            .map((_, i) => (
+              <Card key={i} radius="md" p="lg">
+                <Skeleton height={60} />
+              </Card>
+            ))}
+        </SimpleGrid>
+      </Stack>
+    );
+  }
+
   return (
     <Stack p="lg" gap="xxl">
       <Stack gap={0}>
@@ -212,7 +237,7 @@ export default function AdminDashboard() {
       {/* 🔹 Stats Cards */}
       <SimpleGrid cols={3} spacing="xl">
         {loading
-          ? Array(3)
+          ? Array(7)
               .fill(0)
               .map((_, i) => (
                 <Card key={i} radius="md" p="lg">

@@ -8,7 +8,6 @@ import { db } from "@/networking/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import { firebaseConstants } from "@/constants/Firestore";
 import { UserModel } from "@/features/user/models/user.model";
-import { getUserDocument } from "@/features/user";
 import BookingTable from "./BookingTable";
 
 export default function ManageBookings() {
@@ -18,15 +17,24 @@ export default function ManageBookings() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   // ✅ Firestore Snapshot Listener for Bookings
   useEffect(() => {
+    setMounted(true);
+
+    // Don't run Firestore operations during build
+    if (typeof window === "undefined") return;
+
     const bookingsRef = collection(db, firebaseConstants.collections.bookings);
 
     const unsub = onSnapshot(
       bookingsRef,
       async (snapshot) => {
         try {
+          // Dynamically import to avoid server-side dependencies
+          const { getUserDocument } = await import("@/features/user");
+
           const bookingsData = await Promise.all(
             snapshot.docs.map(async (doc) => {
               const data = doc.data() as BookingModel;
@@ -125,6 +133,54 @@ export default function ManageBookings() {
 
     return counts;
   }, [bookings]);
+
+  // Don't render during build/SSR
+  if (!mounted) {
+    return (
+      <Stack p="lg" gap="xl">
+        <Stack gap={0}>
+          <Text fz="xl" fw={600} c="black">
+            Manage Bookings
+          </Text>
+          <Text fz="md" c="dimmed">
+            Loading bookings...
+          </Text>
+        </Stack>
+        <Card
+          py="lg"
+          px="xl"
+          radius="md"
+          style={{ filter: "drop-shadow(0px 1px 2px #00000020)" }}
+        >
+          <Group gap="md">
+            <Input
+              flex={1}
+              size="md"
+              radius="md"
+              placeholder="Search bookings, users or vehicles..."
+              leftSection={<IconSearch color="gray" size={20} />}
+              value={search}
+              onChange={(e) => setSearch(e.currentTarget.value)}
+            />
+            <Select
+              placeholder="Filter by status"
+              value={statusFilter}
+              onChange={setStatusFilter}
+              data={[
+                { value: "pending", label: "Pending" },
+                { value: "confirmed", label: "Confirmed" },
+                { value: "active", label: "Active" },
+                { value: "completed", label: "Completed" },
+                { value: "cancelled", label: "Cancelled" },
+              ]}
+              clearable
+            />
+          </Group>
+        </Card>
+        <BookingTable loading={true} bookings={[]} />
+      </Stack>
+    );
+  }
 
   return (
     <Stack p="lg" gap="xl">
