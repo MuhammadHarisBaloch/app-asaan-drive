@@ -4,6 +4,18 @@ import { db } from "@/networking/firebase";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 
 export async function autoUpdateBookingStatus() {
+  // ⛔ Prevent execution during server-side rendering and build
+  if (typeof window === "undefined") {
+    console.log("🚫 Auto-update skipped (server environment)");
+    return;
+  }
+
+  // ⛔ Additional check - only run in browser environment
+  if (!db) {
+    console.log("🚫 Auto-update skipped (Firestore not available)");
+    return;
+  }
+
   try {
     console.log("🔧 Auto-updating booking statuses...");
     const bookingsRef = collection(db, firebaseConstants.collections.bookings);

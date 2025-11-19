@@ -16,7 +16,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
 const data = [
   { label: "Dashboard", icon: IconLayoutDashboard },
@@ -27,7 +27,8 @@ const data = [
   { label: "Profile & Settings", icon: IconUser },
 ];
 
-export default function VehiclesOwnerPage() {
+// Create a client component that uses useSearchParams
+function VehiclesOwnerContent() {
   const [active, setActive] = useState("Dashboard");
   const searchParams = useSearchParams();
 
@@ -40,6 +41,9 @@ export default function VehiclesOwnerPage() {
   }, [searchParams]);
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === "undefined") return;
+
     const updateBookingStatus = async () => {
       try {
         console.log("Auto update function triggered...");
@@ -88,3 +92,26 @@ export default function VehiclesOwnerPage() {
     </Grid>
   );
 }
+
+// Main export with Suspense boundary
+export default function VehiclesOwnerPage() {
+  return (
+    <Suspense
+      fallback={
+        <Grid px="sm">
+          <GridCol span={2.5}>
+            <div>Loading sidebar...</div>
+          </GridCol>
+          <GridCol span={9.5}>
+            <div>Loading vehicles owner portal...</div>
+          </GridCol>
+        </Grid>
+      }
+    >
+      <VehiclesOwnerContent />
+    </Suspense>
+  );
+}
+
+// Optional: Disable static generation if issues persist
+export const dynamic = "force-dynamic";
