@@ -71,7 +71,7 @@ export default function Admin() {
         />
       </GridCol>
       <GridCol span={9.5}>
-        {active === "Dashboard" && <p>AdminDashboard</p>}
+        {active === "Dashboard" && <AdminDashboard />}
         {active === "Manage Users" && <p>ManageUsersSection</p>}
         {active === "Manage Vehicles" && <p>ManageVehiclesSection</p>}
         {active === "Manage Bookings" && <p>ManageBookings</p>}
