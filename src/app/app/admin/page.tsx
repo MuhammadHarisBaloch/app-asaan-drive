@@ -23,19 +23,19 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-// const data = [
-//   { label: "Dashboard", icon: IconLayoutDashboard },
-//   { label: "Manage Users", icon: IconUsers },
-//   { label: "Manage Vehicles", icon: IconCar },
-//   { label: "Manage Bookings", icon: IconCalendarMonth },
-//   { label: "Documents Verification", icon: IconFileCheck },
-//   { label: "Payment & Earnings", icon: IconBrandCashapp },
-//   { label: "Report & Analysis", icon: IconChartBar },
-//   { label: "Settings", icon: IconSettings },
-// ];
+const data = [
+  { label: "Dashboard", icon: IconLayoutDashboard },
+  { label: "Manage Users", icon: IconUsers },
+  { label: "Manage Vehicles", icon: IconCar },
+  { label: "Manage Bookings", icon: IconCalendarMonth },
+  { label: "Documents Verification", icon: IconFileCheck },
+  { label: "Payment & Earnings", icon: IconBrandCashapp },
+  { label: "Report & Analysis", icon: IconChartBar },
+  { label: "Settings", icon: IconSettings },
+];
 
 export default function Admin() {
-  // const [active, setActive] = useState("Dashboard");
+  const [active, setActive] = useState("Dashboard");
 
   // useEffect(() => {
   //   // Only run on client side, not during build
@@ -61,30 +61,36 @@ export default function Admin() {
   // }, []);
 
   return (
-    // <Grid px="sm">
-    //   <GridCol span={2.5}>
-    //     <SideBar
-    //       title="Admin Portal"
-    //       data={data}
-    //       active={active}
-    //       setActive={setActive}
-    //     />
-    //   </GridCol>
-    //   <GridCol span={9.5}>
-    //     {active === "Dashboard" && <AdminDashboard />}
-    //     {active === "Manage Users" && <ManageUsersSection />}
-    //     {active === "Manage Vehicles" && <ManageVehiclesSection />}
-    //     {active === "Manage Bookings" && <ManageBookings />}
-    //     {active === "Documents Verification" && <AdminDocumentVerification />}
-    //     {active === "Payment & Earnings" && <PaymentsEarningsSection />}
-    //     {active === "Report & Analysis" && <ReportsDashboardSection />}
-    //     {active === "Settings" && <AdminSettingsSection />}
-    //   </GridCol>
-    // </Grid>
-    <div style={{ padding: "20px" }}>
-      <h1>Admin Portal - Minimal Test</h1>
-      <p>If this builds, then the issue is in imported components.</p>
-    </div>
+    <Grid px="sm">
+      <GridCol span={2.5}>
+        <SideBar
+          title="Admin Portal"
+          data={data}
+          active={active}
+          setActive={setActive}
+        />
+      </GridCol>
+      <GridCol span={9.5}>
+        {active === "Dashboard" && <p>AdminDashboard</p>}
+        {active === "Manage Users" && <p>ManageUsersSection</p>}
+        {active === "Manage Vehicles" && <p>ManageVehiclesSection</p>}
+        {active === "Manage Bookings" && <p>ManageBookings</p>}
+        {active === "Documents Verification" && (
+          <p>AdminDocumentVerification</p>
+        )}
+        {active === "Payment & Earnings" && <p>PaymentsEarningsSection</p>}
+        {active === "Report & Analysis" && <p>ReportsDashboardSection</p>}
+        {active === "Settings" && <p>AdminSettingsSection</p>}
+        {/* {active === "Dashboard" && <AdminDashboard />}
+        {active === "Manage Users" && <ManageUsersSection />}
+        {active === "Manage Vehicles" && <ManageVehiclesSection />}
+        {active === "Manage Bookings" && <ManageBookings />}
+        {active === "Documents Verification" && <AdminDocumentVerification />}
+        {active === "Payment & Earnings" && <PaymentsEarningsSection />}
+        {active === "Report & Analysis" && <ReportsDashboardSection />}
+        {active === "Settings" && <AdminSettingsSection />} */}
+      </GridCol>
+    </Grid>
   );
 }
 

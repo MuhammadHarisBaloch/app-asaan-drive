@@ -160,12 +160,7 @@ export default function SignInPage() {
                     type: "checkbox",
                   })}
                 />
-                <UnstyledButton
-                  component={Link}
-                  href="/forget-password"
-                  c="red.4"
-                  fz="sm"
-                >
+                <UnstyledButton c="red.4" fz="sm">
                   Forget Password?
                 </UnstyledButton>
               </Group>
