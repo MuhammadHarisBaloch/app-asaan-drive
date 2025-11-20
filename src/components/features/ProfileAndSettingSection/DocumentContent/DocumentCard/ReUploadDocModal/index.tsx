@@ -1,4 +1,3 @@
-// src/components/ReUploadDocModal.tsx - COMPLETE UPDATED FILE
 "use client";
 import { Button, Card, Divider, Flex, Stack, Text } from "@mantine/core";
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
@@ -75,7 +74,7 @@ function ModalInner({
     }
   };
 
-  // ReUploadDocModal.tsx - SERVER-SIDE UPLOAD SOLUTION
+  // ReUploadDocModal.tsx - aligned with ListYourVehicle upload logic
   const handleUpload = async () => {
     const auth = getAuth();
     const userId = auth.currentUser?.uid;
@@ -100,19 +99,37 @@ function ModalInner({
     setLoading(true);
 
     try {
-      console.log("🚀 Starting server-side upload process...");
+      console.log("🚀 Starting server-side upload process (ReUpload) ...");
 
-      // ✅ OPTION 1: Use StorageService (Vehicle page jaisa)
+      // Use the same StorageService approach as ListYourVehicle page
       const StorageService = (await import("@/features/storage")).default;
 
-      console.log("📤 Uploading via StorageService...");
-      const uploadedFileId = await StorageService.shared.uploadFile(
-        file as File
-      );
-      console.log("✅ Upload successful, fileId:", uploadedFileId);
+      // Prefer uploadMultipleFiles (same logic used in ListYourVehicle)
+      let uploadedIds: string[] = [];
 
+      if (StorageService?.shared?.uploadMultipleFiles) {
+        console.log(
+          "📤 Calling uploadMultipleFiles with single file (array) ..."
+        );
+        uploadedIds = await StorageService.shared.uploadMultipleFiles([
+          file as File,
+        ]);
+      } else if (StorageService?.shared?.uploadFile) {
+        // Defensive fallback (older implementations)
+        console.log(
+          "📤 uploadMultipleFiles not found, falling back to uploadFile ..."
+        );
+        const singleId = await StorageService.shared.uploadFile(file as File);
+        uploadedIds = [singleId];
+      } else {
+        throw new Error("StorageService upload method not found.");
+      }
+
+      console.log("✅ Upload returned IDs:", uploadedIds);
+
+      // Download actual URL(s) using same service
       const uploadedFileUrl = await StorageService.shared.downloadFile(
-        uploadedFileId
+        uploadedIds[0]
       );
       console.log("🔗 File URL:", uploadedFileUrl);
 
@@ -156,17 +173,39 @@ function ModalInner({
 
       modals.closeAll();
     } catch (err: any) {
-      console.error("💥 Upload failed:", err);
+      console.error("💥 Upload failed (ReUpload):", err);
 
+      // If the StorageService wraps fetch errors, add extra attempt to log raw response text
+      if (err?.response) {
+        try {
+          // some services attach the original response
+          const r = err.response;
+          if (typeof r.text === "function") {
+            const txt = await r.text();
+            console.error("Raw response text from server:", txt);
+          } else {
+            console.error("Response object:", r);
+          }
+        } catch (e) {
+          console.error("Failed to read raw response text:", e);
+        }
+      }
+
+      // Friendly user message based on likely causes
       let errorMessage = "Upload failed. Please try again.";
 
-      if (err.message.includes("405")) {
+      const msg = String(err?.message || err);
+      if (msg.includes("405")) {
         errorMessage =
-          "Server temporarily unavailable. Please try again in few minutes.";
-      } else if (err.message.includes("CORS")) {
-        errorMessage = "Please try different browser or contact support.";
+          "Server rejected the request (405). Likely the upload API route does not accept this HTTP method on Vercel — check your serverless function method (should be POST).";
+      } else if (msg.includes("CORS")) {
+        errorMessage =
+          "A CORS policy prevented the upload. Check your API route CORS headers on Vercel.";
+      } else if (msg.includes("Unexpected end of JSON input")) {
+        errorMessage =
+          "Server returned an empty/non-JSON response. Check the upload API for unhandled errors or HTML error pages (404/405). See console network tab for the raw response.";
       } else {
-        errorMessage = err.message || errorMessage;
+        errorMessage = msg || errorMessage;
       }
 
       notifications.show({
@@ -178,7 +217,7 @@ function ModalInner({
       setLoading(false);
     }
   };
-  
+
   return (
     <Stack p="lg" gap="lg">
       <Stack gap={0}>
