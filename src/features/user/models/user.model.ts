@@ -23,4 +23,5 @@ export interface UserModel {
   };
   documentStatus?: "Not Uploaded" | "Pending" | "Verified" | "Rejected";
   documentRemarks?: string; // optional reason if rejected
+  isEmailVerified?: boolean;
 }

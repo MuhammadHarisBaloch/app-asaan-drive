@@ -21,10 +21,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signupUser } from "../../features/auth";
-import { createUserDocument } from "../../features/user";
-import { UserModel } from "@/features/user/models/user.model";
-import { serverTimestamp } from "firebase/firestore";
+import { generateOTP, storeOTP, sendOTPEmail } from "@/lib/otp-service";
+
 interface SignUpForm {
   userType: string;
   fullName: string;
@@ -42,38 +40,46 @@ function SignupPage() {
 
   const registerUser = async (values: SignUpForm) => {
     startLoading();
-    const userCred = await signupUser(values.email, values.password);
-    if (!userCred) {
-      stopLoading();
+
+    try {
+      // 1. Generate and send OTP
+      const otp = generateOTP();
+      await storeOTP(values.email, otp);
+      await sendOTPEmail(values.email, otp);
+
+      // 2. Store user data in session storage temporarily
+      const signupData = {
+        email: values.email,
+        password: values.password,
+        fullName: values.fullName,
+        userType: values.userType,
+        number: values.number,
+        city: values.city,
+      };
+
+      sessionStorage.setItem("signupData", JSON.stringify(signupData));
+
       notifications.show({
-        title: "Registration Failed",
-        message: "Failed to register new user",
+        title: "OTP Sent!",
+        message: "Check your email for verification code",
+        color: "green",
       });
-      return;
+
+      // 3. Redirect without sensitive data in URL
+      router.push("/signup/otp-verification");
+    } catch (error) {
+      console.error("Signup error:", error);
+      notifications.show({
+        title: "Signup Failed",
+        message: "Failed to send OTP. Please try again.",
+        color: "red",
+      });
+    } finally {
+      stopLoading();
     }
-
-    const createResult = await createUserDocument({
-      id: userCred.uid,
-      email: values.email,
-      fullName: values.fullName,
-      userType: values.userType,
-      city: values.city,
-      phoneNumber: values.number,
-      availableBalance: 0,
-    });
-
-    console.log("created user doc:", createResult?.data);
-
-    stopLoading();
-    notifications.show({
-      title: "Account created successfully!",
-      message: "You can now sign in",
-    });
-
-    // If you rely on createdAt immediately in UI, you can inspect createResult?.data.createdAt or createResult?.data.joined
-    router.push(`/app/${values.userType}`);
   };
 
+  // ... rest of your form code remains same
   const form = useForm<SignUpForm>({
     mode: "uncontrolled",
     initialValues: {
@@ -114,9 +120,8 @@ function SignupPage() {
         <Card w="35%" p="lg" py="3xl" radius="lg">
           <form
             onSubmit={form.onSubmit(async (values) => {
-              startLoading();
               await registerUser(values);
-              console.log("Form is submitted", values);
+              console.log("Form submitted", values);
             })}
           >
             <Stack align="center" px="xxl">
@@ -137,33 +142,21 @@ function SignupPage() {
               <TextInput
                 label="Full Name"
                 w="100%"
-                styles={{
-                  label: {
-                    fontSize: "xs",
-                  },
-                }}
+                styles={{ label: { fontSize: "xs" } }}
                 key={form.key("fullName")}
                 {...form.getInputProps("fullName")}
               />
               <TextInput
                 label="Email"
                 w="100%"
-                styles={{
-                  label: {
-                    fontSize: "xs",
-                  },
-                }}
+                styles={{ label: { fontSize: "xs" } }}
                 key={form.key("email")}
                 {...form.getInputProps("email")}
               />
               <TextInput
                 label="Phone number"
                 w="100%"
-                styles={{
-                  label: {
-                    fontSize: "xs",
-                  },
-                }}
+                styles={{ label: { fontSize: "xs" } }}
                 key={form.key("number")}
                 {...form.getInputProps("number")}
               />
@@ -172,33 +165,21 @@ function SignupPage() {
                 label="Select our city"
                 placeholder="Pick city"
                 data={["Larkana", "Sukkur", "Khairpur' Mirs", "Rohri"]}
-                styles={{
-                  label: {
-                    fontSize: "xs",
-                  },
-                }}
+                styles={{ label: { fontSize: "xs" } }}
                 key={form.key("city")}
                 {...form.getInputProps("city")}
               />
               <PasswordInput
                 label="Password"
                 w="100%"
-                styles={{
-                  label: {
-                    fontSize: "xs",
-                  },
-                }}
+                styles={{ label: { fontSize: "xs" } }}
                 key={form.key("password")}
                 {...form.getInputProps("password")}
               />
               <PasswordInput
                 label="Confirm Password"
                 w="100%"
-                styles={{
-                  label: {
-                    fontSize: "xs",
-                  },
-                }}
+                styles={{ label: { fontSize: "xs" } }}
                 key={form.key("confirmPassword")}
                 {...form.getInputProps("confirmPassword")}
               />
