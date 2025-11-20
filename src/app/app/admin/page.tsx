@@ -74,20 +74,11 @@ export default function Admin() {
         {active === "Dashboard" && <AdminDashboard />}
         {active === "Manage Users" && <ManageUsersSection />}
         {active === "Manage Vehicles" && <ManageVehiclesSection />}
-        {active === "Manage Bookings" && <p>ManageBookings</p>}
-        {active === "Documents Verification" && (
-          <p>AdminDocumentVerification</p>
-        )}
-        {active === "Payment & Earnings" && <p>PaymentsEarningsSection</p>}
-        {active === "Report & Analysis" && <p>ReportsDashboardSection</p>}
-        {active === "Settings" && <p>AdminSettingsSection</p>}
-
-        {/* {active === "Manage Vehicles" && <ManageVehiclesSection />}
         {active === "Manage Bookings" && <ManageBookings />}
         {active === "Documents Verification" && <AdminDocumentVerification />}
         {active === "Payment & Earnings" && <PaymentsEarningsSection />}
         {active === "Report & Analysis" && <ReportsDashboardSection />}
-        {active === "Settings" && <AdminSettingsSection />} */}
+        {active === "Settings" && <AdminSettingsSection />}
       </GridCol>
     </Grid>
   );

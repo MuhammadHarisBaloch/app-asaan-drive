@@ -147,14 +147,18 @@ export default function OwnerDocCard({ role }: OwnerDocCardProps) {
                           ? "orange.0"
                           : status === "Verified"
                           ? "green.1"
-                          : "pink.1"
+                          : status === "Rejected"
+                          ? "pink.1"
+                          : "orange.0"
                       }
                       c={
                         status === "Pending"
                           ? "orange.4"
                           : status === "Verified"
                           ? "green"
-                          : "pink"
+                          : status === "Rejected"
+                          ? "pink"
+                          : "orange.4"
                       }
                       fw={500}
                       styles={{
