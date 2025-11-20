@@ -4,7 +4,6 @@ import { IconUpload } from "@tabler/icons-react";
 import ReUploadDocModal, { openReUploadDocModal } from "./ReUploadDocModal";
 import { DocumentModel } from "@/features/document/models";
 import { JSX } from "react";
-import { modals } from "@mantine/modals";
 
 interface DocumentCardProps {
   documentType: string;
@@ -38,7 +37,7 @@ export default function DocumentCard({
       break;
     case "Rejected":
     case "decline":
-    case "Rejected":
+    case "rejected":
       color = "red";
       bgColor = "pink.1";
       break;
@@ -46,14 +45,18 @@ export default function DocumentCard({
       color = "transparent";
       bgColor = "transparent";
   }
+
   return (
-    <Card radius="md" withBorder p="xl">
+    <Card radius="md" withBorder p="xl" h={docRecord ? "auto" : "60%"}>
       <Stack gap="lg">
+        {/* Header + Status */}
         <Group justify="space-between" align="center">
           <Text fz="sm" fw={500} c="black">
             {documentType}
           </Text>
-          <Flex align="center" gap="xs">
+
+          {/* 👇 Status shown ONLY if file uploaded */}
+          {docRecord?.fileUrl && (
             <Badge
               size="sm"
               c={color}
@@ -68,12 +71,32 @@ export default function DocumentCard({
             >
               {status}
             </Badge>
-          </Flex>
+          )}
         </Group>
+
+        {/* 👇 Always show image if file uploaded */}
+        {docRecord?.fileUrl && (
+          <Card withBorder radius="md" py="sm" style={{ overflow: "hidden" }}>
+            <img
+              src={docRecord.fileUrl}
+              alt={`${documentType} preview`}
+              style={{
+                width: "100%",
+                maxHeight: 100,
+                objectFit: "contain",
+                borderRadius: "8px",
+              }}
+            />
+          </Card>
+        )}
+
+        {/* Dates */}
         <Stack gap={0}>
           <Text fz="xs">Uploaded: {uploadedDate}</Text>
           <Text fz="xs">Expires: {expiresDate}</Text>
         </Stack>
+
+        {/* Upload / Re-upload button */}
         <Button
           bg="blue.1"
           c="blue.4"
@@ -87,7 +110,7 @@ export default function DocumentCard({
             });
           }}
         >
-          {docRecord ? "Re-upload / View" : "Upload"}
+          {docRecord ? "Re-upload" : "Upload"}
         </Button>
       </Stack>
     </Card>
