@@ -75,7 +75,7 @@ function ModalInner({
     }
   };
 
-  // ReUploadDocModal.tsx - DIRECT APPWRITE UPLOAD (100% WORKING)
+  // ReUploadDocModal.tsx - SERVER-SIDE UPLOAD SOLUTION
   const handleUpload = async () => {
     const auth = getAuth();
     const userId = auth.currentUser?.uid;
@@ -100,43 +100,28 @@ function ModalInner({
     setLoading(true);
 
     try {
-      console.log("🚀 Starting DIRECT Appwrite upload...");
+      console.log("🚀 Starting server-side upload process...");
 
-      // ✅ DIRECT APPWRITE UPLOAD (No API route)
-      const { Client, Storage, ID } = await import("appwrite");
+      // ✅ OPTION 1: Use StorageService (Vehicle page jaisa)
+      const StorageService = (await import("@/features/storage")).default;
 
-      const client = new Client()
-        .setEndpoint("https://nyc.cloud.appwrite.io/v1")
-        .setProject("68bb42450007bbaf128a");
-
-      const storage = new Storage(client);
-
-      // File preparation
-      const arrayBuffer = await file.arrayBuffer();
-      const uploadFile = new File([arrayBuffer], file.name, {
-        type: file.type,
-        lastModified: file.lastModified,
-      });
-
-      console.log("📤 Uploading to Appwrite directly...");
-      const result = await storage.createFile(
-        "68bb42e2001557c9125f",
-        ID.unique(),
-        uploadFile
+      console.log("📤 Uploading via StorageService...");
+      const uploadedFileId = await StorageService.shared.uploadFile(
+        file as File
       );
+      console.log("✅ Upload successful, fileId:", uploadedFileId);
 
-      console.log("✅ Direct upload successful:", result);
-
-      // Generate download URL
-      const fileUrl = `https://nyc.cloud.appwrite.io/v1/storage/buckets/68bb42e2001557c9125f/files/${result.$id}/view?project=68bb42450007bbaf128a`;
-      console.log("🔗 File URL:", fileUrl);
+      const uploadedFileUrl = await StorageService.shared.downloadFile(
+        uploadedFileId
+      );
+      console.log("🔗 File URL:", uploadedFileUrl);
 
       const documentField = getDocumentFieldName(documentType);
 
       // Firestore updates
       if (existingDoc?.id) {
         await updateDoc(doc(db, "documents", existingDoc.id), {
-          fileUrl: fileUrl,
+          fileUrl: uploadedFileUrl,
           status: "pending",
           updatedAt: serverTimestamp(),
         });
@@ -146,7 +131,7 @@ function ModalInner({
           id: newDocRef.id,
           userId: userId,
           documentType: documentType,
-          fileUrl: fileUrl,
+          fileUrl: uploadedFileUrl,
           status: "pending",
           uploadedAt: serverTimestamp(),
           createdAt: serverTimestamp(),
@@ -158,7 +143,7 @@ function ModalInner({
       // Update user document
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
-        [`documents.${documentField}`]: fileUrl,
+        [`documents.${documentField}`]: uploadedFileUrl,
         documentStatus: "pending",
         updatedAt: serverTimestamp(),
       });
@@ -171,16 +156,15 @@ function ModalInner({
 
       modals.closeAll();
     } catch (err: any) {
-      console.error("💥 Direct upload failed:", err);
+      console.error("💥 Upload failed:", err);
 
       let errorMessage = "Upload failed. Please try again.";
 
-      if (err.message.includes("CORS")) {
+      if (err.message.includes("405")) {
+        errorMessage =
+          "Server temporarily unavailable. Please try again in few minutes.";
+      } else if (err.message.includes("CORS")) {
         errorMessage = "Please try different browser or contact support.";
-      } else if (err.message.includes("Network")) {
-        errorMessage = "Network error. Please check your connection.";
-      } else if (err.message.includes("405")) {
-        errorMessage = "Server issue. Please try again later.";
       } else {
         errorMessage = err.message || errorMessage;
       }
@@ -194,6 +178,7 @@ function ModalInner({
       setLoading(false);
     }
   };
+  
   return (
     <Stack p="lg" gap="lg">
       <Stack gap={0}>
