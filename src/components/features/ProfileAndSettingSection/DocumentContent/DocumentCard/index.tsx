@@ -47,7 +47,7 @@ export default function DocumentCard({
   }
 
   return (
-    <Card radius="md" withBorder p="xl" h={docRecord ? "auto" : "60%"}>
+    <Card radius="md" withBorder p="xl">
       <Stack gap="lg">
         {/* Header + Status */}
         <Group justify="space-between" align="center">

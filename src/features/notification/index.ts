@@ -40,8 +40,8 @@ async function sendEmailNotification(notification: NotificationModel) {
         to: userData.email, // ✅ Dynamic user email
         subject: `🔔 ${notification.title} - AsaanDrive`, // ✅ Dynamic title
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e53e3e; border-radius: 8px;">
-            <div style="background: #e53e3e; color: white; padding: 15px; border-radius: 8px 8px 0 0; text-align: center;">
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #FF0005; border-radius: 8px;">
+            <div style="background: #FF0005; color: white; padding: 15px; border-radius: 8px 8px 0 0; text-align: center;">
               <h2 style="margin: 0;">AsaanDrive</h2>
               <p style="margin: 5px 0 0 0; opacity: 0.9;">Notification</p>
             </div>
@@ -52,7 +52,7 @@ async function sendEmailNotification(notification: NotificationModel) {
               <p style="color: #666; line-height: 1.6; font-size: 14px;">${
                 notification.message
               }</p>
-              <div style="background: #f7fafc; padding: 12px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #e53e3e;">
+              <div style="background: #f7fafc; padding: 12px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #FF0005;">
                 <p style="margin: 0; color: #666; font-size: 12px;">
                   <strong>Notification Type:</strong> ${notification.type}<br>
                   <strong>Sent:</strong> ${new Date().toLocaleString()}
