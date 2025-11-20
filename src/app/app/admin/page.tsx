@@ -37,28 +37,28 @@ const data = [
 export default function Admin() {
   const [active, setActive] = useState("Dashboard");
 
-  // useEffect(() => {
-  //   // Only run on client side, not during build
-  //   if (typeof window === "undefined") return;
+  useEffect(() => {
+    // Only run on client side, not during build
+    if (typeof window === "undefined") return;
 
-  //   const updateBookingStatus = async () => {
-  //     try {
-  //       console.log("🔄 Auto update function triggered...");
-  //       await autoUpdateBookingStatus();
-  //     } catch (error) {
-  //       console.error("❌ Failed to auto-update booking status:", error);
-  //     }
-  //   };
+    const updateBookingStatus = async () => {
+      try {
+        console.log("🔄 Auto update function triggered...");
+        await autoUpdateBookingStatus();
+      } catch (error) {
+        console.error("❌ Failed to auto-update booking status:", error);
+      }
+    };
 
-  //   // Run immediately when component mounts
-  //   updateBookingStatus();
+    // Run immediately when component mounts
+    updateBookingStatus();
 
-  //   // Set up interval to run every 5 minutes
-  //   const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
+    // Set up interval to run every 5 minutes
+    const interval = setInterval(updateBookingStatus, 5 * 60 * 1000);
 
-  //   // Cleanup interval on component unmount
-  //   return () => clearInterval(interval);
-  // }, []);
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Grid px="sm">
