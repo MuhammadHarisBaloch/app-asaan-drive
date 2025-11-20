@@ -75,7 +75,7 @@ function ModalInner({
     }
   };
 
-  // ReUploadDocModal.tsx - COMPLETE WORKING VERSION
+  // ReUploadDocModal.tsx - DIRECT APPWRITE UPLOAD (100% WORKING)
   const handleUpload = async () => {
     const auth = getAuth();
     const userId = auth.currentUser?.uid;
@@ -100,55 +100,36 @@ function ModalInner({
     setLoading(true);
 
     try {
-      console.log("🚀 Starting document upload process...");
+      console.log("🚀 Starting DIRECT Appwrite upload...");
 
-      // ✅ DIRECT API CALL (Working perfectly)
-      const formData = new FormData();
-      formData.append("file", file as File);
+      // ✅ DIRECT APPWRITE UPLOAD (No API route)
+      const { Client, Storage, ID } = await import("appwrite");
 
-      console.log("📤 Calling /api/upload directly...");
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      const client = new Client()
+        .setEndpoint("https://nyc.cloud.appwrite.io/v1")
+        .setProject("68bb42450007bbaf128a");
+
+      const storage = new Storage(client);
+
+      // File preparation
+      const arrayBuffer = await file.arrayBuffer();
+      const uploadFile = new File([arrayBuffer], file.name, {
+        type: file.type,
+        lastModified: file.lastModified,
       });
 
-      console.log("📥 Response status:", response.status, response.statusText);
+      console.log("📤 Uploading to Appwrite directly...");
+      const result = await storage.createFile(
+        "68bb42e2001557c9125f",
+        ID.unique(),
+        uploadFile
+      );
 
-      if (!response.ok) {
-        let errorMessage = `Upload failed: ${response.status}`;
+      console.log("✅ Direct upload successful:", result);
 
-        try {
-          const errorText = await response.text();
-          if (errorText) {
-            const errorData = JSON.parse(errorText);
-            errorMessage = errorData.error || errorMessage;
-          }
-        } catch (e) {
-          // Ignore parse errors
-        }
-
-        throw new Error(errorMessage);
-      }
-
-      // ✅ SAFE RESPONSE PARSING
-      const responseText = await response.text();
-      console.log("📄 Raw response:", responseText);
-
-      if (!responseText) {
-        throw new Error("Empty response from server");
-      }
-
-      const result = JSON.parse(responseText);
-
-      if (!result.success || !result.fileId) {
-        throw new Error(result.error || "Invalid response");
-      }
-
-      console.log("✅ Upload successful, fileId:", result.fileId);
-
-      // ✅ DIRECT DOWNLOAD URL GENERATION (StorageService ke bina)
-      const fileUrl = `https://nyc.cloud.appwrite.io/v1/storage/buckets/68bb42e2001557c9125f/files/${result.fileId}/view?project=68bb42450007bbaf128a`;
-      console.log("🔗 Generated file URL:", fileUrl);
+      // Generate download URL
+      const fileUrl = `https://nyc.cloud.appwrite.io/v1/storage/buckets/68bb42e2001557c9125f/files/${result.$id}/view?project=68bb42450007bbaf128a`;
+      console.log("🔗 File URL:", fileUrl);
 
       const documentField = getDocumentFieldName(documentType);
 
@@ -190,14 +171,16 @@ function ModalInner({
 
       modals.closeAll();
     } catch (err: any) {
-      console.error("💥 Upload process failed:", err);
+      console.error("💥 Direct upload failed:", err);
 
       let errorMessage = "Upload failed. Please try again.";
 
       if (err.message.includes("CORS")) {
-        errorMessage = "Browser security error. Please try different browser.";
+        errorMessage = "Please try different browser or contact support.";
       } else if (err.message.includes("Network")) {
         errorMessage = "Network error. Please check your connection.";
+      } else if (err.message.includes("405")) {
+        errorMessage = "Server issue. Please try again later.";
       } else {
         errorMessage = err.message || errorMessage;
       }
