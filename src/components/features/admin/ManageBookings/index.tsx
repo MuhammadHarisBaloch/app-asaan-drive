@@ -204,19 +204,59 @@ export default function ManageBookings() {
         {/* Status Count Badges */}
         <ScrollArea>
           <Group gap="xs" mt="sm" wrap="nowrap">
-            <Badge c="orange.3" bg="orange.0" size="lg" >
+            <Badge
+              c="orange.3"
+              bg="orange.0"
+              size="lg"
+              fw={500}
+              styles={{
+                root: { textAlign: "center", textTransform: "lowercase" },
+              }}
+            >
               Pending: {statusCounts.pending}
             </Badge>
-            <Badge c="green" bg="green.1" size="lg" >
+            <Badge
+              c="green"
+              bg="green.1"
+              size="lg"
+              fw={500}
+              styles={{
+                root: { textAlign: "center", textTransform: "lowercase" },
+              }}
+            >
               Confirmed: {statusCounts.confirmed}
             </Badge>
-            <Badge c="blue" bg="blue.1" size="lg" >
+            <Badge
+              c="blue"
+              bg="blue.1"
+              size="lg"
+              fw={500}
+              styles={{
+                root: { textAlign: "center", textTransform: "lowercase" },
+              }}
+            >
               Active: {statusCounts.active}
             </Badge>
-            <Badge c="bkack" bg="gray.2" size="lg" >
+            <Badge
+              c="bkack"
+              bg="gray.2"
+              size="lg"
+              fw={500}
+              styles={{
+                root: { textAlign: "center", textTransform: "lowercase" },
+              }}
+            >
               Completed: {statusCounts.completed}
             </Badge>
-            <Badge c="red" bg="pink.1" size="lg" >
+            <Badge
+              c="red"
+              bg="pink.1"
+              size="lg"
+              fw={500}
+              styles={{
+                root: { textAlign: "center", textTransform: "lowercase" },
+              }}
+            >
               Cancelled: {statusCounts.cancelled}
             </Badge>
           </Group>

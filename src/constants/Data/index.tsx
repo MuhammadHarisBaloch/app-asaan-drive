@@ -62,6 +62,7 @@ const footerMenu: FooterMenu[] = [
       { name: "Home", link: "/" },
       { name: "How it works ", link: "/how-it-works" },
       { name: "Contact us", link: "/contact" },
+      { name: "Terms and Privacy", link: "/terms-privacy" },
     ],
   },
   {

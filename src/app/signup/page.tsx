@@ -3,6 +3,7 @@ import VehicleBackgroundOverlay from "@/components/VehicleBackgroundOverlay";
 import {
   Button,
   Card,
+  Checkbox,
   Divider,
   Flex,
   Group,
@@ -22,6 +23,7 @@ import { notifications } from "@mantine/notifications";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { generateOTP, storeOTP, sendOTPEmail } from "@/lib/otp-service";
+import { useState } from "react";
 
 interface SignUpForm {
   userType: string;
@@ -31,6 +33,7 @@ interface SignUpForm {
   city: string;
   password: string;
   confirmPassword: string;
+  check: boolean;
 }
 
 function SignupPage() {
@@ -90,6 +93,7 @@ function SignupPage() {
       city: "",
       password: "",
       confirmPassword: "",
+      check: false,
     },
     validate: {
       userType: isNotEmpty("Please select your type"),
@@ -183,8 +187,31 @@ function SignupPage() {
                 key={form.key("confirmPassword")}
                 {...form.getInputProps("confirmPassword")}
               />
+              <Flex align="center" gap="sm">
+                <Checkbox
+                  defaultChecked
+                  color="red.4"
+                  key={form.key("check")}
+                  {...form.getInputProps("check", { type: "checkbox" })}
+                />
+                <Text c="black" fz="sm">
+                  I agree to accept{" "}
+                  <Link
+                    href="/terms-privacy"
+                    target="_blank"
+                    style={{ color: "red" }}
+                  >
+                    terms-privacy{" "}
+                  </Link>
+                </Text>
+              </Flex>
               <Space h="lg" />
-              <Button w="80%" type="submit" loading={loading}>
+              <Button
+                w="80%"
+                type="submit"
+                loading={loading}
+                disabled={!form.values.check}
+              >
                 Sign Up
               </Button>
               <Flex w="60%" align="center" gap="lg">
