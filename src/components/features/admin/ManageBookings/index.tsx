@@ -1,7 +1,17 @@
+// components/ManageBookings.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Card, Input, Stack, Text, Group, Select, Badge } from "@mantine/core";
+import {
+  Card,
+  Input,
+  Stack,
+  Text,
+  Group,
+  Select,
+  Badge,
+  ScrollArea,
+} from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { db } from "@/networking/firebase";
@@ -78,7 +88,8 @@ export default function ManageBookings() {
         return (
           b.bookingId?.toLowerCase().includes(query) ||
           b.vehicleName?.toLowerCase().includes(query) ||
-          b.renter?.fullName?.toLowerCase().includes(query)
+          b.renter?.fullName?.toLowerCase().includes(query) ||
+          b.renter?.email?.toLowerCase().includes(query)
         );
       });
     }
@@ -122,7 +133,6 @@ export default function ManageBookings() {
       active: 0,
       completed: 0,
       cancelled: 0,
-      rejected: 0,
     };
 
     bookings.forEach((booking) => {
@@ -137,12 +147,12 @@ export default function ManageBookings() {
   // Don't render during build/SSR
   if (!mounted) {
     return (
-      <Stack p="lg" gap="xl">
+      <Stack p="md" gap="lg" style={{ maxWidth: "100%", overflow: "hidden" }}>
         <Stack gap={0}>
           <Text fz="xl" fw={600} c="black">
             Manage Bookings
           </Text>
-          <Text fz="md" c="dimmed">
+          <Text fz="sm" c="dimmed">
             Loading bookings...
           </Text>
         </Stack>
@@ -152,7 +162,7 @@ export default function ManageBookings() {
           radius="md"
           style={{ filter: "drop-shadow(0px 1px 2px #00000020)" }}
         >
-          <Group gap="md">
+          <Group gap="md" wrap="nowrap">
             <Input
               flex={1}
               size="md"
@@ -183,84 +193,34 @@ export default function ManageBookings() {
   }
 
   return (
-    <Stack p="lg" gap="xl">
+    <Stack p="md" gap="lg" style={{ maxWidth: "100%", overflow: "hidden" }}>
       {/* 🔹 Header */}
       <Stack gap={0}>
         <Text fz="xl" fw={600} c="black">
           Manage Bookings
         </Text>
-        <Text fz="md" c="dimmed">
-          View and manage all bookings on the platform.
-        </Text>
+        <Text fz="md">View and manage all bookings on the platform.</Text>
 
         {/* Status Count Badges */}
-        <Group mt="sm">
-          <Badge
-            c="orange.3"
-            bg="orange.1"
-            fw={500}
-            styles={{
-              root: {
-                textAlign: "center",
-                textTransform: "lowercase",
-              },
-            }}
-          >
-            Pending: {statusCounts.pending}
-          </Badge>
-          <Badge
-            c="blue"
-            bg="blue.1"
-            fw={500}
-            styles={{
-              root: {
-                textAlign: "center",
-                textTransform: "lowercase",
-              },
-            }}
-          >
-            Confirmed: {statusCounts.confirmed}
-          </Badge>
-          <Badge
-            c="green"
-            bg="green.1"
-            fw={500}
-            styles={{
-              root: {
-                textAlign: "center",
-                textTransform: "lowercase",
-              },
-            }}
-          >
-            Active: {statusCounts.active}
-          </Badge>
-          <Badge
-            c="black"
-            bg="gray.1"
-            fw={500}
-            styles={{
-              root: {
-                textAlign: "center",
-                textTransform: "lowercase",
-              },
-            }}
-          >
-            Completed: {statusCounts.completed}
-          </Badge>
-          <Badge
-            c="red"
-            bg="pink.1"
-            fw={500}
-            styles={{
-              root: {
-                textAlign: "center",
-                textTransform: "lowercase",
-              },
-            }}
-          >
-            Cancelled: {statusCounts.cancelled}
-          </Badge>
-        </Group>
+        <ScrollArea>
+          <Group gap="xs" mt="sm" wrap="nowrap">
+            <Badge c="orange.3" bg="orange.0" size="lg" >
+              Pending: {statusCounts.pending}
+            </Badge>
+            <Badge c="green" bg="green.1" size="lg" >
+              Confirmed: {statusCounts.confirmed}
+            </Badge>
+            <Badge c="blue" bg="blue.1" size="lg" >
+              Active: {statusCounts.active}
+            </Badge>
+            <Badge c="bkack" bg="gray.2" size="lg" >
+              Completed: {statusCounts.completed}
+            </Badge>
+            <Badge c="red" bg="pink.1" size="lg" >
+              Cancelled: {statusCounts.cancelled}
+            </Badge>
+          </Group>
+        </ScrollArea>
       </Stack>
 
       {/* 🔹 Search & Filter Card */}
@@ -270,7 +230,7 @@ export default function ManageBookings() {
         radius="md"
         style={{ filter: "drop-shadow(0px 1px 2px #00000020)" }}
       >
-        <Group gap="md">
+        <Group gap="md" wrap="nowrap">
           <Input
             flex={1}
             size="md"
@@ -297,7 +257,10 @@ export default function ManageBookings() {
         </Group>
       </Card>
 
-      <BookingTable loading={loading} bookings={filteredBookings} />
+      {/* 🔹 Table with proper scrolling */}
+      <div style={{ width: "100%", overflow: "hidden" }}>
+        <BookingTable loading={loading} bookings={filteredBookings} />
+      </div>
     </Stack>
   );
 }

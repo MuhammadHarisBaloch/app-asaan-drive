@@ -1,7 +1,7 @@
 // components/BookingTable.tsx
 "use client";
 
-import { Card, Skeleton, Text } from "@mantine/core";
+import { Card, Skeleton, Text, Table, ScrollArea } from "@mantine/core";
 import { BookingModel } from "@/features/booking/models/booking.model";
 import { UserModel } from "@/features/user/models/user.model";
 import BookingRow from "../BookingRow";
@@ -13,17 +13,121 @@ interface BookingTableProps {
 
 export default function BookingTable({ loading, bookings }: BookingTableProps) {
   const headers = [
-    "Booking ID",
-    "User",
-    "Vehicle",
-    "Date & Duration",
-    "Status",
-    "Payment",
+    { label: "Booking ID", width: "140px" },
+    { label: "User", width: "200px" },
+    { label: "Vehicle", width: "180px" },
+    { label: "Date & Duration", width: "150px" },
+    { label: "Status", width: "120px" },
+    { label: "Payment", width: "130px" },
   ];
 
-  // ✅ grid layout same as before
-  const gridHeaderTemplate = "160px 220px 230px 110px 100px 100px";
-  const gridRowTemplate = "200px 210px 210px 100px 100px 100px";
+  if (loading) {
+    return (
+      <Card
+        p={0}
+        radius="md"
+        style={{
+          filter: "drop-shadow(0px 1px 2px #00000020)",
+          overflow: "hidden",
+          minWidth: "900px",
+        }}
+      >
+        <ScrollArea>
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                {headers.map((header, index) => (
+                  <Table.Th
+                    key={index}
+                    style={{
+                      backgroundColor: "#f9f9f9",
+                      padding: "14px 16px",
+                      borderBottom: "1px solid #eee",
+                      width: header.width,
+                      minWidth: header.width,
+                    }}
+                  >
+                    <Text
+                      fz="xs"
+                      fw={600}
+                      tt="uppercase"
+                      ta={header.label === "Booking ID" ? "left" : "center"}
+                    >
+                      {header.label}
+                    </Text>
+                  </Table.Th>
+                ))}
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Table.Tr key={index}>
+                  {headers.map((_, cellIndex) => (
+                    <Table.Td
+                      key={cellIndex}
+                      style={{
+                        padding: "16px",
+                        borderBottom: "1px solid #f2f2f2",
+                      }}
+                    >
+                      <Skeleton height={20} radius="sm" />
+                    </Table.Td>
+                  ))}
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </ScrollArea>
+      </Card>
+    );
+  }
+
+  if (bookings.length === 0) {
+    return (
+      <Card
+        p={0}
+        radius="md"
+        style={{
+          filter: "drop-shadow(0px 1px 2px #00000020)",
+          overflow: "hidden",
+          minWidth: "900px",
+        }}
+      >
+        <ScrollArea>
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                {headers.map((header, index) => (
+                  <Table.Th
+                    key={index}
+                    style={{
+                      backgroundColor: "#f9f9f9",
+                      padding: "14px 16px",
+                      borderBottom: "1px solid #eee",
+                      width: header.width,
+                      minWidth: header.width,
+                    }}
+                  >
+                    <Text
+                      fz="xs"
+                      fw={600}
+                      tt="uppercase"
+                      ta={header.label === "Booking ID" ? "left" : "center"}
+                    >
+                      {header.label}
+                    </Text>
+                  </Table.Th>
+                ))}
+              </Table.Tr>
+            </Table.Thead>
+          </Table>
+        </ScrollArea>
+        <Text ta="center" py="xl" c="dimmed">
+          No bookings found.
+        </Text>
+      </Card>
+    );
+  }
 
   return (
     <Card
@@ -32,63 +136,43 @@ export default function BookingTable({ loading, bookings }: BookingTableProps) {
       style={{
         filter: "drop-shadow(0px 1px 2px #00000020)",
         overflow: "hidden",
+        minWidth: "900px",
       }}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: gridHeaderTemplate,
-          alignItems: "center",
-          backgroundColor: "#f9f9f9",
-          padding: "14px 24px",
-          borderBottom: "1px solid #eee",
-        }}
-      >
-        {headers.map((h, i) => (
-          <Text
-            key={i}
-            fz="xs"
-            fw={600}
-            tt="capitalize"
-            ta={h === "Booking ID" ? "start" : "center"}
-          >
-            {h}
-          </Text>
-        ))}
-      </div>
-
-      {/* Rows */}
-      {loading ? (
-        Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            style={{
-              display: "grid",
-              gridTemplateColumns: gridRowTemplate,
-              alignItems: "center",
-              padding: "16px 24px",
-              borderBottom: "1px solid #f2f2f2",
-            }}
-          >
-            {Array.from({ length: 6 }).map((_, j) => (
-              <Skeleton key={j} height={20} radius="sm" />
+      <ScrollArea>
+        <Table>
+          <Table.Thead>
+            <Table.Tr>
+              {headers.map((header, index) => (
+                <Table.Th
+                  key={index}
+                  style={{
+                    backgroundColor: "#a8a8a83e",
+                    padding: "14px 16px",
+                    borderBottom: "1px solid #eee",
+                    width: header.width,
+                    minWidth: header.width,
+                  }}
+                >
+                  <Text
+                    fz="xs"
+                    fw={600}
+                    tt="uppercase"
+                    ta={header.label === "Booking ID" ? "left" : "center"}
+                  >
+                    {header.label}
+                  </Text>
+                </Table.Th>
+              ))}
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {bookings.map((booking) => (
+              <BookingRow key={booking.bookingId} booking={booking} />
             ))}
-          </div>
-        ))
-      ) : bookings.length === 0 ? (
-        <Text ta="center" py="xl" c="dimmed">
-          No bookings found.
-        </Text>
-      ) : (
-        bookings.map((b) => (
-          <BookingRow
-            key={b.bookingId}
-            booking={b}
-            gridTemplate={gridRowTemplate}
-          />
-        ))
-      )}
+          </Table.Tbody>
+        </Table>
+      </ScrollArea>
     </Card>
   );
 }
