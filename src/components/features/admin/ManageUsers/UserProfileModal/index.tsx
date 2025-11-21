@@ -145,7 +145,7 @@ export default function UserProfileModal({
               <IconWallet size={16} color="#6b6b6b" />
               <Text fz="xs">Wallet</Text>
             </Group>
-            <Text fw={600}>{user.walletBalance ?? "0"}</Text>
+            <Text fw={600}>{user.availableBalance ?? "0"}</Text>
           </Stack>
 
           <Stack gap={4}>
