@@ -1,7 +1,90 @@
 import { firebaseConstants } from "@/constants/Firestore";
 import { sendNotification } from "@/features/notification";
 import { db } from "@/networking/firebase";
-import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
+
+// ✅ PAYMENT WATCHER - Real-time listener for payment status changes
+function setupPaymentWatcher(bookingId: string) {
+  console.log(
+    "👀 [PaymentWatcher] Setting up listener for booking:",
+    bookingId
+  );
+
+  const ref = doc(db, firebaseConstants.collections.bookings, bookingId);
+  const unsubscribe = onSnapshot(ref, async (snap) => {
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+    const bookingStatus = data.status;
+    const paymentStatus = data.payment?.status;
+
+    console.log("💰 [PaymentWatcher] Status:", {
+      bookingStatus,
+      paymentStatus,
+    });
+
+    // ✅ Payment release when booking is completed
+    if (bookingStatus === "completed" && paymentStatus === "hold") {
+      console.log("🎯 [PaymentWatcher] Releasing payment...");
+
+      try {
+        await updateDoc(ref, {
+          "payment.status": "released",
+          "payment.updatedAt": new Date(),
+        });
+        console.log("✅ [PaymentWatcher] Payment released successfully!");
+
+        // Notify owner
+        if (data.vehicleOwnerId) {
+          await sendNotification({
+            userId: data.vehicleOwnerId,
+            title: "Payment Released",
+            message: `Payment for "${data.vehicleName}" has been released to your account.`,
+            type: "payment",
+          });
+        }
+      } catch (error) {
+        console.error("❌ [PaymentWatcher] Payment release failed:", error);
+      }
+    }
+
+    // ✅ Payment refund when booking is cancelled
+    if (bookingStatus === "cancelled" && paymentStatus === "hold") {
+      console.log("🎯 [PaymentWatcher] Refunding payment...");
+
+      try {
+        await updateDoc(ref, {
+          "payment.status": "refunded",
+          "payment.updatedAt": new Date(),
+        });
+        console.log("✅ [PaymentWatcher] Payment refunded successfully!");
+
+        // Notify renter
+        if (data.renterId) {
+          await sendNotification({
+            userId: data.renterId,
+            title: "Payment Refunded",
+            message: `Payment for "${data.vehicleName}" has been refunded to your account.`,
+            type: "payment",
+          });
+        }
+      } catch (error) {
+        console.error("❌ [PaymentWatcher] Payment refund failed:", error);
+      }
+    }
+  });
+
+  return unsubscribe;
+}
+
+// ✅ ACTIVE PAYMENT WATCHERS TRACKING
+const activeWatchers = new Map<string, () => void>();
 
 export async function autoUpdateBookingStatus() {
   // ⛔ Prevent execution during server-side rendering and build
@@ -39,8 +122,9 @@ export async function autoUpdateBookingStatus() {
         const pickUpDate = booking.pickUpDate;
         const pickUpTime = booking.pickUpTime;
         const returnDate = booking.returnDate;
-        const returnTime = booking.returnTime || booking.pickUpTime; // Fallback to pickUpTime
+        const returnTime = booking.returnTime || booking.pickUpTime;
         const status = booking.status;
+        const paymentStatus = booking.payment?.status;
 
         // ✅ Skip if essential fields missing
         if (!pickUpDate || !pickUpTime || !returnDate) {
@@ -64,10 +148,37 @@ export async function autoUpdateBookingStatus() {
 
         console.log(`📋 Booking ${bookingId}:`);
         console.log(`   Status: ${status}`);
+        console.log(`   Payment Status: ${paymentStatus}`);
         console.log(`   Start: ${localStart.toISOString()}`);
         console.log(`   End: ${localEnd.toISOString()}`);
         console.log(`   Now: ${localNow.toISOString()}`);
 
+        // ✅ SETUP PAYMENT WATCHER FOR ACTIVE/CONFIRMED BOOKINGS
+        if (
+          (status === "confirmed" || status === "active") &&
+          !activeWatchers.has(bookingId)
+        ) {
+          console.log(
+            `🔍 Setting up payment watcher for booking: ${bookingId}`
+          );
+          const unsubscribe = setupPaymentWatcher(bookingId);
+          activeWatchers.set(bookingId, unsubscribe);
+        }
+
+        // ✅ CLEANUP WATCHER FOR COMPLETED/CANCELLED BOOKINGS
+        if (
+          (status === "completed" || status === "cancelled") &&
+          activeWatchers.has(bookingId)
+        ) {
+          console.log(
+            `🧹 Cleaning up payment watcher for booking: ${bookingId}`
+          );
+          const unsubscribe = activeWatchers.get(bookingId);
+          if (unsubscribe) unsubscribe();
+          activeWatchers.delete(bookingId);
+        }
+
+        // 🔄 ORIGINAL STATUS UPDATE FLOW
         // 🚗 1️⃣ Confirmed → Active
         if (
           status === "confirmed" &&
@@ -81,15 +192,24 @@ export async function autoUpdateBookingStatus() {
           console.log(`✅ Booking ${bookingId} marked as ACTIVE`);
           updatedCount++;
 
-          // 🔔 Notify renter that booking has started
+          // Notify renter
           if (booking.renterId) {
             await sendNotification({
               userId: booking.renterId,
               title: "Booking Started",
-              message: `Your booking for "${booking.vehicleName}" has started.`,
+              message: `Your booking for "${booking.vehicleName}" has started. Enjoy your ride!`,
               type: "booking",
             });
-            console.log(`🔔 Notification sent to renter for booking start`);
+          }
+
+          // Notify owner
+          if (booking.vehicleOwnerId) {
+            await sendNotification({
+              userId: booking.vehicleOwnerId,
+              title: "Booking Started",
+              message: `Booking for your "${booking.vehicleName}" has started. The vehicle is now in use.`,
+              type: "booking",
+            });
           }
         }
 
@@ -102,7 +222,7 @@ export async function autoUpdateBookingStatus() {
           console.log(`🏁 Booking ${bookingId} marked as COMPLETED`);
           updatedCount++;
 
-          // 🔹 Vehicle status wapas available karna
+          // Vehicle status wapas available karna
           const vehicleId = booking.vehicleId;
           if (vehicleId) {
             const vehicleRef = doc(
@@ -114,17 +234,24 @@ export async function autoUpdateBookingStatus() {
             console.log(`🔄 Vehicle ${vehicleId} status updated to AVAILABLE`);
           }
 
-          // 🔔 Notify renter that booking is completed
+          // Notify renter
           if (booking.renterId) {
             await sendNotification({
               userId: booking.renterId,
               title: "Booking Completed",
-              message: `Your booking for "${booking.vehicleName}" is now completed.`,
+              message: `Your booking for "${booking.vehicleName}" is now completed. Thank you for using AsaanDrive!`,
               type: "booking",
             });
-            console.log(
-              `🔔 Notification sent to renter for booking completion`
-            );
+          }
+
+          // Notify owner
+          if (booking.vehicleOwnerId) {
+            await sendNotification({
+              userId: booking.vehicleOwnerId,
+              title: "Booking Completed",
+              message: `Booking for your "${booking.vehicleName}" is now completed. The vehicle is available for new bookings.`,
+              type: "booking",
+            });
           }
         }
       } catch (docError) {
@@ -139,7 +266,18 @@ export async function autoUpdateBookingStatus() {
     console.log(
       `📊 Auto-update completed: ${updatedCount} updated, ${errorCount} errors`
     );
+    console.log(`👀 Active payment watchers: ${activeWatchers.size}`);
   } catch (error) {
     console.error("💥 Error auto-updating booking statuses:", error);
   }
+}
+
+// ✅ CLEANUP FUNCTION - Saare watchers band karne ke liye
+export function cleanupAllPaymentWatchers() {
+  console.log(`🧹 Cleaning up all payment watchers: ${activeWatchers.size}`);
+  activeWatchers.forEach((unsubscribe, bookingId) => {
+    unsubscribe();
+    console.log(`✅ Cleaned up watcher for: ${bookingId}`);
+  });
+  activeWatchers.clear();
 }

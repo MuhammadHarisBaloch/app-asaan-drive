@@ -238,7 +238,7 @@ export default function ManageBookings() {
               Active: {statusCounts.active}
             </Badge>
             <Badge
-              c="bkack"
+              c="black"
               bg="gray.2"
               size="lg"
               fw={500}
