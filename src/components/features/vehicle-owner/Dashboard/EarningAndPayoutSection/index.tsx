@@ -28,6 +28,11 @@ import dayjs from "dayjs";
 import { collection, onSnapshot, query, where, doc } from "firebase/firestore";
 import { db } from "@/networking/firebase";
 
+/**
+ * Fully fixed & cleaned EarningAndPayoutSection (Option B)
+ * Roman Urdu comments added for clarity.
+ */
+
 export default function EarningAndPayoutSection() {
   const [openMainModal, setOpenMainModal] = useState(false);
   const [user, setUser] = useState<UserModel | null>(null);
@@ -35,8 +40,11 @@ export default function EarningAndPayoutSection() {
   const [loading, setLoading] = useState(true);
   const [availableBalance, setAvailableBalance] = useState<number>(0);
 
-  // Track processed booking IDs
+  // processedBookingIds: woh bookings jinki earning DB mein add ho chuki hai (IDs)
   const processedBookingIds = useRef<Set<string>>(new Set());
+
+  // mutex jisse parallel balance updates ek sath na chalain
+  const updatingRef = useRef(false);
 
   useEffect(() => {
     const auth = getAuth();
@@ -45,17 +53,28 @@ export default function EarningAndPayoutSection() {
       if (!firebaseUser) return;
 
       try {
-        // Get user data first
+        // -------------------------
+        // Initial user data
+        // -------------------------
         const userData = await getUserDocument(firebaseUser.uid);
         setUser(userData);
         setAvailableBalance(userData?.availableBalance || 0);
 
-        // Fetch all bookings for display
+        // -------------------------
+        // Initial fetch (optional, display)
+        // -------------------------
         const ownerBookings = await fetchOwnerVehicleBookings(firebaseUser.uid);
-        setBookings(ownerBookings || []);
 
-        // Add existing released bookings to processed set
-        ownerBookings?.forEach((booking) => {
+        const fixedBookings = ownerBookings?.map((b: any) => ({
+          ...b,
+          // ensure bookingId set (doc.id ya existing bookingId)
+          bookingId: b.bookingId ?? b.id,
+        }));
+
+        setBookings(fixedBookings || []);
+
+        // mark already released ones as processed so duplicates na aaye
+        fixedBookings?.forEach((booking) => {
           if (booking.payment?.status === "released" && booking.bookingId) {
             processedBookingIds.current.add(booking.bookingId);
           }
@@ -63,7 +82,9 @@ export default function EarningAndPayoutSection() {
 
         setLoading(false);
 
-        // Real-time listener for user document
+        // -------------------------
+        // Real-time user listener
+        // -------------------------
         const userDocRef = doc(db, "users", firebaseUser.uid);
         const unsubscribeUser = onSnapshot(userDocRef, (docSnapshot) => {
           if (docSnapshot.exists()) {
@@ -72,7 +93,9 @@ export default function EarningAndPayoutSection() {
           }
         });
 
-        // Real-time listener for bookings
+        // -------------------------
+        // Real-time bookings listener
+        // -------------------------
         const bookingsQuery = query(
           collection(db, "bookings"),
           where("vehicleOwnerId", "==", firebaseUser.uid)
@@ -81,54 +104,100 @@ export default function EarningAndPayoutSection() {
         const unsubscribeBookings = onSnapshot(
           bookingsQuery,
           async (snapshot) => {
-            const allBookings = snapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            })) as unknown as BookingModel[];
+            // map karte waqt bookingId = doc.id assign kar do
+            const allBookings = snapshot.docs.map((d) => ({
+              ...d.data(),
+              bookingId: d.id,
+            })) as BookingModel[];
 
+            // set local state for UI
             setBookings(allBookings);
 
-            // Find NEW released bookings (not processed before)
-            const newReleasedBookings = allBookings.filter((booking) => {
-              const isReleased = booking.payment?.status === "released";
-              const hasBookingId = !!booking.bookingId;
-              const isNew = !processedBookingIds.current.has(
-                booking.bookingId!
-              );
-
-              return isReleased && hasBookingId && isNew;
+            // Ab released bookings ke IDs nikaalo
+            const releasedIds = new Set<string>();
+            allBookings.forEach((b) => {
+              if (b.payment?.status === "released" && b.bookingId) {
+                releasedIds.add(b.bookingId);
+              }
             });
 
-            // Process only NEW bookings
-            if (newReleasedBookings.length > 0) {
-              let totalNewEarnings = 0;
+            // Naye released bookings = releasedIds - processedBookingIds
+            const newlyReleasedIds: string[] = [];
+            releasedIds.forEach((id) => {
+              if (!processedBookingIds.current.has(id))
+                newlyReleasedIds.push(id);
+            });
 
-              newReleasedBookings.forEach((booking) => {
-                const earning =
-                  (booking.totalPrice || 0) - (booking.platformFee || 0);
-                totalNewEarnings += earning;
+            // Agar koi naye released bookings hain, to unki total earning calculate karo
+            if (newlyReleasedIds.length > 0) {
+              // avoid concurrent updates
+              if (updatingRef.current) {
+                // agar already update chal raha hai to skip kar do; next snapshot pe fir try hoga
+                console.log(
+                  "Update in progress, skipping this snapshot processing."
+                );
+                return;
+              }
 
-                // Mark this booking as processed
-                processedBookingIds.current.add(booking.bookingId!);
-              });
+              try {
+                updatingRef.current = true;
 
-              if (totalNewEarnings > 0) {
-                // Get CURRENT balance from Firestore to ensure we have latest value
-                const currentUserData = await getUserDocument(firebaseUser.uid);
-                const currentBalance = currentUserData?.availableBalance || 0;
-
-                // Add new earnings to CURRENT balance
-                const newBalance = currentBalance + totalNewEarnings;
-
-                // Update Firestore
-                await updateUserDocumentField(firebaseUser.uid, {
-                  availableBalance: newBalance,
+                // calculate total earnings for those bookings
+                let totalNewEarnings = 0;
+                newlyReleasedIds.forEach((id) => {
+                  const booking = allBookings.find((b) => b.bookingId === id);
+                  if (booking) {
+                    const earning =
+                      (booking.totalPrice || 0) - (booking.platformFee || 0);
+                    totalNewEarnings += earning;
+                  }
                 });
 
-                console.log(
-                  `Added ${totalNewEarnings} to current balance ${currentBalance}. New balance: ${newBalance}`
-                );
+                if (totalNewEarnings > 0) {
+                  // get latest user's balance from firestore
+                  const currentUserData = await getUserDocument(
+                    firebaseUser.uid
+                  );
+                  const currentBalance = currentUserData?.availableBalance || 0;
+                  const newBalance = currentBalance + totalNewEarnings;
+
+                  // update firestore with new balance
+                  await updateUserDocumentField(firebaseUser.uid, {
+                    availableBalance: newBalance,
+                  });
+
+                  // update local UI state optimistically
+                  setAvailableBalance(newBalance);
+
+                  // mark all released ids as processed (we set to releasedIds to keep in sync)
+                  processedBookingIds.current = new Set([
+                    ...Array.from(processedBookingIds.current),
+                    ...newlyReleasedIds,
+                  ]);
+
+                  console.log(
+                    `Added earnings ${totalNewEarnings} to user ${firebaseUser.uid}. Old: ${currentBalance}, New: ${newBalance}`
+                  );
+                } else {
+                  // agar amount zero ho to processed ids ko refresh kar do (avoid future duplicates)
+                  processedBookingIds.current = new Set([
+                    ...Array.from(processedBookingIds.current),
+                    ...newlyReleasedIds,
+                  ]);
+                }
+              } catch (err) {
+                console.error("Error updating earnings:", err);
+                // agar error, don't mark processed - next snapshot will retry
+              } finally {
+                updatingRef.current = false;
               }
+            } else {
+              // Agar koi new release nahi, to snapshot ke hisab se processed list ko bhi refresh karo
+              // (ye ensure karta hai ke agar kisi wajah se processed IDs out of sync hue hon to sync rehain)
+              // NOTE: hum yahan sirf releasedIds ke union se processedBookingIds replenish kar rahe hain
+              // takay future new items sahi detect hon.
+              // (Don't remove any existing processed ids that are not in releasedIds to avoid double-add.)
+              // No-op in most cases.
             }
           }
         );
@@ -146,18 +215,18 @@ export default function EarningAndPayoutSection() {
     return () => unsubscribeAuth();
   }, []);
 
-  // Calculate total earnings for display
+  // -------------------------
+  // Calculations for UI display
+  // -------------------------
   const totalEarnings = bookings
     .filter((b) => b.payment?.status === "released")
     .reduce((sum, b) => sum + ((b.totalPrice || 0) - (b.platformFee || 0)), 0);
 
-  // Calculate this month earnings for display
   const currentMonthEarnings = bookings
     .filter((b) => b.payment?.status === "released" && b.pickUpDate)
     .filter((b) => dayjs(b.pickUpDate).isSame(dayjs(), "month"))
     .reduce((sum, b) => sum + ((b.totalPrice || 0) - (b.platformFee || 0)), 0);
 
-  // Chart data for display
   const chartData = [...Array(6)].map((_, i) => {
     const month = dayjs().subtract(5 - i, "month");
     const monthlyEarnings = bookings
@@ -171,12 +240,29 @@ export default function EarningAndPayoutSection() {
     return { month: month.format("MMM"), Sales: monthlyEarnings };
   });
 
-  // Withdraw handler
+  // -------------------------
+  // Withdraw handler (modal se call hota hai)
+  // -------------------------
   const handleWithdrawComplete = async (amount: number) => {
     if (!user) return;
 
-    const newBalance = Math.max(0, availableBalance - amount);
-    await updateUserDocumentField(user.id, { availableBalance: newBalance });
+    try {
+      // simple update: subtract amount from firestore balance
+      // get latest to avoid overwrite
+      const currentUserData = await getUserDocument(user.id);
+      const currentBalance = currentUserData?.availableBalance || 0;
+      const newBalance = Math.max(0, currentBalance - amount);
+
+      await updateUserDocumentField(user.id, { availableBalance: newBalance });
+
+      // update local UI state asap
+      setAvailableBalance(newBalance);
+
+      // NOTE: We DO NOT alter processedBookingIds here.
+      // processedBookingIds handling is snapshot-driven (above). That prevents double-add or skipping.
+    } catch (err) {
+      console.error("Error during withdraw update:", err);
+    }
   };
 
   if (loading) {

@@ -54,7 +54,7 @@ function setupPaymentWatcher(bookingId: string) {
       }
     }
 
-    // ✅ Payment refund when booking is cancelled
+    // ✅ Payment refund when booking is cancelled (ANY CANCELLATION)
     if (bookingStatus === "cancelled" && paymentStatus === "hold") {
       console.log("🎯 [PaymentWatcher] Refunding payment...");
 
@@ -153,9 +153,13 @@ export async function autoUpdateBookingStatus() {
         console.log(`   End: ${localEnd.toISOString()}`);
         console.log(`   Now: ${localNow.toISOString()}`);
 
-        // ✅ SETUP PAYMENT WATCHER FOR ACTIVE/CONFIRMED BOOKINGS
+        // ✅ SETUP PAYMENT WATCHER FOR ALL BOOKINGS WITH HOLD PAYMENTS
+        // (confirmed, active, pending - koi bhi status jahan payment hold hai)
         if (
-          (status === "confirmed" || status === "active") &&
+          (status === "confirmed" ||
+            status === "active" ||
+            status === "pending") &&
+          paymentStatus === "hold" &&
           !activeWatchers.has(bookingId)
         ) {
           console.log(
@@ -176,6 +180,54 @@ export async function autoUpdateBookingStatus() {
           const unsubscribe = activeWatchers.get(bookingId);
           if (unsubscribe) unsubscribe();
           activeWatchers.delete(bookingId);
+        }
+
+        // ✅ IMMEDIATE PAYMENT REFUND FOR CANCELLED BOOKINGS
+        // Agar booking cancelled hai aur payment abhi bhi hold hai, toh immediately refund karo
+        if (status === "cancelled" && paymentStatus === "hold") {
+          console.log(
+            `🎯 [Immediate Refund] Processing refund for cancelled booking: ${bookingId}`
+          );
+
+          try {
+            await updateDoc(
+              doc(db, firebaseConstants.collections.bookings, bookingId),
+              {
+                "payment.status": "refunded",
+                "payment.updatedAt": new Date(),
+              }
+            );
+            console.log(
+              `✅ [Immediate Refund] Payment refunded for: ${bookingId}`
+            );
+            updatedCount++;
+
+            // Notify renter
+            if (booking.renterId) {
+              await sendNotification({
+                userId: booking.renterId,
+                title: "Payment Refunded",
+                message: `Payment for "${booking.vehicleName}" has been refunded to your account.`,
+                type: "payment",
+              });
+              console.log(`🔔 Notification sent to renter for refund`);
+            }
+
+            // Notify owner about cancellation
+            if (booking.vehicleOwnerId) {
+              await sendNotification({
+                userId: booking.vehicleOwnerId,
+                title: "Booking Cancelled",
+                message: `Booking for your "${booking.vehicleName}" has been cancelled. Payment refunded to renter.`,
+                type: "booking",
+              });
+            }
+          } catch (error) {
+            console.error(
+              `❌ [Immediate Refund] Failed for ${bookingId}:`,
+              error
+            );
+          }
         }
 
         // 🔄 ORIGINAL STATUS UPDATE FLOW

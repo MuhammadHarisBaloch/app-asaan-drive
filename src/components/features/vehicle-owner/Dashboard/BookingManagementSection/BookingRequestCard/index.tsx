@@ -10,6 +10,8 @@ import BookingViewDetailModal from "./BookingViewDetailsModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { firebaseConstants } from "@/constants/Firestore";
 import { db } from "@/networking/firebase";
+import { useState } from "react";
+import { useDisclosure } from "@mantine/hooks";
 
 interface BookingRequestCardProps {
   renterName: string;
@@ -40,7 +42,11 @@ export default function BookingRequestCard({
   onApprove,
   onDecline,
 }: BookingRequestCardProps) {
+  const [approveloader, setApproveLoader] = useDisclosure(false);
+  const [declineloader, setDeclineLoader] = useDisclosure(false);
+
   const handleApprove = async (bookingId: string) => {
+    setApproveLoader.open();
     console.log("Booking ID in Approve Handler:", bookingId);
     try {
       const bookingRef = doc(
@@ -54,12 +60,15 @@ export default function BookingRequestCard({
 
       // 🔹 notify parent to refresh UI
       onApprove?.(bookingId);
+      setApproveLoader.close();
     } catch (error) {
       console.error("Error approving booking:", error);
+      setApproveLoader.close();
     }
   };
 
   const handleDecline = async (bookingId: string) => {
+    setDeclineLoader.open();
     console.log("Booking ID in Decline Handler:", bookingId);
     try {
       const bookingRef = doc(
@@ -73,8 +82,10 @@ export default function BookingRequestCard({
 
       // 🔹 notify parent to refresh UI
       onDecline?.(bookingId);
+      setDeclineLoader.close();
     } catch (error) {
       console.error("Error approving booking:", error);
+      setDeclineLoader.close();
     }
   };
 
@@ -170,6 +181,7 @@ export default function BookingRequestCard({
                 size="xs"
                 bg="blue"
                 fz="12px"
+                loading={approveloader}
                 onClick={() => handleApprove(bookingId!)}
               >
                 Approve
@@ -177,6 +189,7 @@ export default function BookingRequestCard({
               <Button
                 fz="12px"
                 size="xs"
+                loading={declineloader}
                 onClick={() => handleDecline(bookingId!)}
               >
                 Decline
