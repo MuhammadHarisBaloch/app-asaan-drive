@@ -33,19 +33,19 @@ export default function FaqCard({
     <AccordionItem key={index} value={faq.question}>
       <AccordionControl
         py="md"
-        px="xl"
         fz="sm"
         style={{ borderTop: `1px solid ${cardBorderColor}` }}
       >
         {faq.question}
       </AccordionControl>
-      <AccordionPanel px="md" fz="xs" c="gray">
+      <AccordionPanel fz="xs" c="gray">
         {faq.answer}
       </AccordionPanel>
     </AccordionItem>
   ));
   return (
     <Card
+      w="100%"
       p={0}
       style={{ border: `1.5px solid ${cardBorderColor}` }}
       radius="md"

@@ -24,7 +24,7 @@ export default function HelpCenterPage() {
           assistance.
         </Text>
       </Stack>
-      <SimpleGrid cols={2} spacing="xxl">
+      <SimpleGrid w="100%" cols={2} spacing="xxl">
         {data.helpCenter.faq.map((data, index) => {
           return <FaqCard faqs={data.faqList} key={index} {...data} />;
         })}

@@ -346,7 +346,7 @@ const resourcesList = [
   {
     title: "Browse Vehicles",
     subTitle: "Find your perfect ride",
-    link: "/app/renters",
+    link: "/signin",
   },
 ];
 const emergencySteps = [

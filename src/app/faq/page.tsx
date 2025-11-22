@@ -37,7 +37,7 @@ export default function FaqPage() {
           assistance.
         </Text>
       </Stack>
-      <Accordion variant="contained" mt="xxl" radius="md">
+      <Accordion w="100%" variant="contained" mt="xxl" radius="md">
         {items}
       </Accordion>
       <Card
