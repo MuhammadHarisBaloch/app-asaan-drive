@@ -33,16 +33,17 @@ export default function FaqCard({
     <AccordionItem key={index} value={faq.question}>
       <AccordionControl
         py="md"
-        fz="sm"
+        fz={{ base: "xs", sm: "sm" }}
         style={{ borderTop: `1px solid ${cardBorderColor}` }}
       >
         {faq.question}
       </AccordionControl>
-      <AccordionPanel fz="xs" c="gray">
+      <AccordionPanel fz={{ base: "xs", sm: "xs" }} c="gray">
         {faq.answer}
       </AccordionPanel>
     </AccordionItem>
   ));
+
   return (
     <Card
       w="100%"
@@ -50,16 +51,16 @@ export default function FaqCard({
       style={{ border: `1.5px solid ${cardBorderColor}` }}
       radius="md"
     >
-      <Flex p="xl" align="center" gap="lg">
+      <Flex p={{ base: "lg", sm: "xl" }} align="center" gap="md">
         <Box
           bg={iconBackgroundColor}
-          h={50}
-          w={50}
+          h={{ base: 40, sm: 50 }}
+          w={{ base: 40, sm: 50 }}
           style={{ borderRadius: "50%" }}
         >
           <Center h="100%">{icon}</Center>
         </Box>
-        <Text fz="lg" c="black" fw={500}>
+        <Text fz={{ base: "md", sm: "lg" }} c="black" fw={500}>
           {title}
         </Text>
       </Flex>

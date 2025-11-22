@@ -1,5 +1,4 @@
 import { SimpleGrid } from "@mantine/core";
-
 import { JSX } from "react";
 import FeatureCard from "./FeatureCard";
 
@@ -13,7 +12,7 @@ interface FeatureCardListProps {
 
 export default function FeatureCardList({ items }: FeatureCardListProps) {
   return (
-    <SimpleGrid cols={4} spacing="xl">
+    <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="xl">
       {items.map((item, index) => {
         return (
           <FeatureCard

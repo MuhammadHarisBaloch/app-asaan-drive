@@ -1,5 +1,4 @@
-import { Card, Flex, Stack, Text } from "@mantine/core";
-
+import { Box, Card, Flex, Stack, Text } from "@mantine/core";
 import { JSX } from "react";
 
 interface SafetyFeatureCardProps {
@@ -17,23 +16,26 @@ export default function SafetyFeatureCard({
 }: SafetyFeatureCardProps) {
   return (
     <Card
-      p="xl"
+      p={{ base: "lg", sm: "xl" }}
       radius="md"
+      h="100%"
       style={{ filter: "drop-shadow(1px 1px 4px rgba(0, 0, 0, 0.21))" }}
     >
-      <Stack>
-        <Text fz="lg" c="black" fw={500}>
+      <Stack gap="lg">
+        <Text fz={{ base: "md", sm: "lg" }} c="black" fw={500}>
           {heading}
         </Text>
         {featureList.map((data, index) => {
           return (
-            <Flex key={index} gap="sm" align="flex-start">
-              {data.icon}
-              <Stack gap="xxs">
-                <Text fz="sm" c="black">
+            <Flex key={index} gap="md" align="flex-start">
+              <Box style={{ flexShrink: 0 }}>{data.icon}</Box>
+              <Stack gap="xs" style={{ flex: 1 }}>
+                <Text fz={{ base: "sm", sm: "sm" }} c="black" fw={500}>
                   {data.title}
                 </Text>
-                <Text fz="xs">{data.subTitle}</Text>
+                <Text fz="xs" lh={1.5}>
+                  {data.subTitle}
+                </Text>
               </Stack>
             </Flex>
           );

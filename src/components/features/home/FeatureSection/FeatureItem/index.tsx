@@ -1,5 +1,4 @@
 import { Box, Text, Center, Group } from "@mantine/core";
-
 import { JSX } from "react";
 
 interface FeatureItemProps {
@@ -7,6 +6,7 @@ interface FeatureItemProps {
   title: string;
   description: string;
 }
+
 export default function FeatureItem({
   icon,
   title,
@@ -14,14 +14,19 @@ export default function FeatureItem({
 }: FeatureItemProps) {
   return (
     <Group gap="md" justify="flex-start" align="flex-start" wrap="nowrap">
-      <Box bg="red.4" h={55} w={55} style={{ borderRadius: "5px" }}>
+      <Box
+        bg="red.4"
+        h={{ base: 45, sm: 55 }}
+        w={{ base: 45, sm: 55 }}
+        style={{ borderRadius: "5px" }}
+      >
         <Center h="100%">{icon}</Center>
       </Box>
-      <Box maw="80%">
-        <Text c="black" fz="xl" fw="bold">
+      <Box maw={{ base: "70%", sm: "80%" }}>
+        <Text c="black" fz={{ base: "lg", sm: "xl" }} fw="bold">
           {title}
         </Text>
-        <Text fz="lg" fw={400}>
+        <Text fz={{ base: "sm", sm: "lg" }} fw={400}>
           {description}
         </Text>
       </Box>

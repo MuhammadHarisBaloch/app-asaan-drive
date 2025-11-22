@@ -10,17 +10,23 @@ import {
   Image,
   Paper,
   UnstyledButton,
+  Burger,
+  Drawer,
+  Stack,
+  Box,
 } from "@mantine/core";
 import { PropsWithChildren } from "react";
 import Footer from "../Footer/Index";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AuthButtons from "./AuthButtons";
+import { useDisclosure } from "@mantine/hooks";
 
 interface HeaderMenuItem {
   name: string;
   link: string;
 }
+
 const baseMenu: HeaderMenuItem[] = [
   {
     name: "Home",
@@ -31,6 +37,7 @@ const baseMenu: HeaderMenuItem[] = [
     link: "/how-it-works",
   },
 ];
+
 const websiteMenu: HeaderMenuItem[] = [
   ...baseMenu,
   { name: "Contact us", link: "/contact" },
@@ -61,6 +68,7 @@ const vehicleOwnerMenu: HeaderMenuItem[] = [
     link: "/app/vehicles-owner/list-your-vehicle",
   },
 ];
+
 const adminMenu: HeaderMenuItem[] = [
   {
     name: "",
@@ -77,16 +85,25 @@ function getHeaderMenu(pathname: string): HeaderMenuItem[] {
 
 export default function BaseLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
-  console.log("parhname ", pathname);
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const headerMenu = getHeaderMenu(pathname);
+
   return (
     <>
-      <AppShell header={{ height: 70 }}>
+      <AppShell header={{ height: { base: 40, md: 70 } }}>
         <AppShellHeader withBorder={false}>
           <Paper shadow="md" bg="white.0">
-            <Group p="lg" justify="space-between">
-              <Image src={Images.logos.simple} h={20} w="auto" />
-              <Flex gap="xl">
-                {getHeaderMenu(pathname).map((data, index) => (
+            <Group p={{ base: "md", md: "lg" }} justify="space-between">
+              {/* Logo */}
+              <Image
+                src={Images.logos.simple}
+                h={{ base: 16, md: 20 }}
+                w="auto"
+              />
+
+              {/* Desktop Menu - Hidden on mobile */}
+              <Flex gap="xl" visibleFrom="md">
+                {headerMenu.map((data, index) => (
                   <UnstyledButton
                     className="hover-expand-item"
                     key={index}
@@ -99,12 +116,58 @@ export default function BaseLayout({ children }: PropsWithChildren) {
                   </UnstyledButton>
                 ))}
               </Flex>
-              <AuthButtons />
+
+              {/* Mobile Menu Button - Hidden on desktop */}
+              <Group hiddenFrom="md">
+                <Burger opened={opened} onClick={toggle} size="sm" />
+              </Group>
+
+              {/* Auth Buttons - Hidden on mobile in nav */}
+              <Box visibleFrom="sm">
+                <AuthButtons />
+              </Box>
             </Group>
           </Paper>
         </AppShellHeader>
+
         <AppShellMain>{children}</AppShellMain>
       </AppShell>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        opened={opened}
+        onClose={close}
+        position="right"
+        size="75%"
+        padding="md"
+      >
+        <Stack gap="lg">
+          {/* Mobile Menu Items */}
+          {headerMenu.map((data, index) => (
+            <UnstyledButton
+              key={index}
+              c={pathname == data.link ? "red.4" : "gray"}
+              fw={pathname == data.link ? 600 : 400}
+              component={Link}
+              href={data.link}
+              onClick={close}
+              style={{
+                padding: "12px 0",
+                borderBottom: "1px solid #f0f0f0",
+              }}
+            >
+              {data.name}
+            </UnstyledButton>
+          ))}
+
+          {/* Auth Buttons in Mobile Drawer */}
+          <Box hiddenFrom="sm" mt="xl">
+            <AuthButtons mobile onButtonClick={close} />
+          </Box>
+        </Stack>
+      </Drawer>
+
+      {/* Footer Condition */}
       {pathname.startsWith("/app/renter") ? null : pathname.startsWith(
           "/app/vehicles-owner"
         ) ? null : pathname.startsWith("/app/admin") ? null : (

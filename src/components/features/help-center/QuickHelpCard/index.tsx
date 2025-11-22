@@ -11,6 +11,7 @@ interface QuickHelpCardProps {
   subTitleColor: string;
   subIconColor: string;
 }
+
 export default function QuickHelpCard({
   icon,
   iconBackground,
@@ -21,22 +22,27 @@ export default function QuickHelpCard({
   subIconColor,
 }: QuickHelpCardProps) {
   return (
-    <Card bg="white.2">
-      <Stack align="center" px="lg" py="md">
-        <Box bg={iconBackground} h={50} w={50} style={{ borderRadius: "50%" }}>
+    <Card bg="white.2" h="100%">
+      <Stack align="center" px={{ base: "md", sm: "lg" }} py="md" gap="sm">
+        <Box
+          bg={iconBackground}
+          h={{ base: 45, sm: 50 }}
+          w={{ base: 45, sm: 50 }}
+          style={{ borderRadius: "50%" }}
+        >
           <Center h="100%">{icon}</Center>
         </Box>
-        <Text fz="sm" c="black" fw={500}>
+        <Text fz={{ base: "xs", sm: "sm" }} c="black" fw={500} ta="center">
           {title}
         </Text>
-        <Text fz="xs" ta="center">
+        <Text fz="xs" ta="center" lh={1.4}>
           {description}
         </Text>
-        <Flex align="center">
+        <Flex align="center" gap="xs">
           <Text fz="xs" c={subTitleColor} fw={500}>
             {subTitle}
           </Text>
-          <IconArrowNarrowRight size={15} color={subIconColor} />
+          <IconArrowNarrowRight size={14} color={subIconColor} />
         </Flex>
       </Stack>
     </Card>

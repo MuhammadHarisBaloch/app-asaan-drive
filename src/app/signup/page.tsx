@@ -16,6 +16,7 @@ import {
   TextInput,
   Title,
   UnstyledButton,
+  Container,
 } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -82,7 +83,6 @@ function SignupPage() {
     }
   };
 
-  // ... rest of your form code remains same
   const form = useForm<SignUpForm>({
     mode: "uncontrolled",
     initialValues: {
@@ -112,128 +112,162 @@ function SignupPage() {
 
   return (
     <VehicleBackgroundOverlay>
-      <Stack w="100%" align="center" gap="xl">
-        <Stack gap="xs" align="center">
-          <Title c="white" order={3}>
-            Create an Account
-          </Title>
-          <Text c="white">
-            Join AsaanDrive to rent vehicles or list your Own
-          </Text>
-        </Stack>
-        <Card w="35%" p="lg" py="3xl" radius="lg">
-          <form
-            onSubmit={form.onSubmit(async (values) => {
-              await registerUser(values);
-              console.log("Form submitted", values);
-            })}
+      <Container size="sm" py="xl">
+        <Stack w="100%" align="center" gap="xl">
+          <Stack gap="xs" align="center">
+            <Title c="white" order={3} ta="center">
+              Create an Account
+            </Title>
+            <Text c="white" ta="center" fz={{ base: "sm", sm: "md" }}>
+              Join AsaanDrive to rent vehicles or list your Own
+            </Text>
+          </Stack>
+          <Card
+            w="100%"
+            p={{ base: "lg", sm: "xl" }}
+            py={{ base: "xl", sm: "3xl" }}
+            radius="lg"
           >
-            <Stack align="center" px="xxl">
-              <Radio.Group
-                name="user-type"
-                key={form.key("userType")}
-                {...form.getInputProps("userType")}
-              >
-                <Group mt="xs">
-                  <Radio color="red.4" value="renter" label="Renter" />
-                  <Radio
-                    color="red.4"
-                    value="vehicles-owner"
-                    label="Vehicles Owner"
-                  />
-                </Group>
-              </Radio.Group>
-              <TextInput
-                label="Full Name"
-                w="100%"
-                styles={{ label: { fontSize: "xs" } }}
-                key={form.key("fullName")}
-                {...form.getInputProps("fullName")}
-              />
-              <TextInput
-                label="Email"
-                w="100%"
-                styles={{ label: { fontSize: "xs" } }}
-                key={form.key("email")}
-                {...form.getInputProps("email")}
-              />
-              <TextInput
-                label="Phone number"
-                w="100%"
-                styles={{ label: { fontSize: "xs" } }}
-                key={form.key("number")}
-                {...form.getInputProps("number")}
-              />
-              <Select
-                w="100%"
-                label="Select our city"
-                placeholder="Pick city"
-                data={["Larkana", "Sukkur", "Khairpur' Mirs", "Rohri"]}
-                styles={{ label: { fontSize: "xs" } }}
-                key={form.key("city")}
-                {...form.getInputProps("city")}
-              />
-              <PasswordInput
-                label="Password"
-                w="100%"
-                styles={{ label: { fontSize: "xs" } }}
-                key={form.key("password")}
-                {...form.getInputProps("password")}
-              />
-              <PasswordInput
-                label="Confirm Password"
-                w="100%"
-                styles={{ label: { fontSize: "xs" } }}
-                key={form.key("confirmPassword")}
-                {...form.getInputProps("confirmPassword")}
-              />
-              <Flex align="center" gap="sm">
-                <Checkbox
-                  defaultChecked
-                  color="red.4"
-                  key={form.key("check")}
-                  {...form.getInputProps("check", { type: "checkbox" })}
-                />
-                <Text c="black" fz="sm">
-                  I agree to accept{" "}
-                  <Link
-                    href="/terms-privacy"
-                    target="_blank"
-                    style={{ color: "red" }}
-                  >
-                    terms-privacy{" "}
-                  </Link>
-                </Text>
-              </Flex>
-              <Space h="lg" />
-              <Button
-                w="80%"
-                type="submit"
-                loading={loading}
-                disabled={!form.values.check}
-              >
-                Sign Up
-              </Button>
-              <Flex w="60%" align="center" gap="lg">
-                <Divider w="50%" />
-                Or
-                <Divider w="50%" />
-              </Flex>
-              <Flex gap="sm">
-                <Text fz="sm">Already have Account?</Text>
-                <UnstyledButton
-                  component={Link}
-                  href="/signin"
-                  c="red.4"
-                  fz="sm"
+            <form
+              onSubmit={form.onSubmit(async (values) => {
+                await registerUser(values);
+                console.log("Form submitted", values);
+              })}
+            >
+              <Stack align="center" px={{ base: "md", sm: "xl" }} gap="lg">
+                <Radio.Group
+                  name="user-type"
+                  key={form.key("userType")}
+                  {...form.getInputProps("userType")}
+                  w="100%"
                 >
-                  Sign in
-                </UnstyledButton>
-              </Flex>
-            </Stack>
-          </form>
-        </Card>
-      </Stack>
+                  <Group mt="xs" justify="center" wrap="nowrap">
+                    <Radio color="red.4" value="renter" label="Renter" />
+                    <Radio
+                      color="red.4"
+                      value="vehicles-owner"
+                      label="Vehicles Owner"
+                    />
+                  </Group>
+                </Radio.Group>
+
+                <TextInput
+                  label="Full Name"
+                  w="100%"
+                  size="md"
+                  styles={{ label: { fontSize: "14px" } }}
+                  key={form.key("fullName")}
+                  {...form.getInputProps("fullName")}
+                />
+
+                <TextInput
+                  label="Email"
+                  w="100%"
+                  size="md"
+                  styles={{ label: { fontSize: "14px" } }}
+                  key={form.key("email")}
+                  {...form.getInputProps("email")}
+                />
+
+                <TextInput
+                  label="Phone number"
+                  w="100%"
+                  size="md"
+                  styles={{ label: { fontSize: "14px" } }}
+                  key={form.key("number")}
+                  {...form.getInputProps("number")}
+                />
+
+                <Select
+                  w="100%"
+                  label="Select our city"
+                  placeholder="Pick city"
+                  data={["Larkana", "Sukkur", "Khairpur' Mirs", "Rohri"]}
+                  size="md"
+                  styles={{ label: { fontSize: "14px" } }}
+                  key={form.key("city")}
+                  {...form.getInputProps("city")}
+                />
+
+                <PasswordInput
+                  label="Password"
+                  w="100%"
+                  size="md"
+                  styles={{ label: { fontSize: "14px" } }}
+                  key={form.key("password")}
+                  {...form.getInputProps("password")}
+                />
+
+                <PasswordInput
+                  label="Confirm Password"
+                  w="100%"
+                  size="md"
+                  styles={{ label: { fontSize: "14px" } }}
+                  key={form.key("confirmPassword")}
+                  {...form.getInputProps("confirmPassword")}
+                />
+
+                <Flex align="flex-start" gap="sm" w="100%">
+                  <Checkbox
+                    defaultChecked
+                    color="red.4"
+                    mt={2}
+                    key={form.key("check")}
+                    {...form.getInputProps("check", { type: "checkbox" })}
+                  />
+                  <Text c="black" fz="sm" lh={1.4}>
+                    I agree to accept{" "}
+                    <Link
+                      href="/terms-privacy"
+                      target="_blank"
+                      style={{ color: "red" }}
+                    >
+                      terms-privacy{" "}
+                    </Link>
+                  </Text>
+                </Flex>
+
+                <Space h="md" />
+
+                <Button
+                  w={{ base: "100%", sm: "80%" }}
+                  type="submit"
+                  loading={loading}
+                  disabled={!form.values.check}
+                  size="md"
+                >
+                  Sign Up
+                </Button>
+
+                <Flex w="100%" align="center" gap="md">
+                  <Divider w="100%" />
+                  <Text
+                    fz="sm"
+                    c="gray"
+                    style={{ whiteSpace: "nowrap" }}
+                    px="xs"
+                  >
+                    Or
+                  </Text>
+                  <Divider w="100%" />
+                </Flex>
+
+                <Flex gap="sm" justify="center" wrap="wrap">
+                  <Text fz="sm">Already have Account?</Text>
+                  <UnstyledButton
+                    component={Link}
+                    href="/signin"
+                    c="red.4"
+                    fz="sm"
+                  >
+                    Sign in
+                  </UnstyledButton>
+                </Flex>
+              </Stack>
+            </form>
+          </Card>
+        </Stack>
+      </Container>
     </VehicleBackgroundOverlay>
   );
 }

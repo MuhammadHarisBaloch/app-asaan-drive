@@ -10,6 +10,7 @@ import {
   Group,
   Alert,
   Paper,
+  Container,
 } from "@mantine/core";
 import { IconMail, IconClock, IconRefresh } from "@tabler/icons-react";
 import { verifyOTP, resendOTP } from "@/lib/otp-service";
@@ -181,111 +182,120 @@ export default function OTPVerification() {
 
   return (
     <VehicleBackgroundOverlay>
-      <Stack w="100%" align="center">
-        <Card
-          shadow="md"
-          radius="lg"
-          padding="xl"
-          style={{ width: "100%", maxWidth: 450, background: "white" }}
-        >
-          <Stack gap="lg">
-            {/* Header */}
-            <div style={{ textAlign: "center" }}>
-              <IconMail
-                size={48}
-                color="#e53e3e"
-                style={{ margin: "0 auto 10px" }}
-              />
-              <Text size="xl" fw={700} c="dark">
-                Verify Your Email
-              </Text>
-              <Text size="sm" c="dimmed">
-                We sent a 6-digit code to: <strong>{signupData.email}</strong>
-              </Text>
-            </div>
-
-            {/* Timer */}
-            <Paper p="md" bg="blue.0" radius="md">
-              <Group justify="center">
-                <IconClock size={20} color="#228be6" />
-                <Text size="sm" fw={500}>
-                  Code expires in:{" "}
-                  <span style={{ color: timeLeft < 30 ? "red" : "green" }}>
-                    {formatTime(timeLeft)}
-                  </span>
+      <Container size="sm" py="xl">
+        <Stack w="100%" align="center">
+          <Card
+            shadow="md"
+            radius="lg"
+            p={{ base: "lg", sm: "xl" }}
+            style={{
+              width: "100%",
+              maxWidth: 450,
+              background: "white",
+            }}
+          >
+            <Stack gap="lg">
+              {/* Header */}
+              <div style={{ textAlign: "center" }}>
+                <IconMail
+                  size={40}
+                  color="#e53e3e"
+                  style={{ margin: "0 auto 10px" }}
+                />
+                <Text size="xl" fw={700} c="dark" ta="center">
+                  Verify Your Email
                 </Text>
-              </Group>
-            </Paper>
+                <Text size="sm" c="dimmed" ta="center">
+                  We sent a 6-digit code to: <strong>{signupData.email}</strong>
+                </Text>
+              </div>
 
-            {/* OTP Input */}
-            <Stack gap="xs">
-              <TextInput
-                ref={inputRef}
-                label="Enter 6-digit OTP"
-                placeholder="123456"
-                value={otp}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "").slice(0, 6);
-                  setOtp(value);
-                  setError("");
-                }}
-                maxLength={6}
-                size="md"
-                styles={{
-                  input: {
-                    textAlign: "center",
-                    fontSize: "24px",
-                    fontWeight: 500,
-                    letterSpacing: "8px",
-                  },
-                }}
-              />
-            </Stack>
+              {/* Timer */}
+              <Paper p="md" bg="blue.0" radius="md">
+                <Group justify="center" wrap="nowrap">
+                  <IconClock size={18} color="#228be6" />
+                  <Text size="sm" fw={500}>
+                    Code expires in:{" "}
+                    <span style={{ color: timeLeft < 30 ? "red" : "green" }}>
+                      {formatTime(timeLeft)}
+                    </span>
+                  </Text>
+                </Group>
+              </Paper>
 
-            {/* Messages */}
-            {error && (
-              <Alert c="red.4" title="Error">
-                {error}
-              </Alert>
-            )}
+              {/* OTP Input */}
+              <Stack gap="xs">
+                <TextInput
+                  ref={inputRef}
+                  label="Enter 6-digit OTP"
+                  placeholder="123456"
+                  value={otp}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setOtp(value);
+                    setError("");
+                  }}
+                  maxLength={6}
+                  size="md"
+                  styles={{
+                    input: {
+                      textAlign: "center",
+                      fontSize: "20px",
+                      fontWeight: 500,
+                      letterSpacing: "6px",
+                      height: "50px",
+                    },
+                  }}
+                />
+              </Stack>
 
-            {success && (
-              <Alert c="green" title="Success">
-                {success}
-              </Alert>
-            )}
+              {/* Messages */}
+              {error && (
+                <Alert c="red.4" title="Error">
+                  {error}
+                </Alert>
+              )}
 
-            {/* Verify Button */}
-            <Button
-              size="md"
-              loading={loading}
-              onClick={handleVerifyOTP}
-              disabled={otp.length !== 6}
-              color="red.4"
-            >
-              {loading ? "Verifying..." : "Verify & Create Account"}
-            </Button>
+              {success && (
+                <Alert c="green" title="Success">
+                  {success}
+                </Alert>
+              )}
 
-            {/* Resend OTP */}
-            <Group justify="center">
-              <Text size="sm" c="dimmed">
-                Didn't receive code?
-              </Text>
+              {/* Verify Button */}
               <Button
-                variant="subtle"
-                size="sm"
-                loading={resendLoading}
-                disabled={!canResend || resendLoading}
-                onClick={handleResendOTP}
-                leftSection={<IconRefresh size={16} />}
+                size="md"
+                loading={loading}
+                onClick={handleVerifyOTP}
+                disabled={otp.length !== 6}
                 color="red.4"
+                fullWidth
               >
-                {resendLoading ? "Sending..." : "Resend OTP"}
+                {loading ? "Verifying..." : "Verify & Create Account"}
               </Button>
-            </Group>
-          </Stack>
-        </Card>
-      </Stack>
+
+              {/* Resend OTP */}
+              <Group justify="center" wrap="nowrap">
+                <Text size="sm" c="dimmed">
+                  Didn't receive code?
+                </Text>
+                <Button
+                  variant="subtle"
+                  size="sm"
+                  loading={resendLoading}
+                  disabled={!canResend || resendLoading}
+                  onClick={handleResendOTP}
+                  leftSection={<IconRefresh size={16} />}
+                  color="red.4"
+                  style={{ whiteSpace: "nowrap" }}
+                >
+                  {resendLoading ? "Sending..." : "Resend OTP"}
+                </Button>
+              </Group>
+            </Stack>
+          </Card>
+        </Stack>
+      </Container>
     </VehicleBackgroundOverlay>
   );
 }

@@ -9,20 +9,22 @@ export default function HomeFeatureSection() {
       justify="center"
       pb="xl"
       pt="3rem"
-      px="xl"
+      px="xs"
       gap="md"
       w="100%"
       h="100%"
     >
-      <Text fz="xl" c="red.4" fw={500}>
+      <Text fz={{ base: "lg", sm: "xl" }} c="red.4" fw={500}>
         Features
       </Text>
-      <Title order={3}>Why Choose AsaanDrive?</Title>
-      <Text fz="xl">
+      <Title order={3} ta="center">
+        Why Choose AsaanDrive?
+      </Title>
+      <Text fz={{ base: "md", sm: "xl" }} ta="center">
         Our platform offers multiple benefits to both renters and vehicle
         owners.
       </Text>
-      <SimpleGrid cols={2} spacing="xl" mt="lg">
+      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl" mt="lg" w="100%">
         {data.home.features.map((feature, index) => (
           <FeatureItem
             key={index}

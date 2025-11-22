@@ -20,35 +20,36 @@ export default function TermsPrivacyPage() {
   const [activeTab, setActiveTab] = useState<"terms" | "privacy">("terms");
 
   return (
-    <Container size="lg" py="xl">
+    <Container size="lg" py="xl" px="md">
       {/* Header Section */}
       <Stack gap="lg" mb="xl">
         <Title order={3} c="black" ta="center">
           Legal Information
         </Title>
-        <Text ta="center" size="lg">
+        <Text ta="center" fz={{ base: "md", sm: "lg" }}>
           Please read our Terms & Conditions and Privacy Policy carefully to
-          understand how <br />
-          AsaanDrive operates and protects your information.
+          understand how AsaanDrive operates and protects your information.
         </Text>
 
         {/* Tab Buttons */}
-        <Group justify="center" mb="md">
+        <Group justify="center" mb="md" wrap="wrap">
           <Button
             variant={activeTab === "terms" ? "filled" : "light"}
-            color="red.4.4"
+            color="red.4"
             size="md"
             leftSection={<IconFileText size={20} />}
             onClick={() => setActiveTab("terms")}
+            maw={{ base: "100%", sm: "auto" }}
           >
             Terms & Conditions
           </Button>
           <Button
             variant={activeTab === "privacy" ? "filled" : "light"}
-            color="red.4.4"
+            color="red.4"
             size="md"
             leftSection={<IconShield size={20} />}
             onClick={() => setActiveTab("privacy")}
+            maw={{ base: "100%", sm: "auto" }}
           >
             Privacy Policy
           </Button>
@@ -59,15 +60,19 @@ export default function TermsPrivacyPage() {
 
       {/* Content Section */}
       {activeTab === "terms" ? (
-        <Stack gap="xl">
+        <Stack gap="lg">
           {/* Terms & Conditions Header */}
           <Stack gap="xs">
-            <Title order={3}>Terms & Conditions</Title>
-            <Text>Last updated: December 2024</Text>
+            <Title order={3} ta={{ base: "center", sm: "left" }}>
+              Terms & Conditions
+            </Title>
+            <Text ta={{ base: "center", sm: "left" }}>
+              Last updated: December 2024
+            </Text>
           </Stack>
 
           {/* Section 1 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               1. Acceptance of Terms
             </Title>
@@ -84,7 +89,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 2 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               2. User Responsibilities
             </Title>
@@ -143,7 +148,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 3 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               3. Booking and Cancellation Policy
             </Title>
@@ -177,13 +182,13 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 4 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               4. Payment Terms
             </Title>
             <Text mb="sm">
               All payments must be made through AsaanDrive's secure payment
-              system. We accept major cred.4it cards, mobile wallets (JazzCash,
+              system. We accept major credit cards, mobile wallets (JazzCash,
               EasyPaisa), and cash payments where applicable.
             </Text>
             <List
@@ -197,7 +202,7 @@ export default function TermsPrivacyPage() {
               }
             >
               <List.Item>
-                Security deposits are required.4 for all rentals
+                Security deposits are required for all rentals
               </List.Item>
               <List.Item>
                 Additional charges may apply for damages, late returns, or
@@ -213,7 +218,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 5 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               5. Dispute Resolution
             </Title>
@@ -229,7 +234,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 6 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               6. Platform Rights and Restrictions
             </Title>
@@ -260,7 +265,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 7 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               7. Limitation of Liability
             </Title>
@@ -276,15 +281,19 @@ export default function TermsPrivacyPage() {
           </Card>
         </Stack>
       ) : (
-        <Stack gap="xl">
+        <Stack gap="lg">
           {/* Privacy Policy Header */}
           <Stack gap="xs">
-            <Title order={3}>Privacy Policy</Title>
-            <Text>Last updated: December 2024</Text>
+            <Title order={3} ta={{ base: "center", sm: "left" }}>
+              Privacy Policy
+            </Title>
+            <Text ta={{ base: "center", sm: "left" }}>
+              Last updated: December 2024
+            </Text>
           </Stack>
 
           {/* Section 1 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               1. Information We Collect
             </Title>
@@ -307,7 +316,7 @@ export default function TermsPrivacyPage() {
                 Driver's license and national ID (CNIC) details
               </List.Item>
               <List.Item>
-                Payment information (cred.4it/debit card details)
+                Payment information (credit/debit card details)
               </List.Item>
               <List.Item>
                 Vehicle registration and insurance documents
@@ -336,7 +345,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 2 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               2. How We Use Your Information
             </Title>
@@ -369,7 +378,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 3 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               3. Data Sharing and Disclosure
             </Title>
@@ -394,9 +403,7 @@ export default function TermsPrivacyPage() {
               <List.Item>
                 With payment processors for transaction processing
               </List.Item>
-              <List.Item>
-                With law enforcement when legally required.4
-              </List.Item>
+              <List.Item>With law enforcement when legally required</List.Item>
               <List.Item>
                 With service providers who assist our operations
               </List.Item>
@@ -405,7 +412,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 4 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               4. Cookies and Tracking Technologies
             </Title>
@@ -436,7 +443,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 5 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               5. Your Rights
             </Title>
@@ -468,7 +475,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 6 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               6. Data Security Measures
             </Title>
@@ -500,7 +507,7 @@ export default function TermsPrivacyPage() {
           </Card>
 
           {/* Section 7 */}
-          <Card withBorder p="lg" radius="md">
+          <Card withBorder p={{ base: "md", sm: "lg" }} radius="md">
             <Title order={4} mb="md" c="black">
               7. Contact Information
             </Title>
@@ -525,14 +532,20 @@ export default function TermsPrivacyPage() {
       )}
 
       {/* Contact Section */}
-      <Card withBorder mt="xl" p="lg" radius="md" bg="gray.0">
+      <Card
+        withBorder
+        mt="xl"
+        p={{ base: "md", sm: "lg" }}
+        radius="md"
+        bg="gray.0"
+      >
         <Title order={4} mb="md" ta="center">
           Have Questions?
         </Title>
-        <Text ta="center" mb="lg">
+        <Text ta="center" mb="lg" fz={{ base: "sm", sm: "md" }}>
           Our legal and support teams are here to help clarify any concerns
         </Text>
-        <Group justify="center">
+        <Group justify="center" wrap="wrap">
           <Button color="red.4" size="md">
             Contact Legal Team
           </Button>

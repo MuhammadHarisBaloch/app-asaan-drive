@@ -6,6 +6,7 @@ interface ResourcesCardProps {
   subTitle: string;
   link: string;
 }
+
 export default function ResourcesCard({
   title,
   subTitle,
@@ -15,15 +16,18 @@ export default function ResourcesCard({
     <Card
       radius="md"
       style={{ filter: "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.24))" }}
-      p="lg"
+      p={{ base: "md", sm: "lg" }}
       component={Link}
       href={link}
+      h="100%"
     >
-      <Stack gap="xxs" align="center">
-        <Text fz="sm" c="black" fw={500}>
+      <Stack gap="xs" align="center" justify="center" h="100%">
+        <Text fz={{ base: "xs", sm: "sm" }} c="black" fw={500} ta="center">
           {title}
         </Text>
-        <Text fz="xs">{subTitle}</Text>
+        <Text fz="xs" ta="center" lh={1.4}>
+          {subTitle}
+        </Text>
       </Stack>
     </Card>
   );
