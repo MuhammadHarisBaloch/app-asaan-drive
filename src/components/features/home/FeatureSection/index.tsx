@@ -9,7 +9,7 @@ export default function HomeFeatureSection() {
       justify="center"
       pb="xl"
       pt="3rem"
-      px="xs"
+      px={{ sm: "lg", base: "md" }}
       gap="md"
       w="100%"
       h="100%"

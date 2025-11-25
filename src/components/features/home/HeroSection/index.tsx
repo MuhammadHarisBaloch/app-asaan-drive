@@ -15,7 +15,7 @@ import Link from "next/link";
 
 function HomeHeroSection() {
   return (
-    <Container size="xl" px="xs">
+    <Container size="xl" px={{ sm: "lg", base: "xl" }}>
       <Grid gutter="xl" align="center" py="xl">
         {/* Text Content Section */}
         <GridCol span={{ base: 12, sm: 6 }}>
