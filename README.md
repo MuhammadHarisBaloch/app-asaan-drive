@@ -134,10 +134,6 @@ Open a Pull Request
 
 Contributions, ideas, and feedback are welcome!
 
-📄 License
-
-This project is licensed under the MIT License.
-
 ⭐ If you like this project, please give it a star on GitHub!
 
 👉 It motivates future improvements 🚀
