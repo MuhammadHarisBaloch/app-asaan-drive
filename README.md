@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📘 AsaanDrive – Smart Transportation Platform
 
-## Getting Started
+AsaanDrive is a smart and digital transportation platform that connects users who want to rent vehicles with owners offering bikes or rickshaws for rent. It simplifies the traditional renting system through easy online booking, secure payments, real-time availability, and a seamless experience for both renters and vehicle owners.
 
-First, run the development server:
+🚀 Why AsaanDrive?
 
-```bash
+Traditional vehicle rentals are manual, time-consuming, and lack transparency.
+AsaanDrive solves these challenges by offering:
+
+📅 Easy booking & scheduling
+
+📍 Real-time vehicle availability and tracking
+
+💳 Secure and digital payments
+
+🛵 Affordable bike & rickshaw rentals
+
+👤 Owner dashboard to manage earnings & listings
+
+🛠️ Tech Stack
+
+Frontend: Next.js, React, TypeScript
+
+UI Framework: Mantine UI
+
+Backend (optional): Node.js + Express
+
+Database (optional): MongoDB
+
+📦 Installation & Setup
+
+Clone the repository:
+
+git clone https://github.com/MuhammadHarisBaloch/app-asaan-drive.git
+cd app-asaan-drive
+
+
+Install dependencies:
+
+npm install
+# or
+yarn install
+
+
+Run the development server:
+
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open your browser at:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+http://localhost:3000
 
-## Learn More
+📁 Project Structure
+app-asaan-drive/
+├── app/                 # App router pages & layouts
+├── components/          # Reusable UI components
+├── public/              # Assets (images, icons, etc.)
+├── styles/              # Global styling
+├── utils/               # Helper functions
+├── package.json
+└── README.md
 
-To learn more about Next.js, take a look at the following resources:
+✨ Core Features
+For Renters (Users):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+View nearby available bikes/rickshaws
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Book instantly with clean UI
 
-## Deploy on Vercel
+Real-time vehicle availability
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Transparent details & secure experience
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For Vehicle Owners:
+
+List your vehicles for rental
+
+Manage bookings, availability & pricing
+
+Track earnings directly from dashboard
+
+Earn by showcasing vehicles digitally
+
+📌 Key Highlights
+
+Fully responsive UI using Mantine
+
+Clean & reusable component structure
+
+Scalable architecture for future upgrades
+
+API-ready design for backend integration
+
+🧭 Future Enhancements
+
+Mobile App (React Native)
+
+GPS-based live tracking
+
+Wallet & secure in-app payment system
+
+Dynamic pricing engine
+
+Driver/renter verification system
+
+SOS / emergency safety features
+
+🚀 Deployment
+
+Easily deploy using Vercel:
+
+Push repository to GitHub
+
+Connect to Vercel dashboard
+
+Build → Deploy
+
+Vercel Docs: https://nextjs.org/docs/app/building-your-application/deploying
+
+🤝 Contributing
+
+Want to improve AsaanDrive?
+
+Fork the repository
+
+Create a new branch (feature/your-feature)
+
+Commit changes
+
+Open a Pull Request
+
+Contributions, ideas, and feedback are welcome!
+
+📄 License
+
+This project is licensed under the MIT License.
+
+⭐ If you like this project, please give it a star on GitHub!
+
+👉 It motivates future improvements 🚀
